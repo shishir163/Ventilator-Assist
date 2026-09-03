@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B1220">
+<title>VentAssist — ICU Ventilator Tool</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VentAssist">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B1220; --bg2:#111B2E; --panel:#16223A; --panel2:#1D2C48;
+  --line:#2A3B5C; --ink:#EAF1FB; --ink2:#9DB0CE; --ink3:#63769A;
+  --brand:#39C0C8; --brand2:#5B8DEF;
+  --ok:#37D399; --okbg:#0E3A2C;
+  --warn:#F5C64C; --warnbg:#3D3216;
+  --bad:#F87272; --badbg:#3E1B22;
+  --insp:#4BD86A; --exp:#F0DE55; --axis:#5B8DEF;
+  --r:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 600px at 80% -10%, #17324E 0%, transparent 55%),
+    radial-gradient(900px 500px at -10% 10%, #16303A 0%, transparent 50%),
+    var(--bg);
+  color:var(--ink);
+  font-family:"Inter","Noto Sans Bengali",system-ui,sans-serif;
+  font-size:15px; line-height:1.55;
+  min-height:100vh;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+body.bn{font-family:"Noto Sans Bengali","Inter",system-ui,sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px 90px}
+h1,h2,h3,h4{margin:0;font-weight:700;letter-spacing:-.01em}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit}
+.hide{display:none!important}
+[data-bn]{display:none}
+body.bn [data-en]{display:none}
+body.bn [data-bn]{display:inline}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  background:linear-gradient(180deg,rgba(11,18,32,.96),rgba(11,18,32,.82));
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;
+}
+.topbar-in{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.logo{
+  width:38px;height:38px;border-radius:11px;flex:none;
+  background:linear-gradient(145deg,var(--brand),var(--brand2));
+  display:grid;place-items:center;box-shadow:0 6px 18px rgba(57,192,200,.35)}
+.logo svg{width:24px;height:24px}
+.brand-name{font-size:18px;font-weight:800;line-height:1}
+.brand-sub{font-size:11.5px;color:var(--ink2);font-weight:500}
+.spacer{flex:1}
+.langtog{
+  border:1px solid var(--line);border-radius:999px;padding:6px 12px;
+  font-size:12.5px;font-weight:600;color:var(--ink2);background:var(--panel)}
+.langtog b{color:var(--brand)}
+.backbtn{
+  border:1px solid var(--line);border-radius:10px;width:38px;height:38px;
+  display:none;place-items:center;background:var(--panel);color:var(--ink)}
+.backbtn svg{width:18px;height:18px}
+body.inview .backbtn{display:grid}
+
+/* ---------- Dashboard ---------- */
+.hero{padding:22px 2px 8px}
+.hero h1{font-size:clamp(22px,5vw,30px);line-height:1.2}
+.hero p{color:var(--ink2);margin:6px 0 0;font-size:14px;max-width:60ch}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-top:18px}
+@media(min-width:720px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{
+  position:relative;border-radius:var(--r);padding:16px 15px 15px;
+  background:var(--panel);border:1px solid var(--line);
+  text-align:left;overflow:hidden;transition:transform .12s ease,border-color .12s}
+.card:active{transform:scale(.975)}
+.card:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.card .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;margin-bottom:11px}
+.card .ic svg{width:23px;height:23px}
+.card h3{font-size:15.5px;line-height:1.25}
+.card p{margin:4px 0 0;font-size:12.5px;color:var(--ink2);line-height:1.4}
+.card::after{content:"";position:absolute;inset:0;border-radius:var(--r);
+  background:radial-gradient(120px 60px at 85% 0%,rgba(255,255,255,.05),transparent 70%);pointer-events:none}
+.c-calc .ic{background:var(--okbg);color:var(--ok)}
+.c-ie .ic{background:#12324D;color:var(--brand2)}
+.c-wave .ic{background:#3A2140;color:#E48CE8}
+.c-dz .ic{background:var(--badbg);color:var(--bad)}
+.c-wean .ic{background:var(--warnbg);color:var(--warn)}
+.c-abg .ic{background:#3A2A16;color:#F5A742}
+.c-trbl .ic{background:#2E2740;color:#B79BF0}
+.c-ref .ic{background:#22303A;color:#7FD0DE}
+
+/* ---------- Views ---------- */
+.view{display:none;padding-top:14px}
+.view.active{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.view h2{font-size:21px;margin-bottom:3px}
+.view .vsub{color:var(--ink2);font-size:13px;margin-bottom:16px}
+
+/* ---------- Inputs ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:15px;margin-bottom:14px}
+.panel-t{font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:12px;letter-spacing:.02em}
+.field-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+@media(min-width:560px){.field-grid{grid-template-columns:repeat(3,1fr)}}
+.field label{display:block;font-size:11.5px;color:var(--ink2);margin-bottom:5px;font-weight:500}
+.field .u{color:var(--ink3);font-weight:400}
+.field input,.field select{
+  width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:11px;
+  padding:11px 12px;color:var(--ink);font-size:16px;font-weight:600;transition:border-color .12s}
+.field input:focus,.field select:focus{outline:none;border-color:var(--brand)}
+.seg{display:flex;background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:3px;gap:3px}
+.seg button{flex:1;padding:9px 4px;border-radius:8px;font-size:13px;font-weight:600;color:var(--ink2)}
+.seg button.on{background:var(--brand);color:#04222A}
+
+/* ---------- Result rows ---------- */
+.res{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.res:last-child{border-bottom:none}
+.res .rk{flex:1;min-width:0}
+.res .rk .n{font-size:14px;font-weight:600}
+.res .rk .d{font-size:12px;color:var(--ink2);margin-top:1px}
+.res .rv{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.res .rv small{font-size:12px;font-weight:600;color:var(--ink2);margin-left:3px}
+.pill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.03em}
+.pill.ok{background:var(--okbg);color:var(--ok)}
+.pill.warn{background:var(--warnbg);color:var(--warn)}
+.pill.bad{background:var(--badbg);color:var(--bad)}
+.pill.neu{background:var(--panel2);color:var(--ink2)}
+.rv.ok{color:var(--ok)}.rv.warn{color:var(--warn)}.rv.bad{color:var(--bad)}
+
+/* interpretation callouts */
+.calls{margin-top:4px}
+.call{display:flex;gap:11px;padding:12px 13px;border-radius:12px;margin-bottom:9px;font-size:13.5px;line-height:1.5;border:1px solid transparent}
+.call .ci{flex:none;width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font-weight:800;font-size:13px;margin-top:1px}
+.call.ok{background:rgba(55,211,153,.08);border-color:rgba(55,211,153,.25)}
+.call.ok .ci{background:var(--ok);color:#04231A}
+.call.warn{background:rgba(245,198,76,.08);border-color:rgba(245,198,76,.28)}
+.call.warn .ci{background:var(--warn);color:#2A2205}
+.call.bad{background:rgba(248,114,114,.09);border-color:rgba(248,114,114,.3)}
+.call.bad .ci{background:var(--bad);color:#2E0A0E}
+.call.info{background:rgba(91,141,239,.08);border-color:rgba(91,141,239,.26)}
+.call.info .ci{background:var(--brand2);color:#04122E}
+.call b{font-weight:700}
+.call .act{display:block;margin-top:3px;color:var(--ink2)}
+
+.disclaimer{font-size:11.5px;color:var(--ink3);text-align:center;padding:8px 10px;margin-top:6px;line-height:1.5}
+
+/* save bar */
+.savebar{display:flex;gap:12px;align-items:flex-end}
+.savebar input{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:11px 12px;color:var(--ink);font-size:16px;font-weight:600}
+.savebar input:focus{outline:none;border-color:var(--brand)}
+.savebtn{flex:none;display:flex;align-items:center;gap:8px;background:var(--brand);color:#04222A;font-weight:700;
+  border-radius:11px;padding:12px 16px;font-size:14px;transition:filter .12s}
+.savebtn:active{filter:brightness(.9)}
+.savebtn svg{width:18px;height:18px}
+.savetoast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);z-index:90;
+  background:var(--ok);color:#04231A;font-weight:700;font-size:13.5px;padding:11px 18px;border-radius:999px;
+  opacity:0;transition:opacity .2s,transform .2s;box-shadow:0 10px 30px rgba(0,0,0,.5);pointer-events:none}
+.savetoast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.linkbtn{color:var(--bad);font-size:12.5px;font-weight:600;padding:10px 0 2px;text-decoration:underline;text-underline-offset:3px}
+
+/* mini chart */
+.chartwrap{width:100%}
+.chartwrap svg{width:100%;height:auto;display:block;overflow:visible}
+.chart-empty{color:var(--ink3);font-size:13px;padding:20px 0;text-align:center}
+.tt-dot{cursor:pointer}
+.trendrow{display:flex;gap:10px;font-size:12.8px;padding:8px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.trendrow:last-child{border-bottom:none}
+.trendrow .tm{color:var(--ink2);flex:1;min-width:0}
+.trendrow b{font-weight:700}
+
+/* PEEP table */
+.peeptable{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.peeptable th{background:var(--panel2);color:var(--ink2);font-size:12px;font-weight:600;padding:9px 8px;text-align:center}
+.peeptable td{padding:9px 8px;text-align:center;border-bottom:1px solid var(--line);font-weight:600}
+.peeptable tr.match td{background:rgba(57,192,200,.16);color:#fff}
+.peeptable tr.match td:first-child{box-shadow:inset 3px 0 0 var(--brand)}
+.c-trend .ic{background:#13323A;color:var(--brand)}
+.c-peep .ic{background:#1C3352;color:var(--brand2)}
+
+/* disease + waveform tiles */
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+@media(min-width:640px){.tiles{grid-template-columns:repeat(3,1fr)}}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px;text-align:left;transition:transform .1s,border-color .12s}
+.tile:active{transform:scale(.97)}
+.tile:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.tile .tt{font-size:14.5px;font-weight:700}
+.tile .td{font-size:11.5px;color:var(--ink2);margin-top:3px;line-height:1.4}
+.tile .tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--panel2);color:var(--brand);margin-top:8px}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:80;display:none;align-items:flex-end;justify-content:center}
+.modal.open{display:flex}
+.modal-bg{position:absolute;inset:0;background:rgba(4,8,16,.72);backdrop-filter:blur(3px)}
+.modal-card{position:relative;background:var(--bg2);border:1px solid var(--line);
+  border-radius:22px 22px 0 0;width:100%;max-width:640px;max-height:88vh;overflow-y:auto;
+  padding:8px 18px calc(env(safe-area-inset-bottom) + 22px);animation:up .22s ease}
+@media(min-width:640px){.modal{align-items:center}.modal-card{border-radius:22px;max-height:82vh}}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+.grab{width:38px;height:4px;border-radius:99px;background:var(--line);margin:8px auto 12px}
+.modal-card h3{font-size:19px;margin-bottom:2px}
+.modal-card .mtag{font-size:12px;color:var(--brand);font-weight:600;margin-bottom:14px}
+.mblock{margin-bottom:14px}
+.mblock h4{font-size:12.5px;color:var(--ink2);letter-spacing:.03em;margin-bottom:6px}
+.mblock ul{margin:0;padding-left:18px}
+.mblock li{font-size:13.5px;margin-bottom:5px;line-height:1.5}
+.mblock .kv{display:flex;gap:8px;font-size:13.5px;padding:6px 0;border-bottom:1px solid var(--line)}
+.mblock .kv b{flex:none;width:38%;color:var(--ink2);font-weight:600}
+.wsvg{background:#0A1524;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:12px}
+.wsvg svg{width:100%;height:auto;display:block}
+.avoid{background:rgba(248,114,114,.07);border:1px solid rgba(248,114,114,.25);border-radius:11px;padding:10px 12px;font-size:13px}
+.avoid b{color:var(--bad)}
+
+/* checklist */
+.check{display:flex;align-items:flex-start;gap:12px;padding:13px;background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:9px;cursor:pointer}
+.check .box{flex:none;width:24px;height:24px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;margin-top:1px;transition:all .12s}
+.check .box svg{width:14px;height:14px;opacity:0;transform:scale(.5);transition:all .12s}
+.check.on .box{background:var(--ok);border-color:var(--ok)}
+.check.on .box svg{opacity:1;transform:none;color:#04231A}
+.check .ct{font-size:14px;font-weight:600}
+.check .cd{font-size:12px;color:var(--ink2);margin-top:2px}
+.wean-verdict{border-radius:14px;padding:16px;margin:6px 0 16px;text-align:center;font-weight:700}
+.wean-verdict.go{background:var(--okbg);border:1px solid rgba(55,211,153,.4);color:var(--ok)}
+.wean-verdict.nogo{background:var(--badbg);border:1px solid rgba(248,114,114,.4);color:var(--bad)}
+.wean-verdict .big{font-size:20px;display:block}
+.wean-verdict .sm{font-size:13px;font-weight:500;color:var(--ink2);margin-top:4px}
+
+/* ref accordion */
+.acc{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.acc summary{padding:14px 15px;font-size:15px;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary::after{content:"+";color:var(--brand);font-size:20px;font-weight:400}
+.acc[open] summary::after{content:"−"}
+.acc .accbody{padding:0 15px 14px}
+.acc table{width:100%;border-collapse:collapse;font-size:13px}
+.acc td{padding:7px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.acc td:first-child{color:var(--ink2)}
+.acc td:last-child{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+
+.footer{text-align:center;color:var(--ink3);font-size:11.5px;padding:24px 10px 10px;line-height:1.6}
+.footer a{color:var(--brand)}
+
+/* install hint */
+.installbar{position:fixed;left:12px;right:12px;bottom:12px;z-index:60;max-width:936px;margin:0 auto;
+  background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;
+  display:none;align-items:center;gap:12px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.installbar.show{display:flex}
+.installbar .it{flex:1;font-size:13px}
+.installbar .it b{display:block}
+.installbar button{background:var(--brand);color:#04222A;font-weight:700;border-radius:10px;padding:9px 15px;font-size:13px}
+.installbar .x{background:none;color:var(--ink2);padding:6px 8px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <button class="backbtn" id="backBtn" aria-label="Back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#04222A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 12h3l2-6 3 12 3-9 2 5 2-2h5"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">VentAssist</div>
+      <div class="brand-sub" data-en>ICU ventilator companion</div><div class="brand-sub" data-bn>আইসিইউ ভেন্টিলেটর সহায়ক</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="langtog" id="langTog"><b>EN</b> / বাং</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ===================== DASHBOARD ===================== -->
+  <section id="home">
+    <div class="hero">
+      <h1 data-en>Everything for the vent, in one tap.</h1><h1 data-bn>ভেন্টিলেটরের সবকিছু, এক ট্যাপে।</h1>
+      <p data-en>Enter the numbers — get compliance, driving pressure, resistance, I:E, and plain-language what-to-do. Plus disease strategies, waveform cheat-codes, and a weaning checklist. Works offline on the round.</p>
+      <p data-bn>সংখ্যা দিন — compliance, driving pressure, resistance, I:E আর সহজ ভাষায় করণীয় পান। সাথে রোগভিত্তিক strategy, waveform cheat-code আর weaning checklist। রাউন্ডে offline-ও চলবে।</p>
+    </div>
+
+    <div class="grid" id="cardGrid"></div>
+
+    <div class="footer">
+      <span data-en>Decision-support only. Every suggestion needs your clinical judgement and a look at the patient. Targets follow ARDSnet / standard guidelines.</span>
+      <span data-bn>শুধু সিদ্ধান্ত-সহায়ক। প্রতিটি পরামর্শে আপনার clinical বিচার আর রোগীকে দেখা জরুরি। Target ARDSnet / প্রচলিত guideline অনুসারে।</span>
+    </div>
+  </section>
+
+  <!-- ===================== CALCULATOR ===================== -->
+  <section id="calc" class="view">
+    <h2 data-en>Core Calculator</h2><h2 data-bn>মূল ক্যালকুলেটর</h2>
+    <div class="vsub" data-en>Fill what you have. Results update live.</div><div class="vsub" data-bn>যা আছে দিন। ফলাফল সঙ্গে সঙ্গে বদলাবে।</div>
+
+    <div class="panel">
+      <div class="panel-t" data-en>PATIENT</div><div class="panel-t" data-bn>রোগী</div>
+      <div class="field-grid">
+        <div class="field"><label data-en>Sex</label><label data-bn>লিঙ্গ</label>
+          <div class="seg" id="sexSeg"><button data-v="M" class="on">♂ M</button><button data-v="F">♀ F</button></div></div>
+        <div class="field"><label><span data-en>Height</span><span data-bn>উচ্চতা</span> <span class="u">cm</span></label><input id="ht" type="number" inputmode="decimal" placeholder="170"></div>
+        <div class="field"><label><span data-en>Actual weight</span><span data-bn>প্রকৃত ওজন</span> <span class="u">kg</span></label><input id="wt" type="number" inputmode="decimal" placeholder="80"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-t" data-en>VENTILATOR READINGS</div><div class="panel-t" data-bn>ভেন্টিলেটর রিডিং</div>
+      <div class="field-grid">
+        <div class="field"><label>VT <span class="u">mL</span></label><input id="vt" type="number" inputmode="decimal" placeholder="420"></div>
+        <div class="field"><label>Ppeak <span class="u">cmH₂O</span></label><input id="ppeak" type="number" inputmode="decimal" placeholder="30"></div>
+        <div class="field"><label>Pplat <span class="u">cmH₂O</span></label><input id="pplat" type="number" inputmode="decimal" placeholder="25"></div>
+        <div class="field"><label>PEEP set <span class="u">cmH₂O</span></label><input id="peep" type="number" inputmode="decimal" placeholder="8"></div>
+        <div class="field"><label>PEEP total <span class="u">cmH₂O</span></label><input id="peept" type="number" inputmode="decimal" placeholder="8"></div>
+        <div class="field"><label>RR <span class="u">/min</span></label><input id="rr" type="number" inputmode="decimal" placeholder="16"></div>
+        <div class="field"><label><span data-en>Insp. flow</span><span data-bn>Insp flow</span> <span class="u">L/min</span></label><input id="flow" type="number" inputmode="decimal" placeholder="60"></div>
+        <div class="field"><label>FiO₂ <span class="u">%</span></label><input id="fio2" type="number" inputmode="decimal" placeholder="50"></div>
+        <div class="field"><label>PaO₂ <span class="u">mmHg</span></label><input id="pao2" type="number" inputmode="decimal" placeholder="80"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-t" data-en>RESULTS</div><div class="panel-t" data-bn>ফলাফল</div>
+      <div id="calcRes"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-t" data-en>INTERPRETATION &amp; WHAT TO DO</div><div class="panel-t" data-bn>ব্যাখ্যা ও করণীয়</div>
+      <div class="calls" id="calcCalls"></div>
+    </div>
+
+    <div class="panel savebar">
+      <div class="field" style="flex:1"><label><span data-en>Patient / bed label</span><span data-bn>রোগী / বেড লেবেল</span></label>
+        <input id="ptLabel" type="text" placeholder="Bed 4 — MR" autocomplete="off"></div>
+      <button class="savebtn" id="saveReading">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+        <span data-en>Save reading</span><span data-bn>রিডিং সেভ</span>
+      </button>
+    </div>
+    <div class="disclaimer" data-en>These are prompts, not orders. Confirm plateau on a passive patient, rule out auto-PEEP with an expiratory hold, and always look at the patient.</div>
+    <div class="disclaimer" data-bn>এগুলো ইঙ্গিত, নির্দেশ নয়। Passive রোগীতে plateau নিশ্চিত করুন, expiratory hold দিয়ে auto-PEEP বাদ দিন, আর সবসময় রোগীকে দেখুন।</div>
+  </section>
+
+  <!-- ===================== I:E LAB ===================== -->
+  <section id="ie" class="view">
+    <h2 data-en>I:E &amp; Timing Lab</h2><h2 data-bn>I:E ও টাইমিং ল্যাব</h2>
+    <div class="vsub" data-en>Change any one — the rest recompute.</div><div class="vsub" data-bn>যেকোনো একটা বদলান — বাকিগুলো নিজে হিসাব হবে।</div>
+
+    <div class="panel">
+      <div class="field-grid">
+        <div class="field"><label>RR <span class="u">/min</span></label><input id="ie_rr" type="number" inputmode="decimal" placeholder="16"></div>
+        <div class="field"><label><span data-en>Set by</span><span data-bn>যেভাবে সেট</span></label>
+          <div class="seg" id="ieMode"><button data-v="ti" class="on">Ti</button><button data-v="ratio">I:E</button></div></div>
+        <div class="field" id="tiField"><label>Ti <span class="u">s</span></label><input id="ie_ti" type="number" inputmode="decimal" placeholder="1.0"></div>
+        <div class="field hide" id="ratioField"><label><span data-en>E part (I:E = 1 :</span><span data-bn>E অংশ (I:E = 1 :</span> )</label><input id="ie_e" type="number" inputmode="decimal" placeholder="2"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-t" data-en>TIMING</div><div class="panel-t" data-bn>টাইমিং</div>
+      <div id="ieRes"></div>
+    </div>
+    <div class="calls" id="ieCalls"></div>
+  </section>
+
+  <!-- ===================== WAVEFORMS ===================== -->
+  <section id="wave" class="view">
+    <h2 data-en>Waveform Cheat-Code</h2><h2 data-bn>Waveform Cheat-Code</h2>
+    <div class="vsub" data-en>Tap a pattern to see what it means and what to do.</div><div class="vsub" data-bn>একটা প্যাটার্নে ট্যাপ করলে মানে ও করণীয় খুলবে।</div>
+    <div class="tiles" id="waveTiles"></div>
+  </section>
+
+  <!-- ===================== DISEASES ===================== -->
+  <section id="dz" class="view">
+    <h2 data-en>Disease Strategy</h2><h2 data-bn>রোগভিত্তিক কৌশল</h2>
+    <div class="vsub" data-en>Starting points from standard guidelines — tailor to your patient.</div><div class="vsub" data-bn>প্রচলিত guideline থেকে শুরুর বিন্দু — রোগী বুঝে সাজান।</div>
+    <div class="tiles" id="dzTiles"></div>
+  </section>
+
+  <!-- ===================== WEANING ===================== -->
+  <section id="wean" class="view">
+    <h2 data-en>Weaning Readiness</h2><h2 data-bn>Weaning প্রস্তুতি</h2>
+    <div class="vsub" data-en>Tick what's true. Green means consider an SBT.</div><div class="vsub" data-bn>যা সত্যি টিক দিন। সবুজ মানে SBT ভাবা যায়।</div>
+    <div class="wean-verdict nogo" id="weanVerdict"><span class="big" id="weanBig">—</span><span class="sm" id="weanSm"></span></div>
+    <div id="weanList"></div>
+
+    <div class="panel" style="margin-top:6px">
+      <div class="panel-t" data-en>RSBI CALCULATOR (during SBT)</div><div class="panel-t" data-bn>RSBI ক্যালকুলেটর (SBT-এর সময়)</div>
+      <div class="field-grid">
+        <div class="field"><label>RR <span class="u">/min</span></label><input id="rsbi_rr" type="number" inputmode="decimal" placeholder="24"></div>
+        <div class="field"><label>VT <span class="u">L</span></label><input id="rsbi_vt" type="number" inputmode="decimal" placeholder="0.4"></div>
+      </div>
+      <div id="rsbiRes" style="margin-top:10px"></div>
+    </div>
+
+    <div class="panel" style="margin-top:6px">
+      <div class="panel-t" data-en>RASS — SEDATION TARGET FOR WEANING</div><div class="panel-t" data-bn>RASS — Weaning-এর জন্য sedation লক্ষ্য</div>
+      <div class="vsub" style="margin-bottom:10px" data-en>Aim for RASS 0 to −1 (calm, awake, follows commands) before an SBT. Deep sedation (−4/−5) blocks weaning; agitation (+2 and up) needs the cause treated, not just more sedation.</div>
+      <div class="vsub" style="margin-bottom:10px" data-bn>SBT-এর আগে RASS ০ থেকে −১ (শান্ত, সজাগ, command মানে) লক্ষ্য করুন। গভীর sedation (−৪/−৫) weaning আটকায়; agitation (+২ ও উপরে) হলে শুধু বেশি sedation নয়, কারণ treat করুন।</div>
+      <div id="rassList"></div>
+    </div>
+  </section>
+
+  <!-- ===================== TROUBLESHOOT ===================== -->
+  <section id="trbl" class="view">
+    <h2 data-en>Troubleshoot</h2><h2 data-bn>সমস্যা সমাধান</h2>
+    <div class="vsub" data-en>Sudden desaturation / high pressure / fighting the vent.</div><div class="vsub" data-bn>হঠাৎ desaturation / high pressure / ভেন্টের সাথে fighting।</div>
+    <div class="tiles" id="trblTiles"></div>
+  </section>
+
+  <!-- ===================== REFERENCE ===================== -->
+  <section id="ref" class="view">
+    <h2 data-en>Quick Reference</h2><h2 data-bn>দ্রুত রেফারেন্স</h2>
+    <div class="vsub" data-en>Normal values &amp; formulas.</div><div class="vsub" data-bn>স্বাভাবিক মান ও সূত্র।</div>
+    <div id="refList"></div>
+  </section>
+
+  <!-- ===================== ABG ===================== -->
+  <section id="abg" class="view">
+    <h2 data-en>ABG Interpreter</h2><h2 data-bn>ABG ব্যাখ্যা</h2>
+    <div class="vsub" data-en>Enter the values — full step-by-step interpretation, no memorising formulas.</div><div class="vsub" data-bn>মান দিন — ধাপে ধাপে সম্পূর্ণ ব্যাখ্যা, সূত্র মুখস্থ ছাড়াই।</div>
+
+    <div class="panel">
+      <div class="panel-t" data-en>PRIMARY VALUES</div><div class="panel-t" data-bn>মূল মান</div>
+      <div class="field-grid">
+        <div class="field"><label>pH</label><input id="a_ph" type="number" inputmode="decimal" placeholder="7.35"></div>
+        <div class="field"><label>PaCO₂ <span class="u">mmHg</span></label><input id="a_co2" type="number" inputmode="decimal" placeholder="40"></div>
+        <div class="field"><label>HCO₃⁻ <span class="u">mEq/L</span></label><input id="a_hco3" type="number" inputmode="decimal" placeholder="24"></div>
+        <div class="field"><label>PaO₂ <span class="u">mmHg</span></label><input id="a_pao2" type="number" inputmode="decimal" placeholder="90"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-t" data-en>FOR ANION GAP / A–a / CHRONICITY (optional)</div><div class="panel-t" data-bn>Anion gap / A–a / chronicity-র জন্য (ঐচ্ছিক)</div>
+      <div class="field-grid">
+        <div class="field"><label>Na⁺ <span class="u">mEq/L</span></label><input id="a_na" type="number" inputmode="decimal" placeholder="140"></div>
+        <div class="field"><label>Cl⁻ <span class="u">mEq/L</span></label><input id="a_cl" type="number" inputmode="decimal" placeholder="104"></div>
+        <div class="field"><label>K⁺ <span class="u">mEq/L</span></label><input id="a_k" type="number" inputmode="decimal" placeholder="4.0"></div>
+        <div class="field"><label><span data-en>Albumin</span><span data-bn>Albumin</span> <span class="u">g/dL</span></label><input id="a_alb" type="number" inputmode="decimal" placeholder="4.0"></div>
+        <div class="field"><label>FiO₂ <span class="u">%</span></label><input id="a_fio2" type="number" inputmode="decimal" placeholder="21"></div>
+        <div class="field"><label><span data-en>Age</span><span data-bn>বয়স</span> <span class="u">yr</span></label><input id="a_age" type="number" inputmode="decimal" placeholder="40"></div>
+        <div class="field"><label><span data-en>Respiratory</span><span data-bn>Respiratory</span></label>
+          <div class="seg" id="a_chron"><button data-v="acute" class="on" data-en>Acute</button><button data-v="acute" class="on hide" data-bn>Acute</button><button data-v="chronic" data-en>Chronic</button><button data-v="chronic" class="hide" data-bn>Chronic</button></div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-t" data-en>RESULTS</div><div class="panel-t" data-bn>ফলাফল</div>
+      <div id="abgRes"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-t" data-en>INTERPRETATION — STEP BY STEP</div><div class="panel-t" data-bn>ব্যাখ্যা — ধাপে ধাপে</div>
+      <div class="calls" id="abgCalls"></div>
+    </div>
+    <div class="disclaimer" data-en>Reference chart concept: Dr. Abdullah Al Mamun Shishir. Always interpret ABG alongside the clinical picture.</div>
+    <div class="disclaimer" data-bn>রেফারেন্স চার্টের ধারণা: ডা. আব্দুল্লাহ আল মামুন শিশির। ABG সবসময় clinical picture-এর সাথে মিলিয়ে ব্যাখ্যা করুন।</div>
+  </section>
+
+  <!-- ===================== TRENDS ===================== -->
+  <section id="trend" class="view">
+    <h2 data-en>Trends</h2><h2 data-bn>Trend</h2>
+    <div class="vsub" data-en>Saved readings per patient. The trend tells you more than any single number.</div><div class="vsub" data-bn>রোগীভিত্তিক সেভ করা রিডিং। যেকোনো একটা সংখ্যার চেয়ে trend বেশি বলে।</div>
+
+    <div class="panel" id="trendPickPanel">
+      <div class="field"><label><span data-en>Patient</span><span data-bn>রোগী</span></label>
+        <select id="trendPatient"></select></div>
+    </div>
+
+    <div id="trendEmpty" class="panel" style="text-align:center;color:var(--ink3);font-size:13.5px;padding:26px 16px">
+      <span data-en>No saved readings yet. Go to the Calculator, enter values, add a patient label and tap “Save reading”.</span>
+      <span data-bn>এখনো কোনো সেভ করা রিডিং নেই। Calculator-এ গিয়ে মান দিন, রোগী লেবেল দিন, “রিডিং সেভ” চাপুন।</span>
+    </div>
+
+    <div id="trendBody" class="hide">
+      <div class="panel">
+        <div class="panel-t"><span data-en>COMPLIANCE</span><span data-bn>COMPLIANCE</span> <span class="u">mL/cmH₂O</span></div>
+        <div id="chartC"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-t"><span data-en>DRIVING PRESSURE</span><span data-bn>DRIVING PRESSURE</span> <span class="u">cmH₂O</span></div>
+        <div id="chartDP"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-t" data-en>SAVED READINGS</div><div class="panel-t" data-bn>সেভ করা রিডিং</div>
+        <div id="trendTable"></div>
+        <button class="linkbtn" id="clearPatient" data-en>Delete this patient's readings</button>
+        <button class="linkbtn hide" id="clearPatient2" data-bn>এই রোগীর রিডিং মুছুন</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PEEP TABLE ===================== -->
+  <section id="peeptbl" class="view">
+    <h2 data-en>PEEP / FiO₂ Table</h2><h2 data-bn>PEEP / FiO₂ টেবিল</h2>
+    <div class="vsub" data-en>ARDSnet ladder. Pick your FiO₂ — the matching PEEP band is highlighted.</div><div class="vsub" data-bn>ARDSnet ladder। FiO₂ বাছুন — মিল PEEP band হাইলাইট হবে।</div>
+
+    <div class="panel">
+      <div class="field-grid">
+        <div class="field"><label><span data-en>Current FiO₂</span><span data-bn>বর্তমান FiO₂</span> <span class="u">%</span></label><input id="peepFio2" type="number" inputmode="decimal" placeholder="50"></div>
+        <div class="field"><label><span data-en>Strategy</span><span data-bn>Strategy</span></label>
+          <div class="seg" id="peepStrat"><button data-v="low" class="on" data-en>Lower PEEP</button><button data-v="low" class="on hide" data-bn>Lower PEEP</button><button data-v="high" data-en>Higher PEEP</button><button data-v="high" class="hide" data-bn>Higher PEEP</button></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div id="peepTableBox"></div>
+    </div>
+    <div class="calls" id="peepCalls"></div>
+    <div class="disclaimer" data-en>ARDSnet ARMA (lower) and ALVEOLI/high-PEEP tables. A guide to pairing, not a substitute for titrating PEEP to compliance, oxygenation and haemodynamics in your patient.</div>
+    <div class="disclaimer" data-bn>ARDSnet ARMA (lower) ও ALVEOLI/high-PEEP টেবিল। জোড়া মেলানোর guide — রোগীতে compliance, oxygenation ও haemodynamics দেখে PEEP titrate করার বিকল্প নয়।</div>
+  </section>
+
+</div>
+
+<!-- modal -->
+<div class="modal" id="modal"><div class="modal-bg" id="modalBg"></div>
+  <div class="modal-card"><div class="grab"></div><div id="modalBody"></div></div>
+</div>
+
+<!-- install hint -->
+<div class="installbar" id="installBar">
+  <div class="it"><b data-en>Install VentAssist</b><b data-bn>VentAssist ইনস্টল করুন</b>
+    <span data-en>Add to home screen for offline use.</span><span data-bn>Offline ব্যবহারে home screen-এ যোগ করুন।</span></div>
+  <button id="installBtn" data-en>Install</button><button id="installBtn2" data-bn class="hide">ইনস্টল</button>
+  <button class="x" id="installX">✕</button>
+</div>
+
+<script>
+/* =================================================================
+   VentAssist — clinical logic + UI. All values on device, offline.
+   ================================================================= */
+"use strict";
+const $=id=>document.getElementById(id);
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const num=v=>{const n=parseFloat(v);return isFinite(n)?n:null;};
+const r1=n=>Math.round(n*10)/10;
+const r0=n=>Math.round(n);
+let BN=false;
+const T=(en,bn)=>BN?bn:en;
+
+/* ---------- language ---------- */
+function setLang(bn){
+  BN=bn; document.body.classList.toggle('bn',bn);
+  $('langTog').innerHTML = bn ? 'EN / <b>বাং</b>' : '<b>EN</b> / বাং';
+  localStorage.setItem('va_lang',bn?'bn':'en');
+  renderAll();
+}
+$('langTog').onclick=()=>setLang(!BN);
+
+/* ---------- navigation ---------- */
+const views=['calc','abg','ie','wave','dz','wean','trbl','peeptbl','trend','ref'];
+function go(id){
+  $('home').classList.toggle('hide', id!=='home');
+  views.forEach(v=>$(v).classList.toggle('active', v===id));
+  document.body.classList.toggle('inview', id!=='home');
+  window.scrollTo({top:0,behavior:'instant'});
+  history.replaceState({view:id},'','#'+id);
+  if(id==='trend') renderTrend();
+}
+$('backBtn').onclick=()=>go('home');
+
+/* ---------- dashboard cards ---------- */
+const CARDS=[
+  {id:'calc',cls:'c-calc',en:'Calculator',bn:'ক্যালকুলেটর',den:'Compliance, ΔP, resistance, MV, P/F',dbn:'Compliance, ΔP, resistance, MV, P/F',ic:'<path d="M9 3h6a2 2 0 012 2v14a2 2 0 01-2 2H9a2 2 0 01-2-2V5a2 2 0 012-2z"/><path d="M9 7h6M9 11h2M13 11h2M9 15h2M13 15h2"/>'},
+  {id:'abg',cls:'c-abg',en:'ABG Interpreter',bn:'ABG ব্যাখ্যা',den:'Full acid–base, anion gap, A–a, delta ratio',dbn:'Acid–base, anion gap, A–a, delta ratio',ic:'<path d="M8 3h8M10 3v5l-5 9a2 2 0 001.8 3h10.4a2 2 0 001.8-3l-5-9V3"/><path d="M7.5 15h9"/>'},
+  {id:'ie',cls:'c-ie',en:'I:E & Timing',bn:'I:E ও টাইমিং',den:'Ti, Te, ratio, cycle time',dbn:'Ti, Te, ratio, cycle time',ic:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'},
+  {id:'wave',cls:'c-wave',en:'Waveform Codes',bn:'Waveform কোড',den:'Read the screen in a glance',dbn:'এক নজরে স্ক্রিন পড়ুন',ic:'<path d="M2 12h3l2-7 3 14 3-10 2 5h4"/>'},
+  {id:'dz',cls:'c-dz',en:'Disease Strategy',bn:'রোগভিত্তিক কৌশল',den:'ARDS, COPD, ICP, acidosis…',dbn:'ARDS, COPD, ICP, acidosis…',ic:'<path d="M12 3v18M3 12h18" stroke-width="2.6"/>'},
+  {id:'wean',cls:'c-wean',en:'Weaning',bn:'Weaning',den:'Readiness checklist + RSBI + RASS',dbn:'প্রস্তুতি checklist + RSBI + RASS',ic:'<path d="M4 12l5 5L20 6"/>'},
+  {id:'trend',cls:'c-trend',en:'Trends',bn:'Trend',den:'Compliance & ΔP over time, per patient',dbn:'রোগীভিত্তিক compliance ও ΔP-র trend',ic:'<path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 5-7"/>'},
+  {id:'peeptbl',cls:'c-peep',en:'PEEP / FiO₂',bn:'PEEP / FiO₂',den:'ARDSnet lower & higher-PEEP ladder',dbn:'ARDSnet lower ও higher-PEEP ladder',ic:'<path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="currentColor"/><circle cx="15" cy="12" r="2" fill="currentColor"/><circle cx="18" cy="18" r="2" fill="currentColor"/>'},
+  {id:'trbl',cls:'c-trbl',en:'Troubleshoot',bn:'সমস্যা সমাধান',den:'DOPES, high pressure algorithm',dbn:'DOPES, high pressure algorithm',ic:'<path d="M12 9v4M12 17h.01M10.3 3.9L2 18a2 2 0 001.7 3h16.6a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/>'},
+  {id:'ref',cls:'c-ref',en:'Quick Reference',bn:'দ্রুত রেফারেন্স',den:'Normal values & formulas',dbn:'স্বাভাবিক মান ও সূত্র',ic:'<path d="M4 5a2 2 0 012-2h12v18H6a2 2 0 01-2-2V5z"/><path d="M8 7h8M8 11h8M8 15h5"/>'},
+];
+function renderCards(){
+  const g=$('cardGrid');g.innerHTML='';
+  CARDS.forEach(c=>{
+    const b=el('button','card '+c.cls);
+    b.innerHTML=`<div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${c.ic}</svg></div>
+      <h3>${T(c.en,c.bn)}</h3><p>${T(c.den,c.dbn)}</p>`;
+    b.onclick=()=>go(c.id);
+    g.appendChild(b);
+  });
+}
+
+/* ===================================================================
+   CORE CALCULATOR
+   =================================================================== */
+function calcRow(name,desc,val,unit,pillTxt,pillCls,valCls){
+  return `<div class="res"><div class="rk"><div class="n">${name}</div><div class="d">${desc}</div></div>
+    <div style="text-align:right"><div class="rv ${valCls||''}">${val}<small>${unit||''}</small></div>
+    ${pillTxt?`<span class="pill ${pillCls}">${pillTxt}</span>`:''}</div></div>`;
+}
+function callBox(cls,icon,html){return `<div class="call ${cls}"><div class="ci">${icon}</div><div>${html}</div></div>`;}
+
+function runCalc(){
+  const sex=$('sexSeg').dataset.v||'M';
+  const ht=num($('ht').value), wt=num($('wt').value);
+  const vt=num($('vt').value), ppeak=num($('ppeak').value), pplat=num($('pplat').value);
+  const peep=num($('peep').value), rr=num($('rr').value), flow=num($('flow').value);
+  const fio2=num($('fio2').value), pao2=num($('pao2').value);
+  let peept=num($('peept').value); if(peept==null)peept=peep;
+
+  const rr_ = rr;
+  let pbw=null;
+  if(ht!=null){pbw=(sex==='F'?45.5:50)+0.91*(ht-152.4); if(pbw<0)pbw=null;}
+  const vtkg = (vt!=null&&pbw)?vt/pbw:null;
+  const dp = (pplat!=null&&peept!=null)?pplat-peept:null;
+  const cstat=(vt!=null&&dp!=null&&dp>0)?vt/dp:null;
+  const cdyn=(vt!=null&&ppeak!=null&&peept!=null&&(ppeak-peept)>0)?vt/(ppeak-peept):null;
+  const raw=(ppeak!=null&&pplat!=null&&flow)?(ppeak-pplat)/(flow/60):null;
+  const mv=(vt!=null&&rr_!=null)?vt*rr_/1000:null;
+  const pf=(pao2!=null&&fio2)?pao2/(fio2/100):null;
+  const vtmax=cstat?cstat*15:null;
+  const bmi=(wt!=null&&ht!=null&&ht>0)?wt/Math.pow(ht/100,2):null;
+
+  // results
+  let h='';
+  if(bmi!=null){
+    const cls=bmi<25?'ok':bmi<30?'warn':'bad';
+    const cat=bmi<18.5?T('underweight','কম ওজন'):bmi<25?T('normal','স্বাভাবিক'):bmi<30?T('overweight','overweight'):bmi<35?T('obese I','obese I'):bmi<40?T('obese II','obese II'):T('obese III','obese III');
+    h+=calcRow('BMI',T('body mass index','body mass index'),r1(bmi),'kg/m²',cat,cls,cls);
+  }
+  if(pbw) h+=calcRow('PBW',T('Predicted body weight','আদর্শ ওজন'),r1(pbw),'kg');
+  if(vtkg!=null){
+    const cls=vtkg<=6.5?'ok':vtkg<=8?'warn':'bad';
+    const pill=vtkg<=6.5?T('lung-protective','ফুসফুস-রক্ষী'):vtkg<=8?T('a bit high','একটু বেশি'):T('too high','অতি বেশি');
+    h+=calcRow('VT / kg',T('per kg PBW','প্রতি kg PBW'),r1(vtkg),'mL/kg',pill,cls,cls);
+  }
+  if(dp!=null){
+    const cls=dp<15?'ok':dp<=18?'warn':'bad';
+    h+=calcRow('Driving pressure','ΔP = Pplat − PEEPtot',r1(dp),'cmH₂O',dp<15?'<15 ✓':(dp<=18?T('borderline','সীমান্তে'):T('high','বেশি')),cls,cls);
+  }
+  if(cstat!=null){
+    const cls=cstat>=50?'ok':cstat>=30?'warn':'bad';
+    h+=calcRow(T('Static compliance','Static compliance'),'VT ÷ ΔP',r1(cstat),'mL/cmH₂O',cstat>=50?T('normal','স্বাভাবিক'):cstat>=30?T('reduced','কম'):T('stiff','খুব কম'),cls,cls);
+  }
+  if(raw!=null){
+    const cls=raw<=10?'ok':raw<=15?'warn':'bad';
+    h+=calcRow('Raw',T('airway resistance','airway resistance'),r1(raw),'cmH₂O/L/s',raw<=10?T('normal','স্বাভাবিক'):raw<=15?T('raised','বাড়তি'):T('high','বেশি'),cls,cls);
+  }
+  if(ppeak!=null&&pplat!=null){
+    const gap=ppeak-pplat;const cls=gap<=8?'ok':gap<=12?'warn':'bad';
+    h+=calcRow('Ppeak − Pplat',T('resistive gap','resistive ব্যবধান'),r1(gap),'cmH₂O',null,null,cls);
+  }
+  if(pplat!=null){
+    const cls=pplat<=30?'ok':'bad';
+    h+=calcRow('Pplat',T('alveolar pressure','alveolar চাপ'),r1(pplat),'cmH₂O',pplat<=30?'≤30 ✓':T('>30 risk','>30 ঝুঁকি'),cls,cls);
+  }
+  if(mv!=null) h+=calcRow(T('Minute ventilation','মিনিট ভেন্টিলেশন'),'VT × RR',r1(mv),'L/min');
+  if(vtmax!=null) h+=calcRow(T('VT for ΔP<15','ΔP<15 রাখতে VT'),'C × 15',r0(vtmax),'mL',null,null,'ok');
+  if(pf!=null){
+    const cls=pf>300?'ok':pf>200?'warn':'bad';
+    const sev=pf>300?T('normal','স্বাভাবিক'):pf>200?T('mild ARDS','mild ARDS'):pf>100?T('moderate ARDS','moderate ARDS'):T('severe ARDS','severe ARDS');
+    h+=calcRow('P/F ratio',T('oxygenation','oxygenation'),r0(pf),'',sev,cls,cls);
+  }
+  $('calcRes').innerHTML = h || `<div style="color:var(--ink3);font-size:13px;padding:8px 0">${T('Enter values above to see results.','উপরে মান দিলে ফলাফল আসবে।')}</div>`;
+
+  // interpretation
+  let c=[];
+  if(vt==null&&pplat==null){c.push(callBox('info','i',T('<b>Start with VT, Pplat and PEEP.</b> Those three unlock compliance and driving pressure — the two numbers that matter most.','<b>VT, Pplat আর PEEP দিয়ে শুরু করুন।</b> এই তিনটাই compliance আর driving pressure খুলে দেয় — সবচেয়ে জরুরি দুই সংখ্যা।')));}
+  // resistance vs compliance logic
+  if(ppeak!=null&&pplat!=null){
+    const gap=ppeak-pplat;
+    if(gap>12){
+      c.push(callBox('bad','R',T('<b>Resistance problem — it\'s the pipe, not the lung.</b> Big Ppeak–Pplat gap. <span class="act">→ Suction, check for kink/biting, treat bronchospasm, change a wet HME, look for mucus plug.</span>','<b>Resistance-এর সমস্যা — পাইপ, ফুসফুস নয়।</b> Ppeak–Pplat ব্যবধান বড়। <span class="act">→ Suction করুন, kink/কামড় দেখুন, bronchospasm treat করুন, ভেজা HME বদলান, mucus plug খুঁজুন।</span>')));
+    }
+  }
+  if(dp!=null&&dp>=15){
+    c.push(callBox(dp>18?'bad':'warn','ΔP',T(`<b>Driving pressure is ${r1(dp)} — aim under 15.</b> This is the strongest mortality signal in ARDS. ${vtmax?`Dropping VT toward <b>${r0(vtmax)} mL</b> would bring ΔP to ~15.`:''} <span class="act">→ Lower VT first; if Pplat still high, reassess PEEP (a recruitable lung improves compliance when PEEP goes up).</span>`,`<b>Driving pressure ${r1(dp)} — ১৫-এর নিচে আনুন।</b> ARDS-এ mortality-র সবচেয়ে শক্তিশালী সংকেত। ${vtmax?`VT <b>${r0(vtmax)} mL</b>-এর দিকে নামালে ΔP ~১৫ হবে।`:''} <span class="act">→ আগে VT কমান; Pplat তবু বেশি হলে PEEP পুনর্বিবেচনা (recruitable ফুসফুসে PEEP বাড়ালে compliance বাড়ে)।</span>`)));
+  }
+  if(pplat!=null&&pplat>30){
+    c.push(callBox('bad','!',T('<b>Pplat over 30 — overdistension risk.</b> <span class="act">→ Reduce VT. If this is obesity or a tight abdomen, the lung may not be the culprit — consider bladder pressure before assuming stiff lung.</span>','<b>Pplat ৩০-এর বেশি — overdistension ঝুঁকি।</b> <span class="act">→ VT কমান। স্থূলতা বা টানটান পেট হলে ফুসফুস দোষী নাও হতে পারে — stiff lung ধরার আগে bladder pressure ভাবুন।</span>')));
+  }
+  if(cstat!=null&&cstat<30){
+    c.push(callBox('warn','C',T(`<b>Compliance ${r1(cstat)} — stiff lung.</b> ARDS pattern. <span class="act">→ Keep VT 4–6 mL/kg PBW, ΔP under 15, titrate PEEP to the best compliance, consider prone if P/F is low.</span>`,`<b>Compliance ${r1(cstat)} — stiff lung।</b> ARDS প্যাটার্ন। <span class="act">→ VT 4–6 mL/kg PBW, ΔP ১৫-এর নিচে, সেরা compliance-এ PEEP titrate, P/F কম হলে prone ভাবুন।</span>`)));
+  }
+  if(peept!=null&&peep!=null&&(peept-peep)>=2){
+    c.push(callBox('bad','⤢',T(`<b>Auto-PEEP ≈ ${r1(peept-peep)} cmH₂O.</b> Total PEEP is above what you set. <span class="act">→ Lengthen expiratory time: cut RR, shorten Ti, aim I:E 1:3 or longer, treat obstruction. Watch for low blood pressure.</span>`,`<b>Auto-PEEP ≈ ${r1(peept-peep)} cmH₂O।</b> Total PEEP সেট-এর চেয়ে বেশি। <span class="act">→ Expiratory time বাড়ান: RR কমান, Ti ছোট করুন, I:E ১:৩ বা তার বেশি, obstruction treat করুন। BP পড়ে যাওয়া খেয়াল রাখুন।</span>`)));
+  }
+  if(vtkg!=null&&vtkg>8){
+    c.push(callBox('bad','VT',T(`<b>VT is ${r1(vtkg)} mL/kg — too big.</b> Set tidal volume on <b>height</b>, not actual weight. <span class="act">→ Target 6 mL/kg PBW (${pbw?r0(pbw*6)+' mL':''}), 4–6 if ARDS.</span>`,`<b>VT ${r1(vtkg)} mL/kg — বেশি বড়।</b> Tidal volume <b>উচ্চতা</b> দেখে সেট করুন, প্রকৃত ওজন নয়। <span class="act">→ লক্ষ্য 6 mL/kg PBW (${pbw?r0(pbw*6)+' mL':''}), ARDS হলে 4–6।</span>`)));
+  }
+  if(pf!=null&&pf<=200){
+    c.push(callBox('warn','O₂',T(`<b>P/F ${r0(pf)} — moderate-to-severe hypoxaemia.</b> <span class="act">→ Optimise PEEP, consider recruitment and prone positioning, keep driving pressure low. If refractory, think ECMO referral criteria.</span>`,`<b>P/F ${r0(pf)} — moderate-to-severe hypoxaemia।</b> <span class="act">→ PEEP optimise, recruitment ও prone ভাবুন, driving pressure কম রাখুন। Refractory হলে ECMO referral criteria ভাবুন।</span>`)));
+  }
+  if(bmi!=null&&bmi>=30){
+    c.push(callBox('info','⊕',T(`<b>Obese (BMI ${r1(bmi)}).</b> A high Pplat here is often chest-wall, not lung — the alveoli may be fine. <span class="act">→ Set VT on height/PBW (${pbw?r0(pbw*6)+' mL @6/kg':''}), expect to need higher PEEP (often 10–15) to hold the lung open, nurse head-up/reverse-Trendelenburg, and consider oesophageal pressure before assuming stiff lung. See the Obesity strategy card.</span>`,`<b>Obese (BMI ${r1(bmi)})।</b> এখানে বেশি Pplat প্রায়ই chest-wall, ফুসফুস নয় — alveoli ঠিক থাকতে পারে। <span class="act">→ VT উচ্চতা/PBW দেখে সেট করুন (${pbw?r0(pbw*6)+' mL @6/kg':''}), সাধারণত বেশি PEEP লাগে (প্রায়ই ১০–১৫) ফুসফুস খোলা রাখতে, রোগীকে head-up/reverse-Trendelenburg রাখুন, stiff lung ধরার আগে oesophageal pressure ভাবুন। Obesity strategy card দেখুন।</span>`)));
+  }
+  // all good
+  if(c.length===0 && (dp!=null||cstat!=null)){
+    c.push(callBox('ok','✓',T('<b>Mechanics look reasonable.</b> Driving pressure, compliance and resistance are within target. Keep monitoring the trend and reassess after any change.','<b>Mechanics মোটামুটি ঠিক আছে।</b> Driving pressure, compliance ও resistance target-এর মধ্যে। Trend দেখতে থাকুন, পরিবর্তনের পর আবার মূল্যায়ন করুন।')));
+  }
+  $('calcCalls').innerHTML=c.join('');
+  // expose latest computed values for saving to trend
+  lastCalc={cstat:cstat,dp:dp,vt:vt,pplat:pplat,peep:peept,raw:raw,pf:pf,vtkg:vtkg};
+}
+let lastCalc={};
+['ht','wt','vt','ppeak','pplat','peep','peept','rr','flow','fio2','pao2'].forEach(id=>{
+  document.addEventListener('input',e=>{if(e.target.id===id)runCalc();});
+});
+$('sexSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  $('sexSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');$('sexSeg').dataset.v=b.dataset.v;runCalc();
+});
+
+/* ---------- save reading + toast ---------- */
+function toast(msg){
+  let t=$('vaToast'); if(!t){t=el('div','savetoast');t.id='vaToast';document.body.appendChild(t);}
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1800);
+}
+function loadStore(){try{return JSON.parse(localStorage.getItem('va_readings')||'{}');}catch(e){return {};}}
+function saveStore(o){localStorage.setItem('va_readings',JSON.stringify(o));}
+$('saveReading').onclick=()=>{
+  let label=($('ptLabel').value||'').trim();
+  if(!label) label=T('Unlabelled','লেবেলহীন');
+  if(lastCalc.cstat==null && lastCalc.dp==null){toast(T('Enter Pplat & PEEP first','আগে Pplat ও PEEP দিন'));return;}
+  const store=loadStore();
+  if(!store[label]) store[label]=[];
+  store[label].push({t:Date.now(), c:lastCalc.cstat!=null?r1(lastCalc.cstat):null, dp:lastCalc.dp!=null?r1(lastCalc.dp):null,
+    vt:lastCalc.vt!=null?r0(lastCalc.vt):null, pplat:lastCalc.pplat!=null?r1(lastCalc.pplat):null,
+    peep:lastCalc.peep!=null?r1(lastCalc.peep):null, pf:lastCalc.pf!=null?r0(lastCalc.pf):null});
+  saveStore(store);
+  toast(T('Saved to '+label,label+'-এ সেভ হয়েছে'));
+};
+
+/* ===================================================================
+   I:E LAB
+   =================================================================== */
+let ieModeV='ti';
+$('ieMode').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  $('ieMode').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');ieModeV=b.dataset.v;
+  $('tiField').classList.toggle('hide',ieModeV!=='ti');
+  $('ratioField').classList.toggle('hide',ieModeV!=='ratio');
+  runIE();
+});
+function runIE(){
+  const rr=num($('ie_rr').value);
+  if(!rr||rr<=0){$('ieRes').innerHTML=`<div style="color:var(--ink3);font-size:13px">${T('Enter respiratory rate.','RR দিন।')}</div>`;$('ieCalls').innerHTML='';return;}
+  const cyc=60/rr; // total cycle seconds
+  let ti,te;
+  if(ieModeV==='ti'){ti=num($('ie_ti').value); if(ti==null){$('ieRes').innerHTML=`<div style="color:var(--ink3);font-size:13px">${T('Enter Ti.','Ti দিন।')}</div>`;$('ieCalls').innerHTML='';return;} te=cyc-ti;}
+  else{const e=num($('ie_e').value)||2; ti=cyc/(1+e); te=cyc-ti;}
+  const ratioE=te/ti;
+  let h='';
+  h+=calcRow(T('Total cycle','মোট cycle'),'60 ÷ RR',r1(cyc),'s');
+  h+=calcRow('Ti',T('inspiratory time','inspiratory সময়'),r1(ti),'s');
+  h+=calcRow('Te',T('expiratory time','expiratory সময়'),r1(te),'s', te<0?'⚠':null, te<0?'bad':null, te<0?'bad':null);
+  h+=calcRow('I:E',T('ratio','অনুপাত'),'1 : '+r1(ratioE),'', null,null, ratioE<1?'warn':'ok');
+  $('ieRes').innerHTML=h;
+  let c=[];
+  if(te<0){c.push(callBox('bad','!',T('<b>Impossible timing.</b> Ti is longer than the whole breath cycle. Lower Ti or RR.','<b>অসম্ভব টাইমিং।</b> Ti পুরো cycle-এর চেয়ে বড়। Ti বা RR কমান।')));}
+  else if(ratioE<1){c.push(callBox('warn','⇄',T(`<b>Inverse ratio (1:${r1(ratioE)}).</b> Expiration shorter than inspiration — only deliberately, and watch hard for auto-PEEP. <span class="act">→ For obstruction you want the opposite: I:E 1:3 to 1:5.</span>`,`<b>Inverse ratio (1:${r1(ratioE)})।</b> Expiration inspiration-এর চেয়ে ছোট — শুধু ইচ্ছাকৃতভাবে, auto-PEEP কড়া নজরে। <span class="act">→ Obstruction-এ উল্টোটা দরকার: I:E ১:৩ থেকে ১:৫।</span>`)));}
+  else if(ratioE>=3){c.push(callBox('info','⇄',T(`<b>Long expiration (1:${r1(ratioE)}).</b> Good for obstructive lungs (COPD/asthma) to avoid gas trapping.`,`<b>লম্বা expiration (1:${r1(ratioE)})।</b> Obstructive ফুসফুসে (COPD/asthma) gas trapping এড়াতে ভালো।`)));}
+  else{c.push(callBox('ok','✓',T('<b>Conventional ratio.</b> Fine for most patients; lengthen E for obstruction, and you can shorten it cautiously in severe ARDS to raise mean airway pressure.','<b>প্রচলিত অনুপাত।</b> বেশিরভাগ রোগীতে ঠিক; obstruction-এ E লম্বা করুন, severe ARDS-এ mean airway pressure বাড়াতে সাবধানে ছোট করা যায়।')));}
+  $('ieCalls').innerHTML=c.join('');
+}
+['ie_rr','ie_ti','ie_e'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id)runIE();}));
+
+/* ===================================================================
+   WAVEFORMS  (svg + explanation)
+   =================================================================== */
+const G='#4BD86A',Y='#F0DE55',AX='#5B8DEF',RD='#F87272',GY='#5A6B8A';
+const WAVES=[
+  {en:'Wide Ppeak–Pplat gap',bn:'Ppeak–Pplat ব্যবধান বড়',tag:'Pressure',cls:'bad',
+   svg:`<svg viewBox="0 0 260 120"><line x1="14" y1="96" x2="250" y2="96" stroke="${AX}" stroke-width="1.5" stroke-dasharray="4 4"/><path d="M14 96 L36 96 L110 20 L116 60 L164 60" fill="none" stroke="${G}" stroke-width="3"/><path d="M164 60 L170 96 L250 96" fill="none" stroke="${Y}" stroke-width="3"/><line x1="190" y1="20" x2="190" y2="60" stroke="${RD}" stroke-width="2"/><text x="196" y="44" fill="${RD}" font-size="13">gap</text></svg>`,
+   mean:{en:'Peak pressure is high but plateau is normal. The extra pressure is being spent pushing gas through a narrowed pipe, not distending the lung.',bn:'Peak চাপ বেশি কিন্তু plateau স্বাভাবিক। বাড়তি চাপটা সরু পাইপ দিয়ে গ্যাস ঠেলতে খরচ হচ্ছে, ফুসফুস ফোলাতে নয়।'},
+   cause:{en:['Secretions / mucus plug','Bronchospasm','Kinked or bitten ETT','Tube too small','Water in circuit / wet HME'],bn:['Secretion / mucus plug','Bronchospasm','ETT kink বা কামড়','Tube খুব সরু','Circuit-এ পানি / ভেজা HME']},
+   act:{en:['Suction the airway','Give a bronchodilator','Straighten / bite-block the tube','Drain the circuit'],bn:['Airway suction করুন','Bronchodilator দিন','Tube সোজা করুন / bite-block দিন','Circuit ঝাড়ুন']}},
+
+  {en:'Ppeak & Pplat both high',bn:'Ppeak ও Pplat দুটোই উঁচু',tag:'Pressure',cls:'bad',
+   svg:`<svg viewBox="0 0 260 120"><line x1="14" y1="96" x2="250" y2="96" stroke="${AX}" stroke-width="1.5" stroke-dasharray="4 4"/><path d="M14 96 L36 96 L110 16 L116 28 L164 28" fill="none" stroke="${G}" stroke-width="3"/><path d="M164 28 L170 96 L250 96" fill="none" stroke="${Y}" stroke-width="3"/></svg>`,
+   mean:{en:'Both pressures rise together, the gap stays narrow. The lung itself is harder to inflate — a compliance problem.',bn:'দুই চাপ একসাথে ওঠে, ব্যবধান সরু থাকে। ফুসফুস নিজেই ফোলানো কঠিন — compliance-এর সমস্যা।'},
+   cause:{en:['ARDS / pulmonary oedema','Atelectasis','Pneumothorax','Mainstem intubation','Tight abdomen / obesity','VT too large'],bn:['ARDS / pulmonary oedema','Atelectasis','Pneumothorax','Mainstem intubation','টানটান পেট / স্থূলতা','VT বেশি বড়']},
+   act:{en:['Measure driving pressure, lower VT','Check tube depth & bilateral air entry','Rule out pneumothorax','Consider bladder pressure if abdomen tight'],bn:['Driving pressure মাপুন, VT কমান','Tube depth ও দুই পাশের air entry দেখুন','Pneumothorax বাদ দিন','পেট টানটান হলে bladder pressure ভাবুন']}},
+
+  {en:'Flow starvation (scooped pressure)',bn:'Flow starvation (দেবে যাওয়া চাপ)',tag:'Pressure',cls:'bad',
+   svg:`<svg viewBox="0 0 260 120"><line x1="14" y1="96" x2="250" y2="96" stroke="${AX}" stroke-width="1.5" stroke-dasharray="4 4"/><path d="M36 96 L120 24" stroke="${GY}" stroke-width="1.6" stroke-dasharray="4 4"/><path d="M14 96 L36 96 C 66 84 86 66 100 48 C 108 38 114 30 120 24 L126 40 L170 40" fill="none" stroke="${G}" stroke-width="3"/><path d="M170 40 L176 96 L250 96" fill="none" stroke="${Y}" stroke-width="3"/></svg>`,
+   mean:{en:'In volume control the pressure line caves inward instead of rising smoothly. The patient is pulling harder than the set flow delivers — air hunger.',bn:'Volume control-এ চাপের রেখা মসৃণভাবে না উঠে ভেতরে দেবে যায়। রোগী সেট flow-এর চেয়ে জোরে টানছে — air hunger।'},
+   cause:{en:['Inspiratory flow set too low','VT too small for demand','High respiratory drive'],bn:['Inspiratory flow খুব কম সেট','চাহিদার তুলনায় VT ছোট','Respiratory drive বেশি']},
+   act:{en:['Increase inspiratory flow','Increase VT if appropriate','Switch to pressure control / PSV','Do NOT just deepen sedation'],bn:['Inspiratory flow বাড়ান','প্রয়োজনে VT বাড়ান','Pressure control / PSV-তে যান','শুধু sedation বাড়াবেন না']}},
+
+  {en:'Air trapping (flow not to zero)',bn:'Air trapping (flow শূন্যে ফেরে না)',tag:'Flow',cls:'bad',
+   svg:`<svg viewBox="0 0 260 120"><line x1="14" y1="60" x2="250" y2="60" stroke="${AX}" stroke-width="1.5"/><path d="M14 60 L30 60 L30 22 L76 22 L76 60" fill="none" stroke="${G}" stroke-width="3"/><path d="M76 60 L80 104 C 92 96 104 78 112 72" fill="none" stroke="${Y}" stroke-width="3"/><line x1="112" y1="72" x2="112" y2="60" stroke="${RD}" stroke-width="2" stroke-dasharray="3 3"/><path d="M124 60 L124 22 L170 22 L170 60" fill="none" stroke="${G}" stroke-width="3"/><path d="M170 60 L174 104 C 186 96 198 78 206 72" fill="none" stroke="${Y}" stroke-width="3"/><text x="118" y="54" fill="${RD}" font-size="12">cut off</text></svg>`,
+   mean:{en:'Expiratory flow never reaches zero before the next breath starts. Gas is being trapped — auto-PEEP builds up.',bn:'পরের breath শুরুর আগে expiratory flow শূন্যে পৌঁছায় না। গ্যাস আটকে যাচ্ছে — auto-PEEP জমছে।'},
+   cause:{en:['COPD / asthma','RR too high','Expiratory time too short','Bronchospasm'],bn:['COPD / asthma','RR বেশি','Expiratory time কম','Bronchospasm']},
+   act:{en:['Lengthen expiration: cut RR, shorten Ti','Aim I:E 1:3 to 1:5','Bronchodilators','Confirm with an expiratory hold; watch BP'],bn:['Expiration বাড়ান: RR কমান, Ti ছোট করুন','I:E ১:৩ থেকে ১:৫','Bronchodilator','Expiratory hold দিয়ে নিশ্চিত করুন; BP দেখুন']}},
+
+  {en:'Sawtooth',bn:'করাতের দাঁত',tag:'Flow',cls:'bad',
+   svg:`<svg viewBox="0 0 260 120"><line x1="14" y1="60" x2="250" y2="60" stroke="${AX}" stroke-width="1.5"/><path d="M14 60 L30 60 L30 24 L40 32 L50 20 L60 32 L70 24 L80 32 L90 24 L90 60" fill="none" stroke="${G}" stroke-width="2.6"/><path d="M90 60 L94 100 L104 86 L116 98 L128 80 L142 90 L158 70 L178 66 L200 62 L230 60" fill="none" stroke="${Y}" stroke-width="2.6"/></svg>`,
+   mean:{en:'Small teeth/oscillations on the flow trace — usually secretions rattling in the airway or condensate in the tubing.',bn:'Flow রেখায় ছোট দাঁত/কম্পন — সাধারণত airway-তে secretion বা tubing-এ জমা পানি।'},
+   cause:{en:['Secretions','Water in the circuit','Patient shivering'],bn:['Secretion','Circuit-এ পানি','রোগী কাঁপছে']},
+   act:{en:['Suction','Empty circuit water traps','Reassess the waveform after'],bn:['Suction করুন','Circuit-এর পানি ফেলুন','পরে waveform আবার দেখুন']}},
+
+  {en:'Double triggering',bn:'Double triggering',tag:'Async',cls:'bad',
+   svg:`<svg viewBox="0 0 260 120"><line x1="14" y1="96" x2="250" y2="96" stroke="${AX}" stroke-width="1.5" stroke-dasharray="4 4"/><path d="M14 96 L26 96 L64 22 L70 22" fill="none" stroke="${G}" stroke-width="3"/><path d="M70 22 L76 66" stroke="${Y}" stroke-width="3"/><path d="M76 66 L112 16 L118 16" fill="none" stroke="${G}" stroke-width="3"/><path d="M118 16 L124 96 L250 96" fill="none" stroke="${Y}" stroke-width="3"/><text x="72" y="112" fill="${RD}" font-size="12">two stacked</text></svg>`,
+   mean:{en:'Two breaths back-to-back with almost no expiration between — the delivered volume doubles up. The patient\'s neural inspiration is longer than the vent\'s.',bn:'পরপর দুই breath, মাঝে expiration প্রায় নেই — delivered volume দ্বিগুণ হয়ে যায়। রোগীর neural inspiration মেশিনের চেয়ে লম্বা।'},
+   cause:{en:['Ti / VT too short for demand','High drive, pain, anxiety'],bn:['চাহিদার তুলনায় Ti / VT ছোট','Drive বেশি, ব্যথা, উদ্বেগ']},
+   act:{en:['Lengthen Ti or increase VT','Treat pain / drive','Sedation is a last resort, not first'],bn:['Ti লম্বা করুন বা VT বাড়ান','ব্যথা / drive treat করুন','Sedation শেষ উপায়, প্রথম নয়']}},
+
+  {en:'Ineffective effort',bn:'Ineffective effort',tag:'Async',cls:'warn',
+   svg:`<svg viewBox="0 0 260 120"><line x1="14" y1="60" x2="250" y2="60" stroke="${AX}" stroke-width="1.5"/><path d="M14 60 L30 60 L30 24 L74 24 L74 60" fill="none" stroke="${G}" stroke-width="3"/><path d="M74 60 L78 100 C 96 88 110 76 124 72 L140 70 L150 62 L160 70 C 178 66 196 62 220 60" fill="none" stroke="${Y}" stroke-width="3"/><circle cx="150" cy="62" r="8" fill="none" stroke="${RD}" stroke-width="2"/><text x="160" y="90" fill="${RD}" font-size="12">effort, no breath</text></svg>`,
+   mean:{en:'A small notch on the expiratory limb where the patient tried to trigger, but no breath was delivered.',bn:'Expiratory limb-এ ছোট খাঁজ — রোগী trigger করতে চেয়েছিল, কিন্তু breath আসেনি।'},
+   cause:{en:['Auto-PEEP raising the trigger threshold','Trigger sensitivity too low','Muscle weakness'],bn:['Auto-PEEP trigger threshold বাড়াচ্ছে','Trigger sensitivity কম','পেশি দুর্বল']},
+   act:{en:['Reduce auto-PEEP (see air-trapping)','Increase trigger sensitivity','Add extrinsic PEEP to counter auto-PEEP'],bn:['Auto-PEEP কমান (air-trapping দেখুন)','Trigger sensitivity বাড়ান','Auto-PEEP মোকাবেলায় extrinsic PEEP যোগ করুন']}},
+
+  {en:'Leak (volume not to baseline)',bn:'Leak (volume baseline-এ ফেরে না)',tag:'Volume',cls:'bad',
+   svg:`<svg viewBox="0 0 260 120"><line x1="14" y1="100" x2="250" y2="100" stroke="${AX}" stroke-width="1.5"/><path d="M14 100 L30 100 L84 30" fill="none" stroke="${G}" stroke-width="3"/><path d="M84 30 C 100 50 112 66 124 72 L138 76" fill="none" stroke="${Y}" stroke-width="3"/><line x1="138" y1="76" x2="138" y2="100" stroke="${RD}" stroke-width="2" stroke-dasharray="3 3"/><line x1="30" y1="100" x2="138" y2="100" stroke="${RD}" stroke-width="3"/><text x="34" y="94" fill="${RD}" font-size="12">lost volume</text></svg>`,
+   mean:{en:'The volume curve doesn\'t return to baseline — exhaled volume is less than delivered. Gas is escaping somewhere.',bn:'Volume curve baseline-এ ফেরে না — exhaled volume delivered-এর চেয়ে কম। কোথাও গ্যাস বেরিয়ে যাচ্ছে।'},
+   cause:{en:['Cuff leak / under-inflated cuff','Circuit disconnection','Chest drain / bronchopleural fistula'],bn:['Cuff leak / কম-ফোলা cuff','Circuit disconnection','Chest drain / bronchopleural fistula']},
+   act:{en:['Check cuff pressure','Check every connection','Inspect chest drain for a big air leak'],bn:['Cuff pressure দেখুন','প্রতিটি জোড়া দেখুন','Chest drain-এ বড় air leak আছে কিনা দেখুন']}},
+
+  {en:'P–V loop: flattened (stiff lung)',bn:'P–V loop: শুয়ে পড়া (stiff lung)',tag:'PV loop',cls:'bad',
+   svg:`<svg viewBox="0 0 260 120"><line x1="30" y1="100" x2="250" y2="100" stroke="${AX}" stroke-width="1.5"/><line x1="30" y1="14" x2="30" y2="100" stroke="${AX}" stroke-width="1.5"/><path d="M50 98 C 82 94 130 84 220 66" fill="none" stroke="${G}" stroke-width="2.6"/><path d="M220 66 C 150 80 90 94 50 98" fill="none" stroke="${Y}" stroke-width="2.6"/><path d="M50 98 L210 30" stroke="${GY}" stroke-width="1.4" stroke-dasharray="4 4"/><text x="150" y="26" fill="${GY}" font-size="11">normal slope</text><text x="150" y="112" fill="${AX}" font-size="11">Paw →</text></svg>`,
+   mean:{en:'The whole loop tips toward the pressure axis — lots of pressure buys little volume. A low, flat slope means low compliance.',bn:'পুরো loop pressure অক্ষের দিকে হেলে পড়ে — অনেক চাপে অল্প volume। নিচু, চ্যাপ্টা slope মানে কম compliance।'},
+   cause:{en:['ARDS / pulmonary oedema','Atelectasis','Chest wall restriction / obesity','Raised intra-abdominal pressure'],bn:['ARDS / pulmonary oedema','Atelectasis','Chest wall restriction / স্থূলতা','বাড়তি intra-abdominal pressure']},
+   act:{en:['Measure driving pressure, keep VT low','Titrate PEEP — a steeper loop after PEEP means recruitment','Rule out chest-wall/abdominal cause before blaming the lung'],bn:['Driving pressure মাপুন, VT কম রাখুন','PEEP titrate — PEEP-এর পর loop খাড়া হলে recruitment','ফুসফুসকে দোষ দেওয়ার আগে chest-wall/পেটের কারণ বাদ দিন']}},
+
+  {en:'P–V loop: beaking (overdistension)',bn:'P–V loop: beaking (overdistension)',tag:'PV loop',cls:'bad',
+   svg:`<svg viewBox="0 0 260 120"><line x1="30" y1="100" x2="250" y2="100" stroke="${AX}" stroke-width="1.5"/><line x1="30" y1="14" x2="30" y2="100" stroke="${AX}" stroke-width="1.5"/><path d="M50 98 C 70 80 100 42 140 28 C 170 18 205 16 240 16" fill="none" stroke="${G}" stroke-width="2.6"/><path d="M240 16 C 205 20 172 30 142 42 C 100 60 70 84 50 98" fill="none" stroke="${Y}" stroke-width="2.6"/><path d="M175 10 L215 10" stroke="${RD}" stroke-width="2"/><text x="170" y="14" fill="${RD}" font-size="11" text-anchor="end">beak</text></svg>`,
+   mean:{en:'The top of the loop flattens to the right — pressure keeps rising but volume barely moves. The alveoli are maxed out.',bn:'Loop-এর মাথা ডানদিকে চ্যাপ্টা হয়ে যায় — চাপ বাড়ছে কিন্তু volume নড়ছে না। Alveoli টানটান।'},
+   cause:{en:['VT too large','PEEP too high on top of adequate volume','Over-aggressive recruitment'],bn:['VT বেশি বড়','যথেষ্ট volume-এর উপর PEEP বেশি','অতি-জোরালো recruitment']},
+   act:{en:['Reduce VT / driving pressure','Reassess PEEP','In ARDS this is a key stop sign — back off pressure'],bn:['VT / driving pressure কমান','PEEP পুনর্বিবেচনা','ARDS-এ এটা মূল থামার সংকেত — চাপ কমান']}},
+
+  {en:'P–V loop: open (leak)',bn:'P–V loop: খোলা (leak)',tag:'PV loop',cls:'bad',
+   svg:`<svg viewBox="0 0 260 120"><line x1="30" y1="100" x2="250" y2="100" stroke="${AX}" stroke-width="1.5"/><line x1="30" y1="14" x2="30" y2="100" stroke="${AX}" stroke-width="1.5"/><path d="M50 98 C 78 80 120 44 170 28 C 195 20 215 18 232 18" fill="none" stroke="${G}" stroke-width="2.6"/><path d="M232 18 C 200 30 160 44 120 54 C 95 60 72 62 58 62" fill="none" stroke="${Y}" stroke-width="2.6"/><line x1="58" y1="62" x2="58" y2="98" stroke="${RD}" stroke-width="2" stroke-dasharray="3 3"/><text x="64" y="84" fill="${RD}" font-size="11">leak</text></svg>`,
+   mean:{en:'The loop never closes — the expiratory limb ends above the start instead of returning to zero volume. The height of the gap is the lost volume.',bn:'Loop কখনো বন্ধ হয় না — expiratory limb শূন্য volume-এ না ফিরে শুরুর উপরে শেষ হয়। ফাঁকের উচ্চতাই হারানো volume।'},
+   cause:{en:['Cuff leak','Circuit disconnection','Chest drain / bronchopleural fistula'],bn:['Cuff leak','Circuit disconnection','Chest drain / bronchopleural fistula']},
+   act:{en:['Check cuff pressure and all connections','In a chest-drain patient, suspect a fistula','Compare set vs exhaled VT'],bn:['Cuff pressure ও সব জোড়া দেখুন','Chest-drain রোগীতে fistula সন্দেহ করুন','Set বনাম exhaled VT মিলিয়ে দেখুন']}},
+
+  {en:'P–V loop: lower inflection point',bn:'P–V loop: lower inflection point',tag:'PV loop',cls:'warn',
+   svg:`<svg viewBox="0 0 260 120"><line x1="30" y1="100" x2="250" y2="100" stroke="${AX}" stroke-width="1.5"/><line x1="30" y1="14" x2="30" y2="100" stroke="${AX}" stroke-width="1.5"/><path d="M46 98 C 60 96 74 92 84 82 C 108 56 150 30 232 18" fill="none" stroke="${G}" stroke-width="2.6"/><path d="M232 18 C 160 34 100 60 74 82 C 62 92 52 98 46 98" fill="none" stroke="${Y}" stroke-width="2.6"/><circle cx="84" cy="82" r="6" fill="none" stroke="${RD}" stroke-width="2"/><text x="92" y="72" fill="${RD}" font-size="11">LIP</text></svg>`,
+   mean:{en:'A flat start then a sudden steepening — below that inflection pressure, alveoli stay collapsed. Suggests PEEP is set below the opening pressure.',bn:'শুরুতে চ্যাপ্টা তারপর হঠাৎ খাড়া — ওই inflection চাপের নিচে alveoli বন্ধ থাকে। মানে PEEP opening চাপের নিচে সেট।'},
+   cause:{en:['Insufficient PEEP','Recruitable collapse (early ARDS)'],bn:['অপর্যাপ্ত PEEP','Recruitable collapse (early ARDS)']},
+   act:{en:['Raise PEEP toward/just above the inflection','Re-check the loop — it should straighten and steepen'],bn:['PEEP inflection-এর দিকে/একটু উপরে বাড়ান','Loop আবার দেখুন — সোজা ও খাড়া হওয়া উচিত']}},
+
+  {en:'F–V loop: expiratory scooping',bn:'F–V loop: expiratory scooping',tag:'FV loop',cls:'bad',
+   svg:`<svg viewBox="0 0 260 120"><line x1="20" y1="60" x2="250" y2="60" stroke="${AX}" stroke-width="1.5"/><line x1="30" y1="14" x2="30" y2="106" stroke="${AX}" stroke-width="1.5"/><path d="M36 60 C 40 28 52 20 70 20 C 140 18 200 40 232 58" fill="none" stroke="${G}" stroke-width="2.6"/><path d="M232 60 C 238 90 232 100 224 100 C 200 92 150 74 36 60" fill="none" stroke="${GY}" stroke-width="1.6" stroke-dasharray="4 4"/><path d="M232 60 C 238 90 232 100 224 100 C 210 84 170 68 36 60" fill="none" stroke="${Y}" stroke-width="2.6"/><text x="120" y="96" fill="${RD}" font-size="11">scooped</text></svg>`,
+   mean:{en:'On the flow–volume loop the expiratory limb caves inward (concave). Classic obstruction signature.',bn:'Flow–volume loop-এ expiratory limb ভেতরে দেবে যায় (concave)। Obstruction-এর ক্লাসিক স্বাক্ষর।'},
+   cause:{en:['Bronchospasm / asthma','COPD','Secretions'],bn:['Bronchospasm / asthma','COPD','Secretion']},
+   act:{en:['Bronchodilator — compare the loop before and after','Suction if secretions','Watch for air trapping alongside'],bn:['Bronchodilator — আগে-পরে loop মিলিয়ে দেখুন','Secretion হলে suction','পাশাপাশি air trapping দেখুন']}},
+
+  {en:'Square vs ramp (mode, not disease)',bn:'Square বনাম ramp (mode, রোগ নয়)',tag:'Normal',cls:'info',
+   svg:`<svg viewBox="0 0 260 120"><line x1="14" y1="60" x2="250" y2="60" stroke="${AX}" stroke-width="1.5"/><path d="M14 60 L30 60 L30 22 L96 22 L96 60" fill="none" stroke="${G}" stroke-width="3"/><path d="M130 60 L130 22 C 156 30 182 48 204 60" fill="none" stroke="#8FE3A0" stroke-width="3"/><text x="34" y="78" fill="${GY}" font-size="12">VC square</text><text x="132" y="78" fill="${GY}" font-size="12">PC ramp</text></svg>`,
+   mean:{en:'A square inspiratory flow is just volume control with constant flow; a decelerating ramp is pressure control or PSV. This is the mode, not pathology.',bn:'চারকোনা inspiratory flow মানে constant-flow volume control; নামতে থাকা ramp মানে pressure control বা PSV। এটা mode, রোগ নয়।'},
+   cause:{en:['VC constant flow → square','PC / PSV → decelerating ramp'],bn:['VC constant flow → square','PC / PSV → নামতে থাকা ramp']},
+   act:{en:['Always know the mode before you read any shape'],bn:['যেকোনো shape পড়ার আগে সবসময় mode জেনে নিন']}},
+];
+function renderWaves(){
+  const g=$('waveTiles');g.innerHTML='';
+  WAVES.forEach((w,i)=>{
+    const t=el('button','tile');
+    t.innerHTML=`<div class="wsvg">${w.svg}</div><div class="tt">${T(w.en,w.bn)}</div><span class="tag">${w.tag}</span>`;
+    t.onclick=()=>openWave(i);
+    g.appendChild(t);
+  });
+}
+function list(arr){return '<ul>'+arr.map(x=>`<li>${x}</li>`).join('')+'</ul>';}
+function openWave(i){
+  const w=WAVES[i];
+  $('modalBody').innerHTML=`
+    <h3>${T(w.en,w.bn)}</h3><div class="mtag">${w.tag}</div>
+    <div class="wsvg">${w.svg}</div>
+    <div class="mblock"><h4>${T('WHAT IT MEANS','মানে')}</h4><p style="font-size:14px;margin:0">${T(w.mean.en,w.mean.bn)}</p></div>
+    <div class="mblock"><h4>${T('COMMON CAUSES','সাধারণ কারণ')}</h4>${list(T(w.cause.en,w.cause.bn))}</div>
+    <div class="mblock"><h4>${T('WHAT TO DO','করণীয়')}</h4>${list(T(w.act.en,w.act.bn))}</div>`;
+  openModal();
+}
+
+/* ===================================================================
+   DISEASE STRATEGY
+   =================================================================== */
+const DZ=[
+  {en:'ARDS',bn:'ARDS',tag:'Lung',
+   goal:{en:'Protect the lung; low VT, low driving pressure, adequate PEEP.',bn:'ফুসফুস রক্ষা; কম VT, কম driving pressure, যথেষ্ট PEEP।'},
+   set:[['Mode','VC or PC'],['VT','4–6 mL/kg PBW'],['Pplat','≤ 30 cmH₂O'],['Driving P','< 15 cmH₂O'],['PEEP',T('per PEEP/FiO₂ table, titrate to compliance','PEEP/FiO₂ table, compliance-এ titrate')],['Target',T('SpO₂ 88–95%, permissive hypercapnia OK','SpO₂ 88–95%, permissive hypercapnia চলে')],['RR','up to 30–35']],
+   extra:{en:['Prone ≥16 h/day if P/F < 150','Consider neuromuscular blockade early if severe','Conservative fluids','ECMO referral if refractory'],bn:['P/F < 150 হলে দিনে ≥১৬ ঘণ্টা prone','Severe হলে early neuromuscular blockade ভাবুন','Fluid conservative রাখুন','Refractory হলে ECMO referral']},
+   avoid:{en:'Large tidal volumes and Pplat > 30 — the main drivers of ventilator-induced lung injury.',bn:'বড় tidal volume আর Pplat > 30 — ventilator-induced lung injury-র প্রধান কারণ।'}},
+
+  {en:'Pneumonia (non-ARDS)',bn:'Pneumonia (non-ARDS)',tag:'Lung',
+   goal:{en:'Support oxygenation, keep lung-protective settings, clear secretions.',bn:'Oxygenation support, lung-protective setting, secretion clearance।'},
+   set:[['Mode','VC or PC'],['VT','6 mL/kg PBW'],['PEEP','5–10, up if hypoxic'],['Pplat','≤ 30'],['Target','SpO₂ ≥ 92%']],
+   extra:{en:['Aggressive suction & physiotherapy','If it evolves to bilateral infiltrates + P/F<300, treat as ARDS','Position good lung down if unilateral (better V/Q)'],bn:['জোরালো suction ও physiotherapy','Bilateral infiltrate + P/F<300 হলে ARDS হিসেবে treat করুন','Unilateral হলে ভালো ফুসফুস নিচে (better V/Q)']},
+   avoid:{en:'Assuming both lungs are equal — unilateral disease behaves very differently.',bn:'দুই ফুসফুস সমান ধরে নেওয়া — unilateral রোগ খুব আলাদা আচরণ করে।'}},
+
+  {en:'Asthma / COPD',bn:'Asthma / COPD',tag:'Obstructive',
+   goal:{en:'Beat air trapping. Give time to exhale. The enemy is time, not pressure.',bn:'Air trapping হারান। শ্বাস ছাড়ার সময় দিন। শত্রু time, চাপ নয়।'},
+   set:[['Mode','VC (monitor Pplat)'],['VT','6–8 mL/kg PBW'],['RR',T('low, 10–14','কম, ১০–১৪')],['I:E','1:3 to 1:5'],['Insp flow',T('high (to shorten Ti)','বেশি (Ti ছোট করতে)')],['PEEP',T('low; ~⅔–¾ of auto-PEEP if triggering hard','কম; trigger কঠিন হলে auto-PEEP-এর ~⅔–¾')],['Target',T('permissive hypercapnia, pH>7.2','permissive hypercapnia, pH>7.2')]],
+   extra:{en:['Watch expiratory flow return to zero','Bronchodilators + steroids','If sudden crash → disconnect and let them exhale (rules out breath-stacking / tension PTX)'],bn:['Expiratory flow শূন্যে ফেরে কিনা দেখুন','Bronchodilator + steroid','হঠাৎ crash → circuit খুলে শ্বাস ছাড়তে দিন (stacking / tension PTX বাদ যায়)']},
+   avoid:{en:'High RR and short expiration — they stack breaths and cause hypotension or barotrauma.',bn:'বেশি RR আর ছোট expiration — breath জমে hypotension বা barotrauma হয়।'}},
+
+  {en:'ILD / Fibrosis',bn:'ILD / Fibrosis',tag:'Restrictive',
+   goal:{en:'Small stiff lungs. Very low VT, accept high rate, gentle pressures.',bn:'ছোট শক্ত ফুসফুস। খুব কম VT, বেশি rate মেনে নিন, মৃদু চাপ।'},
+   set:[['Mode','PC or VC'],['VT','4–6 mL/kg PBW'],['RR',T('higher to keep MV','MV রাখতে বেশি')],['PEEP',T('modest — over-PEEP overdistends','মাঝারি — বেশি PEEP overdistend করে')],['Pplat','≤ 30, ideally lower']],
+   extra:{en:['Poor recruitability — high PEEP rarely helps and can harm','Prognosis often drives goals-of-care discussion','High risk of pneumothorax'],bn:['Recruitability কম — বেশি PEEP প্রায়ই কাজে আসে না, ক্ষতি করে','Prognosis প্রায়ই goals-of-care আলোচনায় নেয়','Pneumothorax-এর উচ্চ ঝুঁকি']},
+   avoid:{en:'Aggressive recruitment and high PEEP — fibrotic lung doesn\'t recruit and will barotrauma.',bn:'জোরালো recruitment ও বেশি PEEP — fibrotic ফুসফুস recruit হয় না, barotrauma হবে।'}},
+
+  {en:'Pneumothorax',bn:'Pneumothorax',tag:'Emergency',
+   goal:{en:'On a vent this is an emergency. Positive pressure enlarges it fast.',bn:'ভেন্টে এটা জরুরি অবস্থা। Positive pressure দ্রুত বড় করে।'},
+   set:[['Priority',T('CHEST DRAIN first','আগে CHEST DRAIN')],['VT','low, 4–6 mL/kg PBW'],['PEEP',T('as low as tolerated','যতটা কম সহ্য হয়')],['Pplat',T('keep low','কম রাখুন')]],
+   extra:{en:['Tension PTX = immediate needle decompression then drain','Minimise mean airway pressure until drained','Sudden Ppeak↑ + hypotension + unilateral air entry = suspect it'],bn:['Tension PTX = সঙ্গে সঙ্গে needle decompression, তারপর drain','Drain না হওয়া পর্যন্ত mean airway pressure কম','হঠাৎ Ppeak↑ + hypotension + একদিকে air entry = সন্দেহ করুন']},
+   avoid:{en:'High PEEP and large VT before a drain is in — can convert to tension.',bn:'Drain বসার আগে বেশি PEEP আর বড় VT — tension-এ রূপ নিতে পারে।'}},
+
+  {en:'Pneumothorax with ICD in situ',bn:'Pneumothorax + IT tube বসানো',tag:'Emergency',
+   goal:{en:'Drain is in — now ventilate gently and watch the air leak.',bn:'Drain বসানো — এখন মৃদুভাবে ventilate করুন, air leak দেখুন।'},
+   set:[['VT','low, 4–6 mL/kg PBW'],['PEEP',T('lowest that keeps oxygenation','oxygenation রাখে এমন সর্বনিম্ন')],['Pplat',T('minimise','কম রাখুন')],['Watch',T('bubbling in drain = ongoing leak','drain-এ bubble = চলমান leak')]],
+   extra:{en:['Persistent bubbling → bronchopleural fistula; minimise support, consider low VT/RR','Never clamp a bubbling drain in a ventilated patient','Volume-loop / volume-curve will show the leak (not returning to baseline)'],bn:['ক্রমাগত bubble → bronchopleural fistula; support কমান, low VT/RR ভাবুন','Ventilated রোগীতে bubble হওয়া drain কখনো clamp করবেন না','Volume-loop / volume-curve-এ leak দেখা যাবে (baseline-এ ফেরে না)']},
+   avoid:{en:'Clamping the drain, and piling on pressure that feeds the fistula.',bn:'Drain clamp করা, আর fistula-কে খাওয়ানো বাড়তি চাপ।'}},
+
+  {en:'Cardiogenic pulmonary oedema',bn:'Cardiogenic pulmonary oedema',tag:'Cardiac',
+   goal:{en:'PEEP is therapeutic here — it reduces preload/afterload and pushes fluid out of alveoli.',bn:'এখানে PEEP চিকিৎসামূলক — preload/afterload কমায়, alveoli থেকে fluid ঠেলে বের করে।'},
+   set:[['First line',T('NIV/CPAP if not intubated','Intubated না হলে NIV/CPAP')],['Mode','VC or PC if intubated'],['PEEP','8–12, higher if tolerated'],['VT','6 mL/kg PBW'],['Target','SpO₂ ≥ 94%']],
+   extra:{en:['Diuresis, nitrates, treat the cause','Higher PEEP well tolerated and helpful here (unlike RV failure)','Rapid improvement expected once decongested'],bn:['Diuresis, nitrate, কারণ treat করুন','এখানে বেশি PEEP ভালো সহ্য হয় ও সাহায্য করে (RV failure-এর বিপরীতে)','Decongest হলে দ্রুত উন্নতি আশা করা যায়']},
+   avoid:{en:'Being shy with PEEP — under-PEEP here prolongs the oedema.',bn:'PEEP নিয়ে দ্বিধা — কম PEEP এখানে oedema দীর্ঘায়িত করে।'}},
+
+  {en:'Raised ICP / Brain injury',bn:'Raised ICP / Brain injury',tag:'Neuro',
+   goal:{en:'Tight CO₂ control. Normocapnia; the lung serves the brain here.',bn:'কড়া CO₂ নিয়ন্ত্রণ। Normocapnia; এখানে ফুসফুস মস্তিষ্কের সেবা করে।'},
+   set:[['PaCO₂',T('35–40 mmHg (low-normal)','৩৫–৪০ mmHg (low-normal)')],['PaO₂',T('> 80–100, avoid hypoxia','> ৮০–১০০, hypoxia এড়ান')],['PEEP',T('moderate 5–8; enough for oxygenation','মাঝারি ৫–৮; oxygenation-এর জন্য যথেষ্ট')],['Head',T('elevate 30°','৩০° উঁচু')],['Target',T('normocapnia, tight','normocapnia, কড়া')]],
+   extra:{en:['Brief hyperventilation (PaCO₂ 30–35) ONLY as a bridge for herniation','Avoid hypoxia and hypotension at all costs','High PEEP can raise ICP — balance against oxygenation need'],bn:['সংক্ষিপ্ত hyperventilation (PaCO₂ ৩০–৩৫) শুধু herniation-এ সেতু হিসেবে','Hypoxia ও hypotension যেকোনো মূল্যে এড়ান','বেশি PEEP ICP বাড়াতে পারে — oxygenation-এর সাথে ভারসাম্য']},
+   avoid:{en:'Letting CO₂ drift up (vasodilates, raises ICP) or routine aggressive hyperventilation (ischaemia).',bn:'CO₂ বেড়ে যেতে দেওয়া (vasodilate, ICP বাড়ে) বা নিয়মিত জোরালো hyperventilation (ischaemia)।'}},
+
+  {en:'Brain tumour (peri-op/ICU)',bn:'Brain tumour (peri-op/ICU)',tag:'Neuro',
+   goal:{en:'Same principles as raised ICP — protect cerebral perfusion, tight CO₂.',bn:'Raised ICP-এর মতোই — cerebral perfusion রক্ষা, কড়া CO₂।'},
+   set:[['PaCO₂','35–40 mmHg'],['PEEP',T('moderate, mind ICP','মাঝারি, ICP খেয়াল')],['MAP',T('maintain CPP','CPP বজায়')],['Head','30° up']],
+   extra:{en:['Smooth induction/extubation to avoid ICP surges','Avoid coughing/bucking on the tube','Coordinate with neurosurgery on CO₂ targets'],bn:['ICP surge এড়াতে মসৃণ induction/extubation','Tube-এ কাশি/bucking এড়ান','CO₂ target নিয়ে neurosurgery-র সাথে সমন্বয়']},
+   avoid:{en:'Pressure surges from asynchrony, coughing, or hypercapnia.',bn:'Asynchrony, কাশি বা hypercapnia থেকে চাপের surge।'}},
+
+  {en:'Ischaemic / Haemorrhagic stroke',bn:'Ischaemic / Haemorrhagic stroke',tag:'Neuro',
+   goal:{en:'Normoxia and normocapnia; protect the penumbra, avoid secondary injury.',bn:'Normoxia ও normocapnia; penumbra রক্ষা, secondary injury এড়ান।'},
+   set:[['PaCO₂','35–40 mmHg'],['PaO₂',T('normoxia; avoid hyperoxia too','normoxia; hyperoxia-ও এড়ান')],['PEEP','moderate 5–8'],['Head','30° up']],
+   extra:{en:['Haemorrhagic: strict BP control alongside','Airway protection is often the reason for intubation (low GCS)','Watch for neurogenic pulmonary oedema'],bn:['Haemorrhagic: পাশাপাশি কড়া BP নিয়ন্ত্রণ','প্রায়ই intubation-এর কারণ airway protection (low GCS)','Neurogenic pulmonary oedema খেয়াল রাখুন']},
+   avoid:{en:'Hypoxia, hypercapnia, and hyperoxia — all worsen outcome.',bn:'Hypoxia, hypercapnia ও hyperoxia — সবই ফল খারাপ করে।'}},
+
+  {en:'CKD with metabolic acidosis',bn:'CKD + metabolic acidosis',tag:'Metabolic',
+   goal:{en:'The lungs are compensating. Do NOT take that compensation away.',bn:'ফুসফুস compensate করছে। সেই compensation কেড়ে নেবেন না।'},
+   set:[['Key',T('match the patient\'s own minute ventilation','রোগীর নিজের minute ventilation মেলান')],['RR',T('higher, as the patient was breathing','রোগী যেমন নিচ্ছিল, বেশি')],['VT','6 mL/kg PBW'],['Target',T('keep pH stable, don\'t normalise PaCO₂','pH স্থির রাখুন, PaCO₂ normalise করবেন না')]],
+   extra:{en:['A "normal" PaCO₂ here can be fatal — it means respiratory acidosis on top','Sedation/paralysis drops their compensatory drive → pH crashes','Treat the cause; dialysis for the acid load'],bn:['এখানে "স্বাভাবিক" PaCO₂ মারাত্মক হতে পারে — মানে উপরন্তু respiratory acidosis','Sedation/paralysis compensatory drive কমায় → pH ধসে পড়ে','কারণ treat করুন; acid load-এ dialysis']},
+   avoid:{en:'Setting a "textbook" RR that lets CO₂ rise while they\'re already acidotic.',bn:'"Textbook" RR সেট করা যাতে acidotic অবস্থায় CO₂ বেড়ে যায়।'}},
+
+  {en:'Severe acidosis (poisoning)',bn:'Severe acidosis (poisoning)',tag:'Metabolic',
+   goal:{en:'Same principle, extreme version. High minute ventilation to blow off CO₂ and defend pH.',bn:'একই নীতি, চরম রূপ। pH রক্ষায় CO₂ উড়াতে বেশি minute ventilation।'},
+   set:[['MV',T('very high may be needed','খুব বেশি লাগতে পারে')],['RR',T('high (watch auto-PEEP)','বেশি (auto-PEEP দেখুন)')],['VT','6 mL/kg PBW'],['Target',T('match pre-intubation MV or higher','intubation-পূর্ব MV বা বেশি')]],
+   extra:{en:['Salicylate poisoning: intubation is dangerous — losing hyperventilation can kill; keep pH high','Consider bicarbonate / dialysis per toxin','Toxicology input early'],bn:['Salicylate poisoning: intubation বিপজ্জনক — hyperventilation হারালে মৃত্যু হতে পারে; pH উঁচু রাখুন','Toxin অনুযায়ী bicarbonate / dialysis ভাবুন','Toxicology-র মত আগে নিন']},
+   avoid:{en:'Standard low-rate settings and long apnoea during intubation — pH will crash.',bn:'Standard কম-rate setting আর intubation-এ দীর্ঘ apnoea — pH ধসে পড়বে।'}},
+
+  {en:'Obese patient',bn:'স্থূল রোগী',tag:'Special',
+   goal:{en:'The lung is often normal — the chest wall and abdomen are the load. Recruit and hold open; don\'t mistake chest-wall pressure for stiff lung.',bn:'ফুসফুস প্রায়ই স্বাভাবিক — chest wall আর পেটই ভার। Recruit করে খোলা রাখুন; chest-wall চাপকে stiff lung ভাববেন না।'},
+   set:[['VT',T('6 mL/kg PBW — on HEIGHT, not actual weight','6 mL/kg PBW — উচ্চতা দেখে, প্রকৃত ওজন নয়')],['PEEP',T('higher: often 10–15; titrate up to best compliance','বেশি: প্রায়ই ১০–১৫; সেরা compliance-এ titrate')],['Recruitment',T('recruit then set PEEP (open-lung)','recruit করে PEEP সেট (open-lung)')],['Position',T('reverse-Trendelenburg / head-up 30°+','reverse-Trendelenburg / head-up ৩০°+')],['Pplat',T('may accept >30 if driving pressure is low (chest-wall load)','driving pressure কম হলে >30 মানা যায় (chest-wall load)')],['Driving P',T('< 15 is the truer target than Pplat','Pplat-এর চেয়ে < 15 বেশি সত্য target')]],
+   extra:{en:['Pplat overreads alveolar pressure here — oesophageal (transpulmonary) pressure is the real guide if available','High risk of atelectasis: pre-oxygenate head-up, recruit after suctioning/disconnection','Watch auto-PEEP and haemodynamics as PEEP climbs','Wean and extubate head-up; high re-intubation risk — consider NIV/HFNC after'],bn:['এখানে Pplat alveolar চাপ বেশি দেখায় — সম্ভব হলে oesophageal (transpulmonary) pressure-ই আসল guide','Atelectasis-এর উচ্চ ঝুঁকি: head-up pre-oxygenate, suction/disconnection-এর পর recruit করুন','PEEP বাড়ার সাথে auto-PEEP ও haemodynamics দেখুন','Head-up wean ও extubate; re-intubation ঝুঁকি বেশি — পরে NIV/HFNC ভাবুন']},
+   avoid:{en:'Setting VT on actual weight (huge over-dose), skimping on PEEP (atelectasis/hypoxia), and flat positioning.',bn:'প্রকৃত ওজনে VT সেট (বিরাট over-dose), কম PEEP (atelectasis/hypoxia), আর শোয়ানো position।'}},
+];
+function renderDz(){
+  const g=$('dzTiles');g.innerHTML='';
+  DZ.forEach((d,i)=>{
+    const t=el('button','tile');
+    t.innerHTML=`<div class="tt">${T(d.en,d.bn)}</div><div class="td">${T(d.goal.en,d.goal.bn)}</div><span class="tag">${d.tag}</span>`;
+    t.onclick=()=>openDz(i);
+    g.appendChild(t);
+  });
+}
+function openDz(i){
+  const d=DZ[i];
+  const kv=d.set.map(r=>`<div class="kv"><b>${r[0]}</b><span>${r[1]}</span></div>`).join('');
+  $('modalBody').innerHTML=`
+    <h3>${T(d.en,d.bn)}</h3><div class="mtag">${d.tag}</div>
+    <div class="mblock"><h4>${T('GOAL','লক্ষ্য')}</h4><p style="font-size:14px;margin:0">${T(d.goal.en,d.goal.bn)}</p></div>
+    <div class="mblock"><h4>${T('STARTING SETTINGS','শুরুর সেটিং')}</h4>${kv}</div>
+    <div class="mblock"><h4>${T('KEY POINTS','মূল পয়েন্ট')}</h4>${list(T(d.extra.en,d.extra.bn))}</div>
+    <div class="avoid"><b>${T('Avoid: ','এড়ান: ')}</b>${T(d.avoid.en,d.avoid.bn)}</div>`;
+  openModal();
+}
+
+/* ===================================================================
+   WEANING
+   =================================================================== */
+const WEAN=[
+  {en:'Underlying cause improving / resolved',bn:'মূল কারণ উন্নত / সমাধান হয়েছে',den:'Reason for intubation is under control',dbn:'Intubation-এর কারণ নিয়ন্ত্রণে'},
+  {en:'Adequate oxygenation',bn:'যথেষ্ট oxygenation',den:'P/F > 200, PEEP ≤ 5–8, FiO₂ ≤ 0.4–0.5',dbn:'P/F > 200, PEEP ≤ 5–8, FiO₂ ≤ 0.4–0.5'},
+  {en:'Haemodynamically stable',bn:'Haemodynamically stable',den:'No / low vasopressors, no active ischaemia',dbn:'Vasopressor নেই / কম, active ischaemia নেই'},
+  {en:'Awake & able to protect airway',bn:'সজাগ ও airway রক্ষা করতে পারে',den:'Follows commands, good cough, manageable secretions',dbn:'Command মানে, ভালো কাশি, secretion সামলানো যায়'},
+  {en:'Adequate respiratory drive',bn:'যথেষ্ট respiratory drive',den:'Triggering spontaneous breaths',dbn:'নিজে নিজে breath trigger করছে'},
+  {en:'Acid–base & electrolytes acceptable',bn:'Acid–base ও electrolyte গ্রহণযোগ্য',den:'pH stable, K/Mg/PO₄ corrected',dbn:'pH স্থির, K/Mg/PO₄ ঠিক করা'},
+  {en:'Afebrile / sepsis controlled',bn:'জ্বরমুক্ত / sepsis নিয়ন্ত্রিত',den:'No high fever, source controlled',dbn:'উচ্চ জ্বর নেই, source নিয়ন্ত্রিত'},
+];
+let weanState=JSON.parse(localStorage.getItem('va_wean')||'[]');
+function renderWean(){
+  const g=$('weanList');g.innerHTML='';
+  WEAN.forEach((w,i)=>{
+    const on=weanState[i];
+    const c=el('div','check'+(on?' on':''));
+    c.innerHTML=`<div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+      <div><div class="ct">${T(w.en,w.bn)}</div><div class="cd">${T(w.den,w.dbn)}</div></div>`;
+    c.onclick=()=>{weanState[i]=!weanState[i];localStorage.setItem('va_wean',JSON.stringify(weanState));renderWean();};
+    g.appendChild(c);
+  });
+  const done=weanState.filter(Boolean).length, tot=WEAN.length;
+  const v=$('weanVerdict');
+  if(done===tot){v.className='wean-verdict go';$('weanBig').textContent=T('Consider an SBT','SBT ভাবা যায়');$('weanSm').textContent=T('All criteria met — do a spontaneous breathing trial and reassess.','সব criteria পূরণ — spontaneous breathing trial দিয়ে আবার মূল্যায়ন করুন।');}
+  else{v.className='wean-verdict nogo';$('weanBig').textContent=`${done} / ${tot} ${T('met','পূরণ')}`;$('weanSm').textContent=T('Not yet ready — address the unchecked items first.','এখনো প্রস্তুত নয় — বাকি item আগে ঠিক করুন।');}
+}
+function runRSBI(){
+  const rr=num($('rsbi_rr').value), vt=num($('rsbi_vt').value);
+  if(rr==null||vt==null||vt<=0){$('rsbiRes').innerHTML=`<div style="color:var(--ink3);font-size:13px">${T('Enter RR and VT (in litres).','RR ও VT (লিটারে) দিন।')}</div>`;return;}
+  const rsbi=rr/vt;
+  const cls=rsbi<105?'ok':'bad';
+  let h=calcRow('RSBI','RR ÷ VT(L)',r0(rsbi),'',rsbi<105?T('likely to succeed','সফল হওয়ার সম্ভাবনা'):T('likely to fail','ব্যর্থ হওয়ার সম্ভাবনা'),cls,cls);
+  h+=`<div class="calls" style="margin-top:8px">${callBox(rsbi<105?'ok':'warn',rsbi<105?'✓':'!',
+    rsbi<105?T('<b>RSBI under 105.</b> Predicts a good chance of successful extubation — but it\'s one data point. Judge the whole trial and the patient.','<b>RSBI ১০৫-এর নিচে।</b> সফল extubation-এর ভালো সম্ভাবনা — তবে এটা একটাই data point। পুরো trial আর রোগী বিচার করুন।')
+    :T('<b>RSBI over 105.</b> Rapid shallow breathing — higher failure risk. Reassess the cause before extubating.','<b>RSBI ১০৫-এর বেশি।</b> Rapid shallow breathing — ব্যর্থতার ঝুঁকি বেশি। Extubate করার আগে কারণ খুঁজুন।'))}</div>`;
+  $('rsbiRes').innerHTML=h;
+}
+['rsbi_rr','rsbi_vt'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id)runRSBI();}));
+
+/* ---------- RASS scale ---------- */
+const RASS=[
+  {s:'+4',en:'Combative',bn:'Combative',den:'Violent, danger to staff',dbn:'হিংস্র, staff-এর জন্য বিপদ',cls:'bad'},
+  {s:'+3',en:'Very agitated',bn:'খুব agitated',den:'Pulls at tubes/catheters, aggressive',dbn:'Tube/catheter টানে, aggressive',cls:'bad'},
+  {s:'+2',en:'Agitated',bn:'Agitated',den:'Frequent non-purposeful movement, fights vent',dbn:'ঘনঘন উদ্দেশ্যহীন নড়াচড়া, ভেন্টের সাথে fight',cls:'warn'},
+  {s:'+1',en:'Restless',bn:'অস্থির',den:'Anxious but movements not aggressive',dbn:'উদ্বিগ্ন কিন্তু নড়াচড়া aggressive নয়',cls:'warn'},
+  {s:'0',en:'Alert & calm',bn:'সজাগ ও শান্ত',den:'',dbn:'',cls:'ok'},
+  {s:'−1',en:'Drowsy',bn:'তন্দ্রাচ্ছন্ন',den:'Not fully alert, sustained (>10s) waking to voice',dbn:'পুরো সজাগ নয়, ভয়েসে >১০s জেগে থাকে',cls:'ok'},
+  {s:'−2',en:'Light sedation',bn:'Light sedation',den:'Briefly (<10s) wakes to voice',dbn:'ভয়েসে সংক্ষিপ্ত (<১০s) জাগে',cls:'warn'},
+  {s:'−3',en:'Moderate sedation',bn:'Moderate sedation',den:'Movement/eye-opening to voice, no eye contact',dbn:'ভয়েসে নড়াচড়া/চোখ খোলে, eye contact নেই',cls:'warn'},
+  {s:'−4',en:'Deep sedation',bn:'Deep sedation',den:'No response to voice, moves to physical stimulus',dbn:'ভয়েসে সাড়া নেই, শারীরিক উদ্দীপনায় নড়ে',cls:'bad'},
+  {s:'−5',en:'Unarousable',bn:'Unarousable',den:'No response to voice or physical stimulus',dbn:'ভয়েস বা শারীরিক উদ্দীপনা—কোনো সাড়া নেই',cls:'bad'},
+];
+function renderRass(){
+  const g=$('rassList');if(!g)return;g.innerHTML='';
+  RASS.forEach(r=>{
+    const target = (r.s==='0'||r.s==='−1');
+    const row=el('div','res');
+    row.style.borderLeft = target?'3px solid var(--ok)':'3px solid transparent';
+    row.style.paddingLeft='10px';
+    row.innerHTML=`<div class="rk"><div class="n">${r.s} · ${T(r.en,r.bn)} ${target?`<span class="pill ok" style="margin-left:6px">${T('weaning target','weaning লক্ষ্য')}</span>`:''}</div>${(T(r.den,r.dbn))?`<div class="d">${T(r.den,r.dbn)}</div>`:''}</div>`;
+    g.appendChild(row);
+  });
+}
+
+/* ===================================================================
+   TROUBLESHOOT
+   =================================================================== */
+const TRBL=[
+  {en:'Sudden desaturation — DOPES',bn:'হঠাৎ desaturation — DOPES',tag:'Emergency',
+   body:{en:['<b>D — Displacement:</b> tube moved or in a mainstem. Check depth, bilateral air entry.','<b>O — Obstruction:</b> mucus plug, kink, biting. Pass a suction catheter.','<b>P — Pneumothorax:</b> sudden Ppeak↑, one-sided air entry, hypotension.','<b>E — Equipment:</b> vent, circuit, O₂ supply, valve.','<b>S — Stacking:</b> auto-PEEP. <b>Disconnect the circuit and let them fully exhale.</b>','<b>Fastest test:</b> take them off the vent and bag by hand — tells you in two breaths whether it\'s the machine or the patient.'],
+        bn:['<b>D — Displacement:</b> tube সরে গেছে বা mainstem-এ। Depth ও দুই পাশের air entry দেখুন।','<b>O — Obstruction:</b> mucus plug, kink, কামড়। Suction catheter নামান।','<b>P — Pneumothorax:</b> হঠাৎ Ppeak↑, একদিকে air entry, hypotension।','<b>E — Equipment:</b> vent, circuit, O₂ supply, valve।','<b>S — Stacking:</b> auto-PEEP। <b>Circuit খুলে পুরোপুরি শ্বাস ছাড়তে দিন।</b>','<b>দ্রুততম পরীক্ষা:</b> ভেন্ট থেকে খুলে হাতে bag করুন — দুই breath-এই বোঝা যায় সমস্যা মেশিনে না রোগীতে।']}},
+
+  {en:'High peak pressure alarm',bn:'High peak pressure alarm',tag:'Pressure',
+   body:{en:['<b>Do an inspiratory hold to get Pplat.</b>','<b>Ppeak high, Pplat normal (wide gap) → resistance:</b> suction, bronchodilator, check for kink/bite, wet HME.','<b>Ppeak and Pplat both high → compliance:</b> pneumothorax, mainstem, oedema/ARDS, tight abdomen, VT too big.','Then treat the branch you landed on.'],
+        bn:['<b>Inspiratory hold দিয়ে Pplat নিন।</b>','<b>Ppeak বেশি, Pplat স্বাভাবিক (চওড়া gap) → resistance:</b> suction, bronchodilator, kink/কামড়, ভেজা HME দেখুন।','<b>Ppeak ও Pplat দুটোই বেশি → compliance:</b> pneumothorax, mainstem, oedema/ARDS, টানটান পেট, VT বড়।','তারপর যে শাখায় পড়লেন সেটা treat করুন।']}},
+
+  {en:'Low pressure / low volume alarm',bn:'Low pressure / low volume alarm',tag:'Leak',
+   body:{en:['Almost always a leak or disconnection.','Trace the circuit from patient to machine.','Check ETT cuff pressure (20–30 cmH₂O).','Look at the volume curve — not returning to baseline confirms a leak.','In a chest-drain patient, a big bronchopleural fistula can do this.'],
+        bn:['প্রায় সবসময় leak বা disconnection।','রোগী থেকে মেশিন পর্যন্ত circuit ধরে দেখুন।','ETT cuff pressure দেখুন (২০–৩০ cmH₂O)।','Volume curve দেখুন — baseline-এ না ফেরা leak নিশ্চিত করে।','Chest-drain রোগীতে বড় bronchopleural fistula এটা করতে পারে।']}},
+
+  {en:'Patient fighting the ventilator',bn:'রোগী ভেন্টের সাথে fighting',tag:'Async',
+   body:{en:['First rule out real problems: hypoxia, hypercapnia, pain, tube in wrong place, pneumothorax, full bladder.','Look at the waveforms for the asynchrony type (double trigger, flow starvation, ineffective effort).','Fix the setting that matches — often more flow, longer Ti, or a mode change.','Sedation treats the patient\'s distress, not the mismatch — fix the vent first.'],
+        bn:['আগে সত্যিকারের সমস্যা বাদ দিন: hypoxia, hypercapnia, ব্যথা, tube ভুল জায়গায়, pneumothorax, ভরা bladder।','Asynchrony-র ধরন দেখতে waveform দেখুন (double trigger, flow starvation, ineffective effort)।','যে setting মেলে সেটা ঠিক করুন — প্রায়ই বেশি flow, লম্বা Ti, বা mode বদল।','Sedation রোগীর কষ্ট কমায়, mismatch নয় — আগে ভেন্ট ঠিক করুন।']}},
+];
+function renderTrbl(){
+  const g=$('trblTiles');g.innerHTML='';
+  TRBL.forEach((t,i)=>{
+    const b=el('button','tile');
+    b.innerHTML=`<div class="tt">${T(t.en,t.bn)}</div><span class="tag">${t.tag}</span>`;
+    b.onclick=()=>{
+      $('modalBody').innerHTML=`<h3>${T(t.en,t.bn)}</h3><div class="mtag">${t.tag}</div><div class="mblock">${list(T(t.body.en,t.body.bn))}</div>`;
+      openModal();
+    };
+    g.appendChild(b);
+  });
+}
+
+/* ===================================================================
+   ABG INTERPRETER  — step-by-step, mirrors the reference chart
+   =================================================================== */
+let abgChron='acute';
+$('a_chron').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  $('a_chron').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+  // set 'on' on both language twins with same value
+  $('a_chron').querySelectorAll('button[data-v="'+b.dataset.v+'"]').forEach(x=>x.classList.add('on'));
+  abgChron=b.dataset.v; runABG();
+});
+function runABG(){
+  const ph=num($('a_ph').value), co2=num($('a_co2').value), hco3=num($('a_hco3').value), pao2=num($('a_pao2').value);
+  const na=num($('a_na').value), cl=num($('a_cl').value), k=num($('a_k').value), alb=num($('a_alb').value);
+  const fio2=num($('a_fio2').value), age=num($('a_age').value);
+
+  if(ph==null||co2==null||hco3==null){
+    $('abgRes').innerHTML=`<div style="color:var(--ink3);font-size:13px;padding:8px 0">${T('Enter pH, PaCO₂ and HCO₃⁻ to begin.','শুরু করতে pH, PaCO₂ ও HCO₃⁻ দিন।')}</div>`;
+    $('abgCalls').innerHTML=`<div class="call info"><div class="ci">i</div><div>${T('These three give the acid–base diagnosis. Add electrolytes for anion gap, FiO₂/age for A–a gradient.','এই তিনটা acid–base রোগ নির্ণয় করে। Anion gap-এর জন্য electrolyte, A–a-র জন্য FiO₂/বয়স দিন।')}</div></div>`;
+    return;
+  }
+
+  // ---- basic classification ----
+  const acidemia = ph<7.35, alkalemia = ph>7.45, phNormal = !acidemia && !alkalemia;
+  const respAcid = co2>45, respAlk = co2<35;
+  const metAcid = hco3<22, metAlk = hco3>26;
+
+  // ---- results block ----
+  let rows='';
+  const phCls = phNormal?'ok':(acidemia?'bad':'warn');
+  rows+=calcRow('pH',T('acid–base','acid–base'),r1(ph),'', phNormal?T('normal','স্বাভাবিক'):(acidemia?T('acidaemia','acidaemia'):T('alkalaemia','alkalaemia')), phCls, phCls);
+  const co2Cls = (co2>=35&&co2<=45)?'ok':'warn';
+  rows+=calcRow('PaCO₂',T('respiratory','respiratory'),r1(co2),'mmHg', respAcid?T('resp. acidosis','resp. acidosis'):respAlk?T('resp. alkalosis','resp. alkalosis'):T('normal','স্বাভাবিক'), co2Cls);
+  const hcCls = (hco3>=22&&hco3<=26)?'ok':'warn';
+  rows+=calcRow('HCO₃⁻',T('metabolic','metabolic'),r1(hco3),'mEq/L', metAcid?T('met. acidosis','met. acidosis'):metAlk?T('met. alkalosis','met. alkalosis'):T('normal','স্বাভাবিক'), hcCls);
+
+  // anion gap
+  let ag=null, agc=null;
+  if(na!=null&&cl!=null){
+    ag = na + (k!=null?k:0) - (cl+hco3);
+    // if K not entered, use classic Na-(Cl+HCO3): adjust normal accordingly. We'll flag which formula.
+    const usedK = k!=null;
+    const agNormalHi = usedK?16:12;
+    const cls = ag>agNormalHi?'bad':'ok';
+    rows+=calcRow(T('Anion gap','Anion gap'), usedK?'(Na+K)−(Cl+HCO₃)':'Na−(Cl+HCO₃)', r1(ag),'mEq/L', ag>agNormalHi?T('high','বেশি'):T('normal','স্বাভাবিক'), cls, cls);
+    if(alb!=null){
+      agc = ag + 2.5*(4-alb);
+      if(Math.abs(agc-ag)>=1) rows+=calcRow(T('Corrected AG','Corrected AG'),T('for albumin','albumin-এর জন্য'), r1(agc),'mEq/L', (agc>agNormalHi?T('high','বেশি'):T('normal','স্বাভাবিক')), agc>agNormalHi?'bad':'ok', agc>agNormalHi?'bad':'ok');
+    }
+  }
+  // P/F and A-a
+  let pf=null, aa=null, aaUpper=null;
+  if(pao2!=null&&fio2){ pf = pao2/(fio2/100); rows+=calcRow('P/F', T('oxygenation','oxygenation'), r0(pf),'', pf>300?T('normal','স্বাভাবিক'):pf>200?T('mild','mild'):pf>100?T('moderate','moderate'):T('severe','severe'), pf>300?'ok':pf>200?'warn':'bad', pf>300?'ok':pf>200?'warn':'bad'); }
+  if(pao2!=null&&fio2){
+    const fiFrac=fio2/100;
+    const PAO2 = (713*fiFrac) - (co2*1.25);
+    aa = PAO2 - pao2;
+    aaUpper = age!=null ? (age/4)+4 : 15;
+    const cls = aa>aaUpper?'bad':'ok';
+    rows+=calcRow('A–a gradient', 'PAO₂ − PaO₂', r0(aa),'mmHg', aa>aaUpper?T('elevated','বাড়তি'):T('normal','স্বাভাবিক'), cls, cls);
+  }
+  $('abgRes').innerHTML=rows;
+
+  // ---- step-by-step interpretation ----
+  let c=[];
+  // Step 1-3: primary disorder
+  let primary='';
+  if(acidemia){
+    if(respAcid && !metAcid) primary='resp_acid';
+    else if(metAcid && !respAcid) primary='met_acid';
+    else if(metAcid && respAcid) primary='mixed_acid';
+    else primary = co2>45?'resp_acid':'met_acid';
+  } else if(alkalemia){
+    if(respAlk && !metAlk) primary='resp_alk';
+    else if(metAlk && !respAlk) primary='met_alk';
+    else if(metAlk && respAlk) primary='mixed_alk';
+    else primary = co2<35?'resp_alk':'met_alk';
+  } else {
+    primary='normal_ph';
+  }
+  const PRIM={
+    resp_acid:{en:'Respiratory acidosis',bn:'Respiratory acidosis'},
+    resp_alk:{en:'Respiratory alkalosis',bn:'Respiratory alkalosis'},
+    met_acid:{en:'Metabolic acidosis',bn:'Metabolic acidosis'},
+    met_alk:{en:'Metabolic alkalosis',bn:'Metabolic alkalosis'},
+    mixed_acid:{en:'Combined respiratory + metabolic acidosis',bn:'সম্মিলিত respiratory + metabolic acidosis'},
+    mixed_alk:{en:'Combined respiratory + metabolic alkalosis',bn:'সম্মিলিত respiratory + metabolic alkalosis'},
+    normal_ph:{en:'Normal pH — look for a mixed disorder',bn:'স্বাভাবিক pH — mixed disorder খুঁজুন'}
+  };
+  const primCls = primary.includes('mixed')?'bad':(primary==='normal_ph'?'warn':'info');
+  c.push(callBox(primCls,'1',T(`<b>Primary: ${PRIM[primary].en}.</b> pH ${r1(ph)}, PaCO₂ ${r1(co2)}, HCO₃⁻ ${r1(hco3)}.`,`<b>মূল: ${PRIM[primary].bn}।</b> pH ${r1(ph)}, PaCO₂ ${r1(co2)}, HCO₃⁻ ${r1(hco3)}।`)));
+
+  // Step 4: compensation check
+  if(primary==='met_acid' || (primary==='normal_ph'&&metAcid)){
+    const expCO2 = 1.5*hco3 + 8;
+    const lo=expCO2-2, hi=expCO2+2;
+    let msg,cls;
+    if(co2>hi){cls='bad';msg=T(`Actual PaCO₂ (${r1(co2)}) is higher than expected (${r1(lo)}–${r1(hi)}) → <b>a respiratory acidosis is also present.</b>`,`প্রকৃত PaCO₂ (${r1(co2)}) প্রত্যাশিত (${r1(lo)}–${r1(hi)})-এর চেয়ে বেশি → <b>respiratory acidosis-ও আছে।</b>`);}
+    else if(co2<lo){cls='warn';msg=T(`Actual PaCO₂ (${r1(co2)}) is lower than expected (${r1(lo)}–${r1(hi)}) → <b>a respiratory alkalosis is also present.</b>`,`প্রকৃত PaCO₂ (${r1(co2)}) প্রত্যাশিত (${r1(lo)}–${r1(hi)})-এর চেয়ে কম → <b>respiratory alkalosis-ও আছে।</b>`);}
+    else{cls='ok';msg=T(`PaCO₂ (${r1(co2)}) sits in the expected range (${r1(lo)}–${r1(hi)}) → <b>appropriate respiratory compensation.</b>`,`PaCO₂ (${r1(co2)}) প্রত্যাশিত সীমার (${r1(lo)}–${r1(hi)}) মধ্যে → <b>যথাযথ respiratory compensation।</b>`);}
+    c.push(callBox(cls,'2',T(`<b>Winter's formula:</b> expected PaCO₂ = 1.5×HCO₃ + 8 = <b>${r1(lo)}–${r1(hi)}</b>. ${msg}`,`<b>Winter's formula:</b> প্রত্যাশিত PaCO₂ = 1.5×HCO₃ + 8 = <b>${r1(lo)}–${r1(hi)}</b>। ${msg}`)));
+  }
+  else if(primary==='met_alk' || (primary==='normal_ph'&&metAlk)){
+    const expCO2 = 40 + 0.7*(hco3-24);
+    const lo=expCO2-2, hi=expCO2+2;
+    let msg,cls;
+    if(co2>hi){cls='warn';msg=T('higher than expected → a respiratory acidosis may also be present.','প্রত্যাশিতের চেয়ে বেশি → respiratory acidosis-ও থাকতে পারে।');}
+    else if(co2<lo){cls='warn';msg=T('lower than expected → a respiratory alkalosis may also be present.','প্রত্যাশিতের চেয়ে কম → respiratory alkalosis-ও থাকতে পারে।');}
+    else{cls='ok';msg=T('within expected range → appropriate compensation.','প্রত্যাশিত সীমার মধ্যে → যথাযথ compensation।');}
+    c.push(callBox(cls,'2',T(`<b>Expected PaCO₂ = 40 + 0.7×ΔHCO₃ = ${r1(lo)}–${r1(hi)}.</b> Actual ${r1(co2)} is ${msg} (compensation rarely pushes PaCO₂ above ~55).`,`<b>প্রত্যাশিত PaCO₂ = 40 + 0.7×ΔHCO₃ = ${r1(lo)}–${r1(hi)}।</b> প্রকৃত ${r1(co2)} ${msg} (compensation সাধারণত PaCO₂ ~৫৫-এর উপরে তোলে না)।`)));
+  }
+  else if(primary==='resp_acid'){
+    const dCO2=(co2-40)/10;
+    const expAcute=24+1*dCO2, expChronic=24+4*dCO2;
+    const isChronic=abgChron==='chronic';
+    const exp=isChronic?expChronic:expAcute;
+    const diff=hco3-exp;
+    let cls = Math.abs(diff)<=3?'ok':'warn';
+    c.push(callBox(cls,'2',T(`<b>${isChronic?'Chronic':'Acute'} respiratory acidosis:</b> HCO₃ should rise by ${isChronic?'4':'1'} per 10 rise in PaCO₂ → expected HCO₃ ≈ <b>${r1(exp)}</b>. Actual ${r1(hco3)}. ${Math.abs(diff)<=3?'Fits — appropriate metabolic compensation.':(diff>3?'Higher → a metabolic alkalosis may also be present.':'Lower → a metabolic acidosis may also be present.')}`,`<b>${isChronic?'Chronic':'Acute'} respiratory acidosis:</b> PaCO₂ প্রতি ১০ বাড়লে HCO₃ ${isChronic?'৪':'১'} বাড়া উচিত → প্রত্যাশিত HCO₃ ≈ <b>${r1(exp)}</b>। প্রকৃত ${r1(hco3)}। ${Math.abs(diff)<=3?'মিলছে — যথাযথ metabolic compensation।':(diff>3?'বেশি → metabolic alkalosis-ও থাকতে পারে।':'কম → metabolic acidosis-ও থাকতে পারে।')}`)));
+  }
+  else if(primary==='resp_alk'){
+    const dCO2=(40-co2)/10;
+    const expAcute=24-2*dCO2, expChronic=24-4*dCO2;
+    const isChronic=abgChron==='chronic';
+    const exp=isChronic?expChronic:expAcute;
+    const diff=hco3-exp;
+    let cls = Math.abs(diff)<=3?'ok':'warn';
+    c.push(callBox(cls,'2',T(`<b>${isChronic?'Chronic':'Acute'} respiratory alkalosis:</b> HCO₃ should fall by ${isChronic?'4':'2'} per 10 drop in PaCO₂ → expected HCO₃ ≈ <b>${r1(exp)}</b>. Actual ${r1(hco3)}. ${Math.abs(diff)<=3?'Fits — appropriate compensation.':(diff>3?'Higher → metabolic alkalosis may also be present.':'Lower → metabolic acidosis may also be present.')}`,`<b>${isChronic?'Chronic':'Acute'} respiratory alkalosis:</b> PaCO₂ প্রতি ১০ কমলে HCO₃ ${isChronic?'৪':'২'} কমা উচিত → প্রত্যাশিত HCO₃ ≈ <b>${r1(exp)}</b>। প্রকৃত ${r1(hco3)}। ${Math.abs(diff)<=3?'মিলছে — যথাযথ compensation।':(diff>3?'বেশি → metabolic alkalosis-ও থাকতে পারে।':'কম → metabolic acidosis-ও থাকতে পারে।')}`)));
+  }
+
+  // Step 5: anion gap interpretation
+  if(ag!=null){
+    const usedK = k!=null; const agNormalHi = usedK?16:12;
+    if(ag>agNormalHi){
+      c.push(callBox('bad','3',T(`<b>High anion gap (${r1(ag)}) — high-AG metabolic acidosis.</b> Think <b>MUDPILES</b>: methanol, uraemia, DKA, propylene glycol, INH/iron, lactic acidosis, ethylene glycol, salicylates. ${agc!=null&&Math.abs(agc-ag)>=2?`Albumin-corrected AG is ${r1(agc)} — use that, hypoalbuminaemia was masking the gap.`:''}`,`<b>High anion gap (${r1(ag)}) — high-AG metabolic acidosis.</b> মনে করুন <b>MUDPILES</b>: methanol, uraemia, DKA, propylene glycol, INH/iron, lactic acidosis, ethylene glycol, salicylate। ${agc!=null&&Math.abs(agc-ag)>=2?`Albumin-corrected AG ${r1(agc)} — সেটাই ব্যবহার করুন, hypoalbuminaemia gap ঢেকে রেখেছিল।`:''}`)));
+      // delta ratio
+      const usedAG = agc!=null?agc:ag;
+      const dAG = usedAG - (usedK?16:12) + (usedK?16:12) - (usedK?12:12); // keep simple: use (AG-12)
+      const deltaAG = usedAG - 12;
+      const deltaHCO3 = 24 - hco3;
+      if(deltaHCO3>0){
+        const dr = deltaAG/deltaHCO3;
+        let drMsg,drCls;
+        if(dr<0.4){drCls='warn';drMsg=T('< 0.4 → a concurrent normal-AG (hyperchloraemic) metabolic acidosis (e.g. added diarrhoea/RTA).','< 0.4 → পাশাপাশি normal-AG (hyperchloraemic) metabolic acidosis (যেমন diarrhoea/RTA)।');}
+        else if(dr<1){drCls='warn';drMsg=T('0.4–1.0 → mixed high-AG plus normal-AG acidosis.','0.4–1.0 → mixed high-AG ও normal-AG acidosis।');}
+        else if(dr<=2){drCls='ok';drMsg=T('1.0–2.0 → pure high-AG metabolic acidosis.','1.0–2.0 → বিশুদ্ধ high-AG metabolic acidosis।');}
+        else{drCls='warn';drMsg=T('> 2.0 → a coexisting metabolic alkalosis (or pre-existing high HCO₃, e.g. chronic resp. acidosis).','> 2.0 → পাশাপাশি metabolic alkalosis (বা আগে থেকেই বেশি HCO₃, যেমন chronic resp. acidosis)।');}
+        c.push(callBox(drCls,'4',T(`<b>Delta ratio = ΔAG/ΔHCO₃ = ${r1(deltaAG)}/${r1(deltaHCO3)} = ${r1(dr)}.</b> ${drMsg}`,`<b>Delta ratio = ΔAG/ΔHCO₃ = ${r1(deltaAG)}/${r1(deltaHCO3)} = ${r1(dr)}।</b> ${drMsg}`)));
+      }
+    } else {
+      if(metAcid) c.push(callBox('info','3',T(`<b>Normal anion gap (${r1(ag)}) metabolic acidosis</b> — hyperchloraemic. Think diarrhoea, RTA, acetazolamide, ureteroenterostomy, pancreatic fistula.`,`<b>Normal anion gap (${r1(ag)}) metabolic acidosis</b> — hyperchloraemic। ভাবুন diarrhoea, RTA, acetazolamide, ureteroenterostomy, pancreatic fistula।`)));
+    }
+  } else if(metAcid){
+    c.push(callBox('info','3',T('<b>Add Na⁺ and Cl⁻</b> to calculate the anion gap — it splits metabolic acidosis into high-AG vs normal-AG, which have completely different causes.','<b>Na⁺ ও Cl⁻ দিন</b> anion gap বের করতে — এটা metabolic acidosis-কে high-AG বনাম normal-AG-তে ভাগ করে, যাদের কারণ সম্পূর্ণ আলাদা।')));
+  }
+
+  // Step 6: oxygenation / A-a
+  if(aa!=null){
+    if(aa>aaUpper){
+      c.push(callBox('warn','O₂',T(`<b>A–a gradient ${r0(aa)} is elevated</b> (upper normal ≈ ${r0(aaUpper)}). The oxygenation defect is <b>in the lung</b> — V/Q mismatch (COPD, asthma, pneumonia, PE), shunt (atelectasis, ARDS), or diffusion (ILD, oedema).`,`<b>A–a gradient ${r0(aa)} বাড়তি</b> (upper normal ≈ ${r0(aaUpper)})। Oxygenation-এর সমস্যা <b>ফুসফুসে</b> — V/Q mismatch (COPD, asthma, pneumonia, PE), shunt (atelectasis, ARDS), বা diffusion (ILD, oedema)।`)));
+    } else {
+      c.push(callBox('ok','O₂',T(`<b>A–a gradient ${r0(aa)} is normal.</b> Any hypoxaemia is <b>not from lung parenchyma</b> — think hypoventilation (high PaCO₂) or low inspired O₂.`,`<b>A–a gradient ${r0(aa)} স্বাভাবিক।</b> কোনো hypoxaemia <b>ফুসফুসের parenchyma থেকে নয়</b> — ভাবুন hypoventilation (বেশি PaCO₂) বা কম inspired O₂।`)));
+    }
+  }
+
+  // Step 7: normal pH mixed hint
+  if(primary==='normal_ph'){
+    c.push(callBox('warn','!',T('<b>pH is normal but the components are not.</b> A normal pH with abnormal PaCO₂/HCO₃ (or a high anion gap) means opposing disorders are cancelling out — a mixed disorder. Work through each component above.','<b>pH স্বাভাবিক কিন্তু components নয়।</b> স্বাভাবিক pH-এর সাথে অস্বাভাবিক PaCO₂/HCO₃ (বা high anion gap) মানে বিপরীত disorder একে অপরকে কাটছে — mixed disorder। উপরের প্রতিটা component ধরে দেখুন।')));
+  }
+
+  $('abgCalls').innerHTML=c.join('');
+}
+['a_ph','a_co2','a_hco3','a_pao2','a_na','a_cl','a_k','a_alb','a_fio2','a_age'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id)runABG();}));
+
+/* ===================================================================
+   TRENDS  — per-patient saved readings + SVG line charts
+   =================================================================== */
+function fmtTime(ts){
+  const d=new Date(ts);
+  const p=n=>String(n).padStart(2,'0');
+  return `${p(d.getDate())}/${p(d.getMonth()+1)} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function lineChart(points, opts){
+  // points: [{t, v}] with v possibly null; opts:{good:[lo,hi], invert, unit, targetLine}
+  const vals=points.filter(p=>p.v!=null);
+  if(vals.length===0) return `<div class="chart-empty">${T('No values for this metric yet.','এই metric-এর মান এখনো নেই।')}</div>`;
+  const W=300,H=140,padL=30,padR=10,padT=12,padB=22;
+  const xs=points.map(p=>p.t);
+  const minX=Math.min(...xs), maxX=Math.max(...xs);
+  const vv=vals.map(p=>p.v);
+  let minV=Math.min(...vv), maxV=Math.max(...vv);
+  if(opts.targetLine!=null){minV=Math.min(minV,opts.targetLine);maxV=Math.max(maxV,opts.targetLine);}
+  const span=(maxV-minV)||1; minV-=span*0.15; maxV+=span*0.15;
+  const X=t=> (maxX===minX)? padL+(W-padL-padR)/2 : padL+(t-minX)/(maxX-minX)*(W-padL-padR);
+  const Y=v=> padT+(1-(v-minV)/(maxV-minV))*(H-padT-padB);
+  // gridlines (3)
+  let grid='';
+  for(let i=0;i<=2;i++){const gv=minV+(maxV-minV)*i/2;const gy=Y(gv);grid+=`<line x1="${padL}" y1="${gy}" x2="${W-padR}" y2="${gy}" stroke="var(--line)" stroke-width="1"/><text x="${padL-4}" y="${gy+3}" text-anchor="end" font-size="9" fill="var(--ink3)">${Math.round(gv)}</text>`;}
+  // target band
+  let band='';
+  if(opts.good){const y1=Y(Math.min(opts.good[1],maxV)),y2=Y(Math.max(opts.good[0],minV));band=`<rect x="${padL}" y="${Math.min(y1,y2)}" width="${W-padL-padR}" height="${Math.abs(y2-y1)}" fill="var(--ok)" opacity="0.10"/>`;}
+  let target='';
+  if(opts.targetLine!=null){const ty=Y(opts.targetLine);target=`<line x1="${padL}" y1="${ty}" x2="${W-padR}" y2="${ty}" stroke="var(--warn)" stroke-width="1.2" stroke-dasharray="4 3"/>`;}
+  // path over non-null, connecting
+  const seq=points.filter(p=>p.v!=null);
+  const dPath=seq.map((p,i)=>`${i?'L':'M'}${X(p.t).toFixed(1)} ${Y(p.v).toFixed(1)}`).join(' ');
+  const dots=seq.map(p=>{
+    const col = opts.color||'var(--brand)';
+    return `<circle cx="${X(p.t).toFixed(1)}" cy="${Y(p.v).toFixed(1)}" r="4" fill="${col}"><title>${fmtTime(p.t)} · ${p.v}${opts.unit||''}</title></circle>`;
+  }).join('');
+  // x labels first & last
+  const xl=`<text x="${padL}" y="${H-6}" font-size="9" fill="var(--ink3)">${fmtTime(minX).split(' ')[0]}</text><text x="${W-padR}" y="${H-6}" text-anchor="end" font-size="9" fill="var(--ink3)">${fmtTime(maxX).split(' ')[1]}</text>`;
+  return `<div class="chartwrap"><svg viewBox="0 0 ${W} ${H}">${band}${grid}${target}<path d="${dPath}" fill="none" stroke="${opts.color||'var(--brand)'}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>${dots}${xl}</svg></div>`;
+}
+function renderTrend(){
+  const store=loadStore();
+  const names=Object.keys(store).filter(k=>store[k]&&store[k].length);
+  const sel=$('trendPatient');
+  if(names.length===0){
+    $('trendEmpty').classList.remove('hide');$('trendBody').classList.add('hide');$('trendPickPanel').classList.add('hide');
+    return;
+  }
+  $('trendEmpty').classList.add('hide');$('trendBody').classList.remove('hide');$('trendPickPanel').classList.remove('hide');
+  const prev=sel.value;
+  sel.innerHTML=names.map(n=>`<option value="${n.replace(/"/g,'&quot;')}">${n} (${store[n].length})</option>`).join('');
+  if(names.includes(prev)) sel.value=prev;
+  const cur=sel.value||names[0];
+  const rows=(store[cur]||[]).slice().sort((a,b)=>a.t-b.t);
+  $('chartC').innerHTML=lineChart(rows.map(r=>({t:r.t,v:r.c})),{good:[50,80],unit:' mL/cmH₂O',color:'var(--ok)'});
+  $('chartDP').innerHTML=lineChart(rows.map(r=>({t:r.t,v:r.dp})),{targetLine:15,unit:' cmH₂O',color:'var(--warn)'});
+  // table (latest first)
+  const tb=rows.slice().reverse().map(r=>`<div class="trendrow"><span class="tm">${fmtTime(r.t)}</span>
+    <span>C <b>${r.c??'–'}</b></span><span>ΔP <b>${r.dp??'–'}</b></span><span>VT <b>${r.vt??'–'}</b></span><span>P/F <b>${r.pf??'–'}</b></span></div>`).join('');
+  $('trendTable').innerHTML=tb;
+}
+$('trendPatient').onchange=renderTrend;
+function clearCurrentPatient(){
+  const sel=$('trendPatient');const cur=sel.value;if(!cur)return;
+  if(confirm(T('Delete all saved readings for "'+cur+'"?','"'+cur+'"-এর সব সেভ করা রিডিং মুছবেন?'))){
+    const store=loadStore();delete store[cur];saveStore(store);renderTrend();toast(T('Deleted','মুছে ফেলা হয়েছে'));
+  }
+}
+$('clearPatient').onclick=clearCurrentPatient; $('clearPatient2').onclick=clearCurrentPatient;
+
+/* ===================================================================
+   PEEP / FiO2 TABLE  (ARDSnet)
+   =================================================================== */
+// [FiO2, PEEP] pairs
+const PEEP_LOW=[ [30,5],[40,5],[40,8],[50,8],[50,10],[60,10],[70,10],[70,12],[70,14],[80,14],[90,14],[90,16],[90,18],[100,18],[100,20],[100,22],[100,24] ];
+const PEEP_HIGH=[ [30,12],[30,14],[40,14],[40,16],[50,16],[50,18],[50,20],[60,20],[70,20],[80,22],[90,22],[100,22],[100,24] ];
+let peepStratV='low';
+$('peepStrat').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  $('peepStrat').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+  $('peepStrat').querySelectorAll('button[data-v="'+b.dataset.v+'"]').forEach(x=>x.classList.add('on'));
+  peepStratV=b.dataset.v;renderPeep();
+});
+function renderPeep(){
+  const tbl = peepStratV==='high'?PEEP_HIGH:PEEP_LOW;
+  const fio2=num($('peepFio2').value);
+  // find matching row: first row whose FiO2 >= current fio2
+  let matchIdx=-1;
+  if(fio2!=null){
+    for(let i=0;i<tbl.length;i++){ if(tbl[i][0]>=fio2){matchIdx=i;break;} }
+    if(matchIdx===-1) matchIdx=tbl.length-1;
+  }
+  let rows='';
+  tbl.forEach((r,i)=>{
+    rows+=`<tr class="${i===matchIdx?'match':''}"><td>${r[0]}%</td><td>${r[1]}</td></tr>`;
+  });
+  $('peepTableBox').innerHTML=`<table class="peeptable"><thead><tr><th>FiO₂</th><th>PEEP (cmH₂O)</th></tr></thead><tbody>${rows}</tbody></table>`;
+  let c=[];
+  if(fio2!=null && matchIdx>=0){
+    const rec=tbl[matchIdx][1];
+    c.push(callBox('info','→',T(`<b>At FiO₂ ${fio2}% the ${peepStratV==='high'?'higher':'lower'}-PEEP table suggests PEEP ≈ ${rec} cmH₂O.</b> This is a starting pair, not a mandate — confirm by watching compliance and oxygenation as you set it, and back off if blood pressure drops or the P–V loop starts to beak.`,`<b>FiO₂ ${fio2}%-এ ${peepStratV==='high'?'higher':'lower'}-PEEP টেবিল অনুযায়ী PEEP ≈ ${rec} cmH₂O।</b> এটা শুরুর জোড়া, বাধ্যবাধকতা নয় — সেট করার সময় compliance ও oxygenation দেখে নিশ্চিত করুন, BP পড়লে বা P–V loop beak করলে কমান।`)));
+    if(peepStratV==='high') c.push(callBox('warn','!',T('Higher-PEEP strategy suits more recruitable lungs (moderate–severe ARDS, P/F ≤ 200). In non-recruitable lungs (ILD, focal disease) it just overdistends.','Higher-PEEP strategy বেশি recruitable ফুসফুসে মানায় (moderate–severe ARDS, P/F ≤ 200)। Non-recruitable ফুসফুসে (ILD, focal) শুধু overdistend করে।')));
+  } else {
+    c.push(callBox('info','i',T('Enter the current FiO₂ to highlight the matching PEEP band.','মিল PEEP band হাইলাইট করতে বর্তমান FiO₂ দিন।')));
+  }
+  $('peepCalls').innerHTML=c.join('');
+}
+document.addEventListener('input',e=>{if(e.target.id==='peepFio2')renderPeep();});
+
+/* ===================================================================
+   REFERENCE
+   =================================================================== */
+const REF=[
+  {en:'Target values',bn:'Target মান',rows:[
+    ['VT (lung-protective)','6 mL/kg PBW'],['VT (ARDS)','4–6 mL/kg PBW'],
+    ['Pplat','≤ 30 cmH₂O'],['Driving pressure','< 15 cmH₂O'],
+    ['SpO₂','88–95% (ARDS), ≥94% (cardiac)'],['Static compliance','50–80 mL/cmH₂O'],
+    ['Raw (with ETT)','5–10 cmH₂O/L/s'],['Ppeak − Pplat','< 5–10 cmH₂O'],['RSBI','< 105 favours extubation']]},
+  {en:'Formulas',bn:'সূত্র',rows:[
+    ['PBW ♂','50 + 0.91×(ht cm − 152.4)'],['PBW ♀','45.5 + 0.91×(ht cm − 152.4)'],
+    ['Compliance','VT ÷ (Pplat − PEEPtot)'],['Driving pressure','Pplat − PEEPtot'],
+    ['VT for ΔP<15','Compliance × 15'],['Resistance','(Ppeak − Pplat) ÷ flow(L/s)'],
+    ['Time constant τ','Compliance × Resistance'],['Full exhalation','3–4 τ'],
+    ['P/F ratio','PaO₂ ÷ FiO₂(fraction)'],['RSBI','RR ÷ VT(L)'],['Minute ventilation','VT × RR']]},
+  {en:'ARDS severity (Berlin, P/F)',bn:'ARDS severity (Berlin, P/F)',rows:[
+    ['Mild','200–300'],['Moderate','100–200'],['Severe','< 100'],['(with PEEP ≥ 5)','required']]},
+  {en:'ABG — normal values',bn:'ABG — স্বাভাবিক মান',rows:[
+    ['pH','7.35–7.45'],['PaCO₂','35–45 mmHg'],['HCO₃⁻','22–26 mEq/L'],
+    ['PaO₂','60–100 mmHg'],['Base excess','−2 to +2'],['Anion gap','8–12 mEq/L']]},
+  {en:'ABG — formulas',bn:'ABG — সূত্র',rows:[
+    ["Winter's (met acid)",'exp PaCO₂ = 1.5×HCO₃ + 8 ±2'],
+    ['Met alkalosis','exp PaCO₂ = 40 + 0.7×ΔHCO₃'],
+    ['Resp acidosis — acute','HCO₃ ↑1 per 10 ↑PaCO₂'],
+    ['Resp acidosis — chronic','HCO₃ ↑4 per 10 ↑PaCO₂'],
+    ['Resp alkalosis — acute','HCO₃ ↓2 per 10 ↓PaCO₂'],
+    ['Resp alkalosis — chronic','HCO₃ ↓4 per 10 ↓PaCO₂'],
+    ['Anion gap','(Na+K) − (Cl+HCO₃)'],
+    ['Corrected AG','AG + 2.5×(4 − albumin)'],
+    ['Delta ratio','ΔAG / ΔHCO₃'],
+    ['A–a gradient','PAO₂ − PaO₂'],
+    ['PAO₂ (any FiO₂)','713×FiO₂ − PaCO₂×1.25'],
+    ['A–a upper normal','(age/4) + 4']]},
+];
+function renderRef(){
+  const g=$('refList');g.innerHTML='';
+  REF.forEach((s,idx)=>{
+    const d=el('details','acc'); if(idx===0)d.open=true;
+    const rows=s.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+    d.innerHTML=`<summary>${T(s.en,s.bn)}</summary><div class="accbody"><table>${rows}</table></div>`;
+    g.appendChild(d);
+  });
+}
+
+/* ---------- modal ---------- */
+function openModal(){$('modal').classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){$('modal').classList.remove('open');document.body.style.overflow='';}
+$('modalBg').onclick=closeModal;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+/* ---------- render everything (on lang change) ---------- */
+function renderAll(){
+  renderCards();renderWaves();renderDz();renderWean();renderRass();renderTrbl();renderRef();
+  runCalc();runIE();runRSBI();runABG();renderPeep();renderTrend();
+}
+
+/* ---------- install prompt ---------- */
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredPrompt=e;
+  if(!localStorage.getItem('va_installhid'))$('installBar').classList.add('show');
+});
+function doInstall(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$('installBar').classList.remove('show');}}
+$('installBtn').onclick=doInstall; $('installBtn2').onclick=doInstall;
+$('installX').onclick=()=>{$('installBar').classList.remove('show');localStorage.setItem('va_installhid','1');};
+
+/* ---------- boot ---------- */
+setLang(localStorage.getItem('va_lang')==='bn');
+go('home');
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+</script>
+</body>
+</html>
