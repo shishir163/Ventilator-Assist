@@ -136,7 +136,7 @@ body.inview .backbtn{display:grid}
 .pill.warn{background:var(--warnbg);color:var(--warn)}
 .pill.bad{background:var(--badbg);color:var(--bad)}
 .pill.neu{background:var(--panel2);color:var(--ink2)}
-.rv.ok{color:var(--ok)}.rv.warn{color:var(--warn)}.rv.bad{color:var(--bad)}
+.rv.ok{color:var(--ok)}.rv.warn{color:var(--warn)}.rv.bad{color:var(--bad)}.rv.neu{color:var(--ink)}
 
 /* interpretation callouts */
 .calls{margin-top:4px}
@@ -187,6 +187,117 @@ body.inview .backbtn{display:grid}
 .peeptable tr.match td:first-child{box-shadow:inset 3px 0 0 var(--brand)}
 .c-trend .ic{background:#13323A;color:var(--brand)}
 .c-peep .ic{background:#1C3352;color:var(--brand2)}
+.c-learn .ic{background:#2C2350;color:#B79BF0}
+.c-wiz .ic{background:#123A2E;color:var(--ok)}
+.c-quiz .ic{background:#3A2140;color:#E48CE8}
+.c-drug .ic{background:#3A2A16;color:#F5A742}
+
+/* wizard pick grid */
+.wzpick{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+@media(min-width:560px){.wzpick{grid-template-columns:repeat(3,1fr)}}
+.wzopt{background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:12px 11px;text-align:left;transition:all .12s}
+.wzopt:active{transform:scale(.97)}
+.wzopt.on{border-color:var(--brand);background:rgba(57,192,200,.1)}
+.wzopt .wzt{font-size:14px;font-weight:700}
+.wzopt .wzd{font-size:11px;color:var(--ink2);margin-top:2px;line-height:1.35}
+.wzset{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.wzset:last-child{border-bottom:none}
+.wzset .wl{color:var(--ink2);font-weight:600}
+.wzset .wv{font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
+.wzset .wv small{color:var(--ink3);font-weight:600;font-size:11.5px;display:block}
+
+/* quiz */
+.quizcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.quizprog{display:flex;justify-content:space-between;font-size:12px;color:var(--ink2);margin-bottom:12px;font-weight:600}
+.quizscore{color:var(--brand);font-weight:700}
+.quizfig{background:#0A1524;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px}
+.quizfig svg{width:100%;height:auto;display:block;max-height:180px}
+.quizq{font-size:15.5px;font-weight:700;margin-bottom:12px;line-height:1.35}
+.quizopts{display:grid;gap:9px}
+.qopt{background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:12px 14px;text-align:left;font-size:14px;font-weight:600;transition:all .12s;display:flex;align-items:center;gap:10px}
+.qopt:active{transform:scale(.98)}
+.qopt .qmark{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
+.qopt.correct{background:rgba(55,211,153,.12);border-color:var(--ok);color:#fff}
+.qopt.correct .qmark{background:var(--ok);border-color:var(--ok);color:#04231A}
+.qopt.wrong{background:rgba(248,114,114,.12);border-color:var(--bad);color:#fff}
+.qopt.wrong .qmark{background:var(--bad);border-color:var(--bad);color:#2E0A0E}
+.qopt.disabled{pointer-events:none;opacity:.7}
+.qopt.disabled.correct,.qopt.disabled.wrong{opacity:1}
+.quizexpl{margin-top:12px;padding:12px 13px;border-radius:11px;background:rgba(91,141,239,.08);border:1px solid rgba(91,141,239,.25);font-size:13.5px;line-height:1.5}
+.quizexpl b{font-weight:700}
+.quiznext{margin-top:14px;width:100%;background:var(--brand);color:#04222A;font-weight:700;border-radius:12px;padding:13px;font-size:15px}
+.quizdone{text-align:center;padding:24px 12px}
+.quizdone .big{font-size:34px;font-weight:800;color:var(--brand)}
+.quizdone .msg{font-size:15px;margin:8px 0 18px;color:var(--ink2)}
+
+/* drugs */
+.druggroup{margin-bottom:14px}
+.druggroup h4{font-size:12.5px;color:var(--ink2);letter-spacing:.03em;margin:0 0 8px;text-transform:uppercase}
+.drugchips{display:flex;flex-wrap:wrap;gap:8px}
+.drugchip{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;transition:all .12s}
+.drugchip:active{transform:scale(.96)}
+.drugchip.on{background:var(--brand);color:#04222A;border-color:var(--brand)}
+.drugrange{background:rgba(91,141,239,.08);border:1px solid rgba(91,141,239,.25);border-radius:11px;padding:11px 13px;margin-bottom:14px;font-size:13.5px;line-height:1.5}
+.drugrange b{color:var(--brand2)}
+.drugbig{text-align:center;padding:8px 0 4px}
+.drugbig .dv{font-size:40px;font-weight:800;color:var(--brand);font-variant-numeric:tabular-nums;line-height:1}
+.drugbig .du{font-size:15px;color:var(--ink2);font-weight:600;margin-top:2px}
+.drugconc{text-align:center;font-size:13px;color:var(--ink2);margin-top:6px}
+.drugconc b{color:var(--ink);font-weight:700}
+
+/* share button */
+.savebtn.share{background:var(--panel2);color:var(--brand)}
+.savebtn.share:active{filter:brightness(1.2)}
+
+/* Learn / Notes */
+.learn-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+@media(min-width:720px){.learn-grid{grid-template-columns:repeat(3,1fr)}}
+.lcard{position:relative;border-radius:var(--r);padding:16px 15px;text-align:left;overflow:hidden;
+  border:1px solid var(--line);transition:transform .12s ease;min-height:118px;display:flex;flex-direction:column}
+.lcard:active{transform:scale(.975)}
+.lcard:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.lcard .lnum{font-size:12px;font-weight:800;opacity:.8;letter-spacing:.05em}
+.lcard h3{font-size:16px;line-height:1.28;margin:8px 0 4px;font-family:"Noto Serif Bengali",serif}
+body:not(.bn) .lcard h3{font-family:"Inter",sans-serif}
+.lcard p{margin:0;font-size:12px;line-height:1.4;opacity:.85}
+.lcard .larrow{position:absolute;right:12px;bottom:12px;opacity:.6}
+.lcard .larrow svg{width:18px;height:18px}
+.lc0{background:linear-gradient(150deg,#123B5E,#0E2942);color:#CFE4F5}
+.lc1{background:linear-gradient(150deg,#123F3C,#0E2C2A);color:#C4EDE4}
+.lc2{background:linear-gradient(150deg,#3A2350,#241634);color:#E4CDF5}
+.lc3{background:linear-gradient(150deg,#4A2A1A,#2E1A10);color:#F3D8C4}
+.lc4{background:linear-gradient(150deg,#123B4E,#0E2A34);color:#C4E7F0}
+.lc5{background:linear-gradient(150deg,#3E2033,#281420);color:#F0C9E0}
+.lc6{background:linear-gradient(150deg,#2A3450,#181F30);color:#CBD6F0}
+.lc7{background:linear-gradient(150deg,#173F2E,#0E2A1E);color:#C4EFD4}
+
+/* Learn modal content */
+.lbody h4{font-size:13px;color:var(--brand);letter-spacing:.03em;margin:16px 0 7px;text-transform:uppercase}
+.lbody p{font-size:14px;line-height:1.6;margin:0 0 10px}
+.lbody ul{margin:0 0 10px;padding-left:20px}
+.lbody li{font-size:14px;line-height:1.55;margin-bottom:6px}
+.lbody b{font-weight:700;color:var(--ink)}
+.lformula{background:#0A1524;border:1px solid var(--line);border-left:3px solid var(--brand);
+  border-radius:10px;padding:11px 13px;margin:0 0 10px;font-size:14.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.lformula .fu{color:var(--ink2);font-weight:500;font-size:12.5px}
+.lformula em{color:var(--insp);font-style:normal}
+.lkey{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.lkey:last-child{border-bottom:none}
+.lkey .lk{flex:none;width:44%;color:var(--ink2);font-weight:600}
+.lpair{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}
+.lpair .lp{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.lpair .lp .h{font-size:12px;color:var(--brand);font-weight:700;margin-bottom:4px}
+.lpair .lp p{font-size:12.5px;margin:0;line-height:1.45}
+.lmnemonic{background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.3);border-radius:10px;padding:11px 13px;margin:0 0 10px;font-size:13.5px}
+.lmnemonic b{color:var(--brand2)}
+.lfigwrap{margin:2px 0 14px}
+.lfigrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lfigrow:has(figure:nth-child(4)){grid-template-columns:repeat(2,1fr)}
+@media(min-width:520px){.lfigrow:has(figure:nth-child(4)){grid-template-columns:repeat(4,1fr)}}
+.lfig{margin:0}
+.lfigsvg{background:#0A1524;border:1px solid var(--line);border-radius:10px;padding:8px}
+.lfigsvg svg{width:100%;height:auto;display:block}
+.lfig figcaption{font-size:10.5px;color:var(--ink2);text-align:center;margin-top:5px;line-height:1.3}
 
 /* disease + waveform tiles */
 .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
@@ -345,7 +456,11 @@ body.inview .backbtn{display:grid}
         <input id="ptLabel" type="text" placeholder="Bed 4 — MR" autocomplete="off"></div>
       <button class="savebtn" id="saveReading">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
-        <span data-en>Save reading</span><span data-bn>রিডিং সেভ</span>
+        <span data-en>Save</span><span data-bn>সেভ</span>
+      </button>
+      <button class="savebtn share" id="shareReading">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+        <span data-en>Share</span><span data-bn>শেয়ার</span>
       </button>
     </div>
     <div class="disclaimer" data-en>These are prompts, not orders. Confirm plateau on a passive patient, rule out auto-PEEP with an expiratory hold, and always look at the patient.</div>
@@ -423,6 +538,77 @@ body.inview .backbtn{display:grid}
     <h2 data-en>Quick Reference</h2><h2 data-bn>দ্রুত রেফারেন্স</h2>
     <div class="vsub" data-en>Normal values &amp; formulas.</div><div class="vsub" data-bn>স্বাভাবিক মান ও সূত্র।</div>
     <div id="refList"></div>
+  </section>
+
+  <!-- ===================== LEARN / NOTES ===================== -->
+  <section id="learn" class="view">
+    <h2 data-en>Learn &amp; Notes</h2><h2 data-bn>শেখা ও নোট</h2>
+    <div class="vsub" data-en>The core theory, the way it clicks at the bedside. Tap a card to open it.</div><div class="vsub" data-bn>মূল theory, যেভাবে বেডসাইডে মাথায় বসে। কার্ডে ট্যাপ করলে খুলবে।</div>
+    <div id="learnTiles" class="learn-grid"></div>
+  </section>
+
+  <!-- ===================== SETUP WIZARD ===================== -->
+  <section id="wizard" class="view">
+    <h2 data-en>Initial Setup Wizard</h2><h2 data-bn>শুরুর সেটআপ উইজার্ড</h2>
+    <div class="vsub" data-en>Just intubated? Enter height, sex and the picture — get starting settings.</div><div class="vsub" data-bn>এইমাত্র intubate করেছেন? উচ্চতা, লিঙ্গ ও রোগ দিন — শুরুর সেটিং পান।</div>
+
+    <div class="panel">
+      <div class="panel-t" data-en>PATIENT</div><div class="panel-t" data-bn>রোগী</div>
+      <div class="field-grid">
+        <div class="field"><label data-en>Sex</label><label data-bn>লিঙ্গ</label>
+          <div class="seg" id="wzSex"><button data-v="M" class="on">♂ M</button><button data-v="F">♀ F</button></div></div>
+        <div class="field"><label><span data-en>Height</span><span data-bn>উচ্চতা</span> <span class="u">cm</span></label><input id="wzHt" type="number" inputmode="decimal" placeholder="170"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-t" data-en>CLINICAL PICTURE</div><div class="panel-t" data-bn>রোগ / অবস্থা</div>
+      <div id="wzPickGrid" class="wzpick"></div>
+    </div>
+    <div class="panel" id="wzResultPanel">
+      <div class="panel-t" data-en>STARTING SETTINGS</div><div class="panel-t" data-bn>শুরুর সেটিং</div>
+      <div id="wzResult"></div>
+    </div>
+    <div class="calls" id="wzCalls"></div>
+    <div class="disclaimer" data-en>A safe starting point from standard guidelines — reassess an ABG and mechanics within 30 min and titrate to the patient.</div>
+    <div class="disclaimer" data-bn>Standard guideline থেকে নিরাপদ শুরুর বিন্দু — ৩০ মিনিটের মধ্যে ABG ও mechanics দেখে রোগী বুঝে titrate করুন।</div>
+  </section>
+
+  <!-- ===================== WAVEFORM QUIZ ===================== -->
+  <section id="quiz" class="view">
+    <h2 data-en>Waveform Quiz</h2><h2 data-bn>Waveform কুইজ</h2>
+    <div class="vsub" data-en>See the trace, name the problem. Great for teaching on the round.</div><div class="vsub" data-bn>ছবি দেখে সমস্যা চিনুন। রাউন্ডে পড়ানোর জন্য চমৎকার।</div>
+    <div id="quizBox"></div>
+  </section>
+
+  <!-- ===================== DRUG INFUSIONS ===================== -->
+  <section id="drugs" class="view">
+    <h2 data-en>Infusion Calculator</h2><h2 data-bn>ইনফিউশন ক্যালকুলেটর</h2>
+    <div class="vsub" data-en>Pick a drug, enter your dilution and target dose — get mL/hr. Dose range shown alongside.</div><div class="vsub" data-bn>ড্রাগ বাছুন, dilution ও target dose দিন — mL/hr পান। Dose range পাশে থাকবে।</div>
+
+    <div class="panel">
+      <div class="panel-t" data-en>DRUG</div><div class="panel-t" data-bn>ড্রাগ</div>
+      <div id="drugGroups"></div>
+    </div>
+
+    <div id="drugCalcPanel" class="hide">
+      <div class="panel">
+        <div class="panel-t"><span id="drugName"></span> <span class="u" id="drugClass"></span></div>
+        <div class="drugrange" id="drugRange"></div>
+        <div class="field-grid">
+          <div class="field"><label><span data-en>Weight</span><span data-bn>ওজন</span> <span class="u">kg</span></label><input id="drugWt" type="number" inputmode="decimal" placeholder="70"></div>
+          <div class="field"><label><span data-en>Drug in vial(s)</span><span data-bn>ভায়ালে ড্রাগ</span> <span class="u" id="drugAmtUnit">mg</span></label><input id="drugAmt" type="number" inputmode="decimal"></div>
+          <div class="field"><label><span data-en>Total volume after dilution</span><span data-bn>Dilution-এর পর মোট আয়তন</span> <span class="u">mL</span></label><input id="drugVol" type="number" inputmode="decimal" placeholder="50"></div>
+          <div class="field"><label><span data-en>Target dose</span><span data-bn>Target dose</span> <span class="u" id="drugDoseUnit"></span></label><input id="drugDose" type="number" inputmode="decimal"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-t" data-en>RESULT</div><div class="panel-t" data-bn>ফলাফল</div>
+        <div id="drugResult"></div>
+      </div>
+      <div class="calls" id="drugCalls"></div>
+    </div>
+    <div class="disclaimer" data-en>Dose ranges are typical adult ICU starting ranges for orientation — always confirm against your unit protocol and the patient. Double-check every infusion calculation independently before it runs.</div>
+    <div class="disclaimer" data-bn>Dose range সাধারণ adult ICU শুরুর মান, দিকনির্দেশের জন্য — সবসময় unit protocol ও রোগীর সাথে মিলিয়ে নিন। চালানোর আগে প্রতিটি হিসাব স্বাধীনভাবে যাচাই করুন।</div>
   </section>
 
   <!-- ===================== ABG ===================== -->
@@ -556,7 +742,7 @@ function setLang(bn){
 $('langTog').onclick=()=>setLang(!BN);
 
 /* ---------- navigation ---------- */
-const views=['calc','abg','ie','wave','dz','wean','trbl','peeptbl','trend','ref'];
+const views=['calc','wizard','abg','ie','wave','quiz','dz','drugs','wean','trbl','peeptbl','trend','ref','learn'];
 function go(id){
   $('home').classList.toggle('hide', id!=='home');
   views.forEach(v=>$(v).classList.toggle('active', v===id));
@@ -564,12 +750,16 @@ function go(id){
   window.scrollTo({top:0,behavior:'instant'});
   history.replaceState({view:id},'','#'+id);
   if(id==='trend') renderTrend();
+  if(id==='quiz') startQuiz();
 }
 $('backBtn').onclick=()=>go('home');
 
 /* ---------- dashboard cards ---------- */
 const CARDS=[
   {id:'calc',cls:'c-calc',en:'Calculator',bn:'ক্যালকুলেটর',den:'Compliance, ΔP, resistance, MV, P/F',dbn:'Compliance, ΔP, resistance, MV, P/F',ic:'<path d="M9 3h6a2 2 0 012 2v14a2 2 0 01-2 2H9a2 2 0 01-2-2V5a2 2 0 012-2z"/><path d="M9 7h6M9 11h2M13 11h2M9 15h2M13 15h2"/>'},
+  {id:'wizard',cls:'c-wiz',en:'Setup Wizard',bn:'সেটআপ উইজার্ড',den:'Starting settings for a fresh intubation',dbn:'নতুন intubation-এর শুরুর সেটিং',ic:'<path d="M12 2l2.4 5 5.6.8-4 4 1 5.6L12 20l-5 2.4 1-5.6-4-4 5.6-.8z" stroke-width="1.6"/>'},
+  {id:'drugs',cls:'c-drug',en:'Infusions',bn:'ইনফিউশন',den:'Sedatives, relaxants, inotropes → mL/hr',dbn:'Sedative, relaxant, inotrope → mL/hr',ic:'<path d="M9 3h6M10 3v4M14 3v4M7 21h10a1 1 0 001-1v-9a4 4 0 00-1.2-2.8L14 7h-4L7.2 8.2A4 4 0 006 11v9a1 1 0 001 1z"/><path d="M6 13h12"/>'},
+  {id:'quiz',cls:'c-quiz',en:'Waveform Quiz',bn:'Waveform কুইজ',den:'See the trace, name the problem',dbn:'ছবি দেখে সমস্যা চিনুন',ic:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 .5c0 2-2.5 2-2.5 4"/><path d="M12 17h.01"/>'},
   {id:'abg',cls:'c-abg',en:'ABG Interpreter',bn:'ABG ব্যাখ্যা',den:'Full acid–base, anion gap, A–a, delta ratio',dbn:'Acid–base, anion gap, A–a, delta ratio',ic:'<path d="M8 3h8M10 3v5l-5 9a2 2 0 001.8 3h10.4a2 2 0 001.8-3l-5-9V3"/><path d="M7.5 15h9"/>'},
   {id:'ie',cls:'c-ie',en:'I:E & Timing',bn:'I:E ও টাইমিং',den:'Ti, Te, ratio, cycle time',dbn:'Ti, Te, ratio, cycle time',ic:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'},
   {id:'wave',cls:'c-wave',en:'Waveform Codes',bn:'Waveform কোড',den:'Read the screen in a glance',dbn:'এক নজরে স্ক্রিন পড়ুন',ic:'<path d="M2 12h3l2-7 3 14 3-10 2 5h4"/>'},
@@ -579,6 +769,7 @@ const CARDS=[
   {id:'peeptbl',cls:'c-peep',en:'PEEP / FiO₂',bn:'PEEP / FiO₂',den:'ARDSnet lower & higher-PEEP ladder',dbn:'ARDSnet lower ও higher-PEEP ladder',ic:'<path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="currentColor"/><circle cx="15" cy="12" r="2" fill="currentColor"/><circle cx="18" cy="18" r="2" fill="currentColor"/>'},
   {id:'trbl',cls:'c-trbl',en:'Troubleshoot',bn:'সমস্যা সমাধান',den:'DOPES, high pressure algorithm',dbn:'DOPES, high pressure algorithm',ic:'<path d="M12 9v4M12 17h.01M10.3 3.9L2 18a2 2 0 001.7 3h16.6a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/>'},
   {id:'ref',cls:'c-ref',en:'Quick Reference',bn:'দ্রুত রেফারেন্স',den:'Normal values & formulas',dbn:'স্বাভাবিক মান ও সূত্র',ic:'<path d="M4 5a2 2 0 012-2h12v18H6a2 2 0 01-2-2V5z"/><path d="M8 7h8M8 11h8M8 15h5"/>'},
+  {id:'learn',cls:'c-learn',en:'Learn & Notes',bn:'শেখা ও নোট',den:'The theory, bedside-ready',dbn:'Theory, বেডসাইড-রেডি',ic:'<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>'},
 ];
 function renderCards(){
   const g=$('cardGrid');g.innerHTML='';
@@ -627,46 +818,67 @@ function runCalc(){
   if(bmi!=null){
     const cls=bmi<25?'ok':bmi<30?'warn':'bad';
     const cat=bmi<18.5?T('underweight','কম ওজন'):bmi<25?T('normal','স্বাভাবিক'):bmi<30?T('overweight','overweight'):bmi<35?T('obese I','obese I'):bmi<40?T('obese II','obese II'):T('obese III','obese III');
-    h+=calcRow('BMI',T('body mass index','body mass index'),r1(bmi),'kg/m²',cat,cls,cls);
+    h+=calcRow('BMI',T('weight ÷ height² — body build','ওজন ÷ উচ্চতা² — শরীরের গড়ন'),r1(bmi),'kg/m²',cat,cls,cls);
   }
-  if(pbw) h+=calcRow('PBW',T('Predicted body weight','আদর্শ ওজন'),r1(pbw),'kg');
+  if(pbw) h+=calcRow('PBW',T('ideal weight from height — set VT on this','উচ্চতা থেকে আদর্শ ওজন — VT এতেই সেট'),r1(pbw),'kg');
   if(vtkg!=null){
     const cls=vtkg<=6.5?'ok':vtkg<=8?'warn':'bad';
     const pill=vtkg<=6.5?T('lung-protective','ফুসফুস-রক্ষী'):vtkg<=8?T('a bit high','একটু বেশি'):T('too high','অতি বেশি');
-    h+=calcRow('VT / kg',T('per kg PBW','প্রতি kg PBW'),r1(vtkg),'mL/kg',pill,cls,cls);
+    h+=calcRow('VT / kg',T('tidal volume per kg PBW (target 6, ARDS 4–6)','প্রতি kg PBW-তে VT (লক্ষ্য 6, ARDS 4–6)'),r1(vtkg),'mL/kg',pill,cls,cls);
   }
+  // Driving pressure — guard against impossible (≤0) values
   if(dp!=null){
-    const cls=dp<15?'ok':dp<=18?'warn':'bad';
-    h+=calcRow('Driving pressure','ΔP = Pplat − PEEPtot',r1(dp),'cmH₂O',dp<15?'<15 ✓':(dp<=18?T('borderline','সীমান্তে'):T('high','বেশি')),cls,cls);
+    if(dp<=0){
+      h+=calcRow('Driving pressure',T('Pplat − PEEPtot — check inputs, can\'t be ≤0','Pplat − PEEPtot — input দেখুন, ≤0 হতে পারে না'),r1(dp),'cmH₂O',T('check inputs','input দেখুন'),'bad','bad');
+    } else {
+      const cls=dp<15?'ok':dp<=18?'warn':'bad';
+      h+=calcRow('Driving pressure',T('lung stretch per breath = Pplat − PEEPtot (aim <15)','প্রতি breath-এ ফুসফুসের টান = Pplat − PEEPtot (লক্ষ্য <15)'),r1(dp),'cmH₂O',dp<15?'<15 ✓':(dp<=18?T('borderline','সীমান্তে'):T('high','বেশি')),cls,cls);
+    }
   }
+  // Static compliance — only when ΔP is valid (>0)
   if(cstat!=null){
     const cls=cstat>=50?'ok':cstat>=30?'warn':'bad';
-    h+=calcRow(T('Static compliance','Static compliance'),'VT ÷ ΔP',r1(cstat),'mL/cmH₂O',cstat>=50?T('normal','স্বাভাবিক'):cstat>=30?T('reduced','কম'):T('stiff','খুব কম'),cls,cls);
+    h+=calcRow(T('Static compliance','Static compliance'),T('how soft the lung is = VT ÷ ΔP (normal 50–80)','ফুসফুস কতটা নরম = VT ÷ ΔP (স্বাভাবিক 50–80)'),r1(cstat),'mL/cmH₂O',cstat>=50?T('normal','স্বাভাবিক'):cstat>=30?T('reduced','কম'):T('stiff','খুব কম'),cls,cls);
+  }
+  // Dynamic compliance — includes resistance; the gap vs static tells the resistance story
+  if(cdyn!=null){
+    h+=calcRow(T('Dynamic compliance','Dynamic compliance'),T('includes resistance = VT ÷ (Ppeak − PEEPtot)','resistance সহ = VT ÷ (Ppeak − PEEPtot)'),r1(cdyn),'mL/cmH₂O',null,null,'neu');
+  }
+  if(cstat!=null&&cdyn!=null){
+    const cgap=cstat-cdyn;
+    h+=calcRow(T('Cstat − Cdyn','Cstat − Cdyn'),T('big gap = a resistance problem','বড় ফাঁক = resistance-এর সমস্যা'),r1(cgap),'mL/cmH₂O',cgap>15?T('resistance','resistance'):T('small','ছোট'),cgap>15?'warn':'ok',cgap>15?'warn':null);
   }
   if(raw!=null){
     const cls=raw<=10?'ok':raw<=15?'warn':'bad';
-    h+=calcRow('Raw',T('airway resistance','airway resistance'),r1(raw),'cmH₂O/L/s',raw<=10?T('normal','স্বাভাবিক'):raw<=15?T('raised','বাড়তি'):T('high','বেশি'),cls,cls);
+    h+=calcRow('Raw',T('airway resistance = (Ppeak − Pplat) ÷ flow (normal 5–10)','airway resistance = (Ppeak − Pplat) ÷ flow (স্বাভাবিক 5–10)'),r1(raw),'cmH₂O/L/s',raw<=10?T('normal','স্বাভাবিক'):raw<=15?T('raised','বাড়তি'):T('high','বেশি'),cls,cls);
   }
   if(ppeak!=null&&pplat!=null){
     const gap=ppeak-pplat;const cls=gap<=8?'ok':gap<=12?'warn':'bad';
-    h+=calcRow('Ppeak − Pplat',T('resistive gap','resistive ব্যবধান'),r1(gap),'cmH₂O',null,null,cls);
+    h+=calcRow('Ppeak − Pplat',T('the resistive part — wide means the pipe, not the lung','resistive অংশ — চওড়া মানে পাইপ, ফুসফুস নয়'),r1(gap),'cmH₂O',null,null,cls);
   }
   if(pplat!=null){
     const cls=pplat<=30?'ok':'bad';
-    h+=calcRow('Pplat',T('alveolar pressure','alveolar চাপ'),r1(pplat),'cmH₂O',pplat<=30?'≤30 ✓':T('>30 risk','>30 ঝুঁকি'),cls,cls);
+    h+=calcRow('Pplat',T('alveolar pressure at end-inspiration (keep ≤30)','end-inspiration-এ alveolar চাপ (≤30 রাখুন)'),r1(pplat),'cmH₂O',pplat<=30?'≤30 ✓':T('>30 risk','>30 ঝুঁকি'),cls,cls);
   }
-  if(mv!=null) h+=calcRow(T('Minute ventilation','মিনিট ভেন্টিলেশন'),'VT × RR',r1(mv),'L/min');
-  if(vtmax!=null) h+=calcRow(T('VT for ΔP<15','ΔP<15 রাখতে VT'),'C × 15',r0(vtmax),'mL',null,null,'ok');
+  if(mv!=null) h+=calcRow(T('Minute ventilation','মিনিট ভেন্টিলেশন'),T('total gas per minute = VT × RR','প্রতি মিনিটে মোট গ্যাস = VT × RR'),r1(mv),'L/min');
+  if(vtmax!=null&&cstat!=null) h+=calcRow(T('VT for ΔP<15','ΔP<15 রাখতে VT'),T('largest safe tidal volume = C × 15','সর্বোচ্চ নিরাপদ VT = C × 15'),r0(vtmax),'mL',null,null,'ok');
   if(pf!=null){
     const cls=pf>300?'ok':pf>200?'warn':'bad';
     const sev=pf>300?T('normal','স্বাভাবিক'):pf>200?T('mild ARDS','mild ARDS'):pf>100?T('moderate ARDS','moderate ARDS'):T('severe ARDS','severe ARDS');
-    h+=calcRow('P/F ratio',T('oxygenation','oxygenation'),r0(pf),'',sev,cls,cls);
+    h+=calcRow('P/F ratio',T('oxygenation = PaO₂ ÷ FiO₂ (ARDS if ≤300)','oxygenation = PaO₂ ÷ FiO₂ (≤300 হলে ARDS)'),r0(pf),'',sev,cls,cls);
   }
   $('calcRes').innerHTML = h || `<div style="color:var(--ink3);font-size:13px;padding:8px 0">${T('Enter values above to see results.','উপরে মান দিলে ফলাফল আসবে।')}</div>`;
 
   // interpretation
   let c=[];
   if(vt==null&&pplat==null){c.push(callBox('info','i',T('<b>Start with VT, Pplat and PEEP.</b> Those three unlock compliance and driving pressure — the two numbers that matter most.','<b>VT, Pplat আর PEEP দিয়ে শুরু করুন।</b> এই তিনটাই compliance আর driving pressure খুলে দেয় — সবচেয়ে জরুরি দুই সংখ্যা।')));}
+  // sanity guards — impossible physiology usually means a data-entry slip
+  if(dp!=null&&dp<=0){
+    c.push(callBox('bad','!',T('<b>Driving pressure came out ≤ 0 — that\'s not physiological.</b> Pplat must be higher than total PEEP. <span class="act">→ Check that Pplat and PEEP total aren\'t swapped, and that PEEP total isn\'t larger than Pplat.</span>','<b>Driving pressure ≤ 0 এসেছে — এটা physiological নয়।</b> Pplat সবসময় total PEEP-এর চেয়ে বড় হবে। <span class="act">→ Pplat আর PEEP total উল্টে যায়নি তো দেখুন, আর PEEP total যেন Pplat-এর চেয়ে বড় না হয়।</span>')));
+  }
+  if(ppeak!=null&&pplat!=null&&ppeak<pplat){
+    c.push(callBox('bad','!',T('<b>Ppeak is below Pplat — impossible.</b> Peak pressure is always ≥ plateau. <span class="act">→ The two are probably swapped; re-enter them.</span>','<b>Ppeak, Pplat-এর চেয়ে কম — অসম্ভব।</b> Peak চাপ সবসময় plateau-এর ≥। <span class="act">→ সম্ভবত দুটো উল্টে গেছে; আবার দিন।</span>')));
+  }
   // resistance vs compliance logic
   if(ppeak!=null&&pplat!=null){
     const gap=ppeak-pplat;
@@ -731,6 +943,82 @@ $('saveReading').onclick=()=>{
     peep:lastCalc.peep!=null?r1(lastCalc.peep):null, pf:lastCalc.pf!=null?r0(lastCalc.pf):null});
   saveStore(store);
   toast(T('Saved to '+label,label+'-এ সেভ হয়েছে'));
+};
+
+/* ---------- share current patient setting + plan ---------- */
+function buildSummary(){
+  const g=id=>{const v=($(id).value||'').trim();return v===''?null:v;};
+  const sex=$('sexSeg').dataset.v||'M';
+  const label=g('ptLabel')||T('Patient','রোগী');
+  const L=lastCalc;
+  const now=new Date();
+  const p=n=>String(n).padStart(2,'0');
+  const stamp=`${p(now.getDate())}/${p(now.getMonth()+1)}/${now.getFullYear()} ${p(now.getHours())}:${p(now.getMinutes())}`;
+  let lines=[];
+  lines.push('VentAssist — '+label);
+  lines.push(stamp);
+  lines.push('');
+  // settings
+  lines.push(T('SETTINGS','সেটিং')+':');
+  const s=[];
+  if(g('ht')) s.push('Height '+g('ht')+' cm ('+(sex==='F'?'F':'M')+')');
+  if(g('wt')) s.push('Wt '+g('wt')+' kg');
+  if(g('vt')) s.push('VT '+g('vt')+' mL');
+  if(g('rr')) s.push('RR '+g('rr'));
+  if(g('peep')) s.push('PEEP '+g('peep'));
+  if(g('fio2')) s.push('FiO2 '+g('fio2')+'%');
+  if(g('flow')) s.push('Flow '+g('flow')+' L/min');
+  lines.push('  '+(s.length?s.join(' · '):'—'));
+  // measured
+  lines.push('');
+  lines.push(T('MEASURED','পরিমাপ')+':');
+  const m=[];
+  if(g('ppeak')) m.push('Ppeak '+g('ppeak'));
+  if(g('pplat')) m.push('Pplat '+g('pplat'));
+  if(g('peept')) m.push('PEEPtot '+g('peept'));
+  if(g('pao2')) m.push('PaO2 '+g('pao2'));
+  lines.push('  '+(m.length?m.join(' · '):'—'));
+  // computed
+  lines.push('');
+  lines.push(T('COMPUTED','হিসাব')+':');
+  const c=[];
+  if(L.cstat!=null) c.push('Compliance '+r1(L.cstat)+' mL/cmH2O');
+  if(L.dp!=null) c.push('Driving P '+r1(L.dp)+' cmH2O');
+  if(L.raw!=null) c.push('Raw '+r1(L.raw));
+  if(L.vtkg!=null) c.push('VT '+r1(L.vtkg)+' mL/kg');
+  if(L.pf!=null) c.push('P/F '+r0(L.pf));
+  lines.push('  '+(c.length?c.join(' · '):'—'));
+  // plan (pull the interpretation callouts as plain text)
+  const plan=[...document.querySelectorAll('#calcCalls .call')].map(el=>{
+    // strip tags
+    const tmp=el.cloneNode(true);
+    const ci=tmp.querySelector('.ci'); if(ci)ci.remove();
+    return '• '+(tmp.textContent||'').replace(/\s+/g,' ').trim();
+  });
+  if(plan.length){
+    lines.push('');
+    lines.push(T('PLAN / FLAGS','প্ল্যান / সংকেত')+':');
+    plan.forEach(x=>lines.push('  '+x));
+  }
+  lines.push('');
+  lines.push(T('— decision-support only; verify at the bedside.','— শুধু সিদ্ধান্ত-সহায়ক; বেডসাইডে যাচাই করুন।'));
+  return lines.join('\n');
+}
+$('shareReading').onclick=async()=>{
+  if(lastCalc.cstat==null && lastCalc.dp==null){toast(T('Enter Pplat & PEEP first','আগে Pplat ও PEEP দিন'));return;}
+  const text=buildSummary();
+  try{
+    if(navigator.share){ await navigator.share({title:'VentAssist',text:text}); return; }
+  }catch(e){ if(e && e.name==='AbortError') return; }
+  // fallback: clipboard
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){ await navigator.clipboard.writeText(text); toast(T('Copied to clipboard','ক্লিপবোর্ডে কপি হয়েছে')); return; }
+  }catch(e){}
+  // last resort: show in modal to copy manually
+  $('modalBody').innerHTML=`<h3>${T('Patient summary','রোগীর সারসংক্ষেপ')}</h3>
+    <div class="mtag">${T('Copy and paste anywhere','যেকোনো জায়গায় কপি-পেস্ট করুন')}</div>
+    <textarea readonly style="width:100%;min-height:280px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;font-family:monospace;line-height:1.5">${text.replace(/</g,'&lt;')}</textarea>`;
+  openModal();
 };
 
 /* ===================================================================
@@ -1361,6 +1649,497 @@ function renderPeep(){
 document.addEventListener('input',e=>{if(e.target.id==='peepFio2')renderPeep();});
 
 /* ===================================================================
+   LEARN / NOTES  — the core theory, bedside-ready
+   =================================================================== */
+/* labelled waveform figures reused in the Learn modals.
+   fig(svgInner, captionEN, captionBN) wraps one captioned figure;
+   figs(...) lays several side by side. */
+function fig(inner,capEn,capBn){
+  return `<figure class="lfig"><div class="lfigsvg">${inner}</div><figcaption>${T(capEn,capBn)}</figcaption></figure>`;
+}
+function figrow(...items){return `<div class="lfigrow">${items.join('')}</div>`;}
+// --- P–V loops ---
+const PV_NORMAL=`<svg viewBox="0 0 150 100"><line x1="18" y1="84" x2="144" y2="84" stroke="${AX}" stroke-width="1"/><line x1="18" y1="8" x2="18" y2="84" stroke="${AX}" stroke-width="1"/><path d="M32 82 C 48 70 70 46 96 30 C 112 20 124 16 136 14" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/><path d="M136 14 C 118 26 98 42 76 56 C 56 70 40 78 32 82" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linecap="round"/><text x="140" y="94" fill="${GY}" font-size="9" text-anchor="end">Paw→</text></svg>`;
+const PV_FLAT=`<svg viewBox="0 0 150 100"><line x1="18" y1="84" x2="144" y2="84" stroke="${AX}" stroke-width="1"/><line x1="18" y1="8" x2="18" y2="84" stroke="${AX}" stroke-width="1"/><path d="M32 82 C 48 70 70 46 96 30 C 112 20 124 16 136 14" fill="none" stroke="${GY}" stroke-width="1.5" opacity=".45" stroke-dasharray="3 3"/><path d="M32 82 C 56 78 88 68 136 54" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/><path d="M136 54 C 96 66 58 78 32 82" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linecap="round"/></svg>`;
+const PV_FAT=`<svg viewBox="0 0 150 100"><line x1="18" y1="84" x2="144" y2="84" stroke="${AX}" stroke-width="1"/><line x1="18" y1="8" x2="18" y2="84" stroke="${AX}" stroke-width="1"/><path d="M32 82 C 38 56 56 28 136 16" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/><path d="M136 16 C 96 40 62 74 32 82" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linecap="round"/></svg>`;
+const PV_BEAK=`<svg viewBox="0 0 150 100"><line x1="18" y1="84" x2="144" y2="84" stroke="${AX}" stroke-width="1"/><line x1="18" y1="8" x2="18" y2="84" stroke="${AX}" stroke-width="1"/><path d="M32 82 C 46 68 62 42 84 28 C 100 19 120 15 142 14" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/><path d="M142 14 C 118 18 100 26 84 38 C 62 56 44 74 32 82" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linecap="round"/><path d="M96 10 L 126 10" stroke="${RD}" stroke-width="1.6"/><text x="92" y="14" font-size="9" fill="${RD}" text-anchor="end">beak</text></svg>`;
+const PV_LEAK=`<svg viewBox="0 0 150 100"><line x1="18" y1="84" x2="144" y2="84" stroke="${AX}" stroke-width="1"/><line x1="18" y1="8" x2="18" y2="84" stroke="${AX}" stroke-width="1"/><path d="M32 82 C 48 70 70 46 96 30 C 112 20 124 16 136 14" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/><path d="M136 14 C 118 26 98 38 76 46 C 58 52 42 55 33 56" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linecap="round"/><line x1="33" y1="56" x2="33" y2="82" stroke="${RD}" stroke-width="1.4" stroke-dasharray="3 3"/><text x="40" y="70" font-size="9" fill="${RD}">leak</text></svg>`;
+const PV_LIP=`<svg viewBox="0 0 150 100"><line x1="18" y1="84" x2="144" y2="84" stroke="${AX}" stroke-width="1"/><line x1="18" y1="8" x2="18" y2="84" stroke="${AX}" stroke-width="1"/><path d="M28 82 C 40 80 50 76 58 68 C 76 50 100 28 136 16" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/><path d="M136 16 C 104 34 74 58 52 74 C 42 80 33 82 28 82" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linecap="round"/><circle cx="58" cy="68" r="4.5" fill="none" stroke="${RD}" stroke-width="1.6"/><text x="66" y="60" font-size="9" fill="${RD}">LIP</text></svg>`;
+const PV_RECT=`<svg viewBox="0 0 150 100"><line x1="18" y1="84" x2="144" y2="84" stroke="${AX}" stroke-width="1"/><line x1="18" y1="8" x2="18" y2="84" stroke="${AX}" stroke-width="1"/><path d="M34 82 C 36 60 42 40 56 30 C 76 18 108 16 130 16" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/><path d="M130 16 C 128 34 126 48 124 54 C 100 58 60 62 40 66 C 36 72 34 78 34 82" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linecap="round"/></svg>`;
+// --- F–V loops ---
+const FV_NORMAL=`<svg viewBox="0 0 150 100"><line x1="16" y1="50" x2="144" y2="50" stroke="${AX}" stroke-width="1"/><line x1="16" y1="8" x2="16" y2="92" stroke="${AX}" stroke-width="1"/><path d="M22 50 C 25 22 32 14 44 13 C 82 11 116 28 134 48" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/><path d="M134 50 C 139 78 134 88 128 88 C 90 84 46 62 22 50" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linecap="round"/><text x="20" y="20" fill="${GY}" font-size="9">insp</text><text x="20" y="88" fill="${GY}" font-size="9">exp</text></svg>`;
+const FV_SCOOP=`<svg viewBox="0 0 150 100"><line x1="16" y1="50" x2="144" y2="50" stroke="${AX}" stroke-width="1"/><line x1="16" y1="8" x2="16" y2="92" stroke="${AX}" stroke-width="1"/><path d="M22 50 C 25 22 32 14 44 13 C 82 11 116 28 134 48" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/><path d="M134 50 C 139 74 134 82 128 82 C 100 74 60 58 22 50" fill="none" stroke="${GY}" stroke-width="1.5" opacity=".45" stroke-dasharray="3 3"/><path d="M134 50 C 139 74 134 82 128 82 C 108 66 70 54 22 50" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linecap="round"/><text x="70" y="70" fill="${RD}" font-size="9">scoop</text></svg>`;
+const FV_TRAP=`<svg viewBox="0 0 150 100"><line x1="16" y1="50" x2="144" y2="50" stroke="${AX}" stroke-width="1"/><line x1="16" y1="8" x2="16" y2="92" stroke="${AX}" stroke-width="1"/><path d="M22 50 C 25 22 32 14 44 13 C 82 11 116 28 134 48" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/><path d="M134 50 C 139 78 134 88 128 88 C 100 80 72 66 56 60" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linecap="round"/><line x1="56" y1="60" x2="56" y2="50" stroke="${RD}" stroke-width="1.6" stroke-dasharray="3 3"/><text x="60" y="46" font-size="9" fill="${RD}">cut</text></svg>`;
+// --- scalars ---
+const SC_PT=`<svg viewBox="0 0 150 74"><line x1="10" y1="60" x2="146" y2="60" stroke="${AX}" stroke-width="1" stroke-dasharray="3 3"/><path d="M10 60 L24 60 L64 14 L68 26 L96 26" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><path d="M96 26 L100 60 L146 60" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linejoin="round"/><text x="40" y="20" fill="${GY}" font-size="8">Ppeak/Pplat</text></svg>`;
+const SC_FT=`<svg viewBox="0 0 150 74"><line x1="10" y1="38" x2="146" y2="38" stroke="${AX}" stroke-width="1"/><path d="M10 38 L24 38 L24 14 L70 14 L70 38" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><path d="M70 38 L74 64 C 86 56 100 42 118 39 C 128 38 138 38 146 38" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linejoin="round"/></svg>`;
+const SC_VT=`<svg viewBox="0 0 150 74"><line x1="10" y1="60" x2="146" y2="60" stroke="${AX}" stroke-width="1"/><path d="M10 60 L24 60 L72 18" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><path d="M72 18 C 88 34 104 54 120 58 C 130 60 138 60 146 60" fill="none" stroke="${Y}" stroke-width="2.4"/></svg>`;
+const SC_STARVE=`<svg viewBox="0 0 150 74"><line x1="10" y1="60" x2="146" y2="60" stroke="${AX}" stroke-width="1" stroke-dasharray="3 3"/><path d="M24 60 L74 16" stroke="${GY}" stroke-width="1.3" stroke-dasharray="3 3"/><path d="M10 60 L24 60 C 40 52 52 42 60 30 C 66 22 70 18 74 16 L78 28 L104 28" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><path d="M104 28 L108 60 L146 60" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linejoin="round"/><text x="26" y="34" fill="${RD}" font-size="8">caves in</text></svg>`;
+const SC_AUTOPEEP=`<svg viewBox="0 0 150 74"><line x1="10" y1="52" x2="146" y2="52" stroke="${AX}" stroke-width="1"/><path d="M10 52 L24 52 L24 16 L54 16 L54 52" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><path d="M54 52 L58 68 C 68 64 76 58 82 56" fill="none" stroke="${Y}" stroke-width="2.4"/><line x1="82" y1="56" x2="82" y2="52" stroke="${RD}" stroke-width="1.6" stroke-dasharray="3 3"/><path d="M92 52 L92 16 L122 16 L122 52" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><text x="86" y="48" fill="${RD}" font-size="8">no zero</text></svg>`;
+const SC_DOUBLE=`<svg viewBox="0 0 150 74"><line x1="10" y1="60" x2="146" y2="60" stroke="${AX}" stroke-width="1" stroke-dasharray="3 3"/><path d="M10 60 L20 60 L44 16 L48 16" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><path d="M48 16 L52 44" stroke="${Y}" stroke-width="2.4"/><path d="M52 44 L74 14 L78 14" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><path d="M78 14 L82 60 L146 60" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linejoin="round"/><text x="48" y="72" fill="${RD}" font-size="8">stacked</text></svg>`;
+const SC_INEFF=`<svg viewBox="0 0 150 74"><line x1="10" y1="38" x2="146" y2="38" stroke="${AX}" stroke-width="1"/><path d="M10 38 L20 38 L20 14 L48 14 L48 38" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><path d="M48 38 L52 66 C 66 56 78 46 92 42 L104 40 L110 34 L116 40 C 126 38 134 38 140 38" fill="none" stroke="${Y}" stroke-width="2.4"/><circle cx="110" cy="35" r="5" fill="none" stroke="${RD}" stroke-width="1.6"/></svg>`;
+const SC_SAW=`<svg viewBox="0 0 150 74"><line x1="10" y1="38" x2="146" y2="38" stroke="${AX}" stroke-width="1"/><path d="M10 38 L20 38 L20 16 L26 22 L32 14 L38 22 L44 16 L50 22 L56 16 L56 38" fill="none" stroke="${G}" stroke-width="2.2"/><path d="M56 38 L60 62 L66 54 L72 60 L80 50 L88 56 L98 46 L110 44 L122 40 L140 38" fill="none" stroke="${Y}" stroke-width="2.2"/></svg>`;
+
+const LEARN=[
+ {en:'The big picture',bn:'পুরো ছবিটা',
+  img:figrow(fig(PV_NORMAL,'P–V loop','P–V loop'),fig(FV_NORMAL,'F–V loop','F–V loop'),fig(SC_FT,'Scalar (flow–time)','Scalar (flow–time)')),
+  sub:{en:'Loop vs scalar — what each answers',bn:'Loop বনাম scalar — কে কী বলে'},
+  html:{
+   en:`<h4>Two screens, two questions</h4>
+   <ul><li>The <b>P–V loop</b> tells you <b>compliance and distension</b>.</li>
+   <li>The <b>F–V loop</b> tells you <b>resistance, secretions and air trapping</b>.</li>
+   <li>The <b>scalars (P/F/V–time)</b> tell you <b>time and synchrony</b> — when the patient wants a breath, when the machine gives it, and whether exhalation finishes.</li></ul>
+   <p><b>Asynchrony is never seen on a loop</b> — only on the scalars. That is the real value of the waveform screen.</p>
+   <h4>Colour key</h4>
+   <p>Green = inspiration, yellow = expiration. Above the zero line = gas going in, below = gas coming out.</p>
+   <h4>The habit that never fails</h4>
+   <p>Before reading any shape, know three things: <b>the mode, the set VT/pressure, and whether the patient is making an effort.</b> Read those wrong and every interpretation is wrong.</p>`,
+   bn:`<h4>দুই স্ক্রিন, দুই প্রশ্ন</h4>
+   <ul><li><b>P–V loop</b> বলে <b>compliance আর distension</b>।</li>
+   <li><b>F–V loop</b> বলে <b>resistance, secretion আর air trapping</b>।</li>
+   <li><b>Scalar (P/F/V–time)</b> বলে <b>time আর synchrony</b> — রোগী কখন শ্বাস চাইছে, মেশিন কখন দিচ্ছে, শ্বাস ছাড়া শেষ হচ্ছে কি না।</li></ul>
+   <p><b>Asynchrony কখনো loop-এ দেখা যায় না</b> — শুধু scalar-এ। এটাই waveform স্ক্রিনের আসল দাম।</p>
+   <h4>রঙের নিয়ম</h4>
+   <p>সবুজ = inspiration, হলুদ = expiration। Zero line-এর উপরে = ভেতরে ঢুকছে, নিচে = বেরোচ্ছে।</p>
+   <h4>যে অভ্যাস কখনো ভুল হতে দেয় না</h4>
+   <p>যেকোনো shape পড়ার আগে তিনটি জিনিস জানুন: <b>mode, set VT/pressure, আর রোগী effort দিচ্ছে কি না।</b> এই তিনটা ভুল পড়লে পুরো interpretation ভুল হবে।</p>`}},
+
+ {en:'P–V loop: how to read it',bn:'P–V loop: কীভাবে পড়বেন',
+  img:figrow(fig(PV_NORMAL,'Steep = good compliance','খাড়া = ভালো compliance'),fig(PV_FAT,'Fat = high resistance','মোটা = বেশি resistance'),fig(PV_BEAK,'Beak = overdistension','Beak = overdistension')),
+  sub:{en:'Slope, width, and the two ends',bn:'হেলান, চওড়া, দুই মাথা'},
+  html:{
+   en:`<p>The loop turns counter-clockwise on a mandatory breath. Look at just three things:</p>
+   <h4>1 · The slope (tilt) = compliance</h4>
+   <p>Join the start and end points with an imaginary line. <b>Steep (toward vertical) = good compliance. Flat (tipped toward the pressure axis) = stiff lung.</b> Slope = VT ÷ (Pplat − PEEP).</p>
+   <h4>2 · The width = resistance</h4>
+   <p>The gap between the inspiratory and expiratory limbs. A <b>fat, wide loop = high resistance</b> — bronchospasm, secretions, a narrow or kinked ETT, a wet HME.</p>
+   <h4>3 · The two ends</h4>
+   <ul><li><b>Lower inflection point</b> (flat start, then a sudden steepening): alveoli stay shut below that pressure → PEEP is too low.</li>
+   <li><b>Beaking / duck-bill</b> at the top (pressure rises, volume doesn't): <b>overdistension</b> → drop VT or driving pressure.</li></ul>`,
+   bn:`<p>Mandatory breath-এ loop counterclockwise ঘোরে। মাত্র তিনটা জিনিস দেখুন:</p>
+   <h4>১ · হেলান (slope) = compliance</h4>
+   <p>শুরু আর শেষ বিন্দু কল্পনায় রেখা দিয়ে জোড়া লাগান। <b>খাড়া (vertical-এর দিকে) = ভালো compliance। শুয়ে পড়া (pressure অক্ষের দিকে) = stiff lung।</b> Slope = VT ÷ (Pplat − PEEP)।</p>
+   <h4>২ · চওড়া (width) = resistance</h4>
+   <p>Inspiratory আর expiratory limb-এর মাঝের ফাঁক। <b>মোটা-ফোলা loop = বেশি resistance</b> — bronchospasm, secretion, সরু/kinked ETT, ভেজা HME।</p>
+   <h4>৩ · দুই মাথা</h4>
+   <ul><li><b>Lower inflection point</b> (শুরুতে চ্যাপ্টা, তারপর হঠাৎ খাড়া): ওই চাপের নিচে alveoli বন্ধ থাকছে → PEEP কম।</li>
+   <li>উপরে <b>beaking / পাখির ঠোঁট</b> (চাপ বাড়ছে, volume নয়): <b>overdistension</b> → VT বা driving pressure কমান।</li></ul>`}},
+
+ {en:'P–V loop: disease patterns',bn:'P–V loop: কোন রোগে কী',
+  img:figrow(fig(PV_FLAT,'Flat → ARDS/oedema','শোয়া → ARDS/oedema'),fig(PV_LEAK,'Open → leak','খোলা → leak'),fig(PV_LIP,'LIP → PEEP too low','LIP → PEEP কম'),fig(PV_RECT,'Rectangular → PC mode','আয়তাকার → PC mode')),
+  sub:{en:'What each condition looks like',bn:'কোন রোগ কেমন দেখায়'},
+  html:{
+   en:`<ul>
+   <li><b>Normal:</b> narrow, gently S-shaped, ~45° or steeper.</li>
+   <li><b>ARDS / oedema / atelectasis / obesity / raised intra-abdominal pressure / chest-wall restriction:</b> the loop shifts right and <b>lies flat</b> — lots of pressure, little volume. Often a clear LIP. (Remember — a flat loop isn't always a stiff lung; abdomen and chest wall make the same shape. Oesophageal pressure or at least an abdominal exam separates them.)</li>
+   <li><b>Asthma / COPD / secretions / partial ETT obstruction:</b> a <b>fat, wide loop</b>; compliance may be fine.</li>
+   <li><b>Overdistension (VT or PEEP too high):</b> a <b>beak</b> at the top — the key signal in ARDS.</li>
+   <li><b>Leak (cuff, BPF, chest drain):</b> the loop <b>doesn't close</b> — the expiratory limb ends above zero. The gap height is the leak volume.</li>
+   <li><b>Patient effort / trigger:</b> a dip <b>to the left of the PEEP line</b> before the breath. A small notch is normal; a deep well means poor trigger sensitivity or auto-PEEP.</li>
+   <li><b>Mode effect (not a disease, but the commonest error):</b> PC/PSV makes a <b>rectangular</b> loop — don't mistake it for beaking.</li></ul>`,
+   bn:`<ul>
+   <li><b>Normal:</b> সরু, হালকা S-আকৃতি, ~৪৫° বা তার বেশি।</li>
+   <li><b>ARDS / oedema / atelectasis / স্থূলতা / বাড়তি intra-abdominal pressure / chest-wall restriction:</b> loop ডানে সরে গিয়ে <b>শুয়ে পড়ে</b> — অনেক চাপে অল্প volume। প্রায়ই স্পষ্ট LIP। (মনে রাখবেন — শোয়া loop মানেই stiff lung না; পেট আর chest wall একই চেহারা বানায়। Oesophageal pressure বা অন্তত abdominal exam আলাদা করে।)</li>
+   <li><b>Asthma / COPD / secretion / partial ETT obstruction:</b> <b>মোটা-ফোলা loop</b>; compliance ঠিক থাকতে পারে।</li>
+   <li><b>Overdistension (VT বা PEEP বেশি):</b> মাথায় <b>beak</b> — ARDS-এ মূল সংকেত।</li>
+   <li><b>Leak (cuff, BPF, chest drain):</b> loop <b>বন্ধ হয় না</b> — expiratory limb শূন্যের উপরে শেষ। ফাঁকের উচ্চতাই leak volume।</li>
+   <li><b>Patient effort / trigger:</b> breath-এর আগে <b>PEEP line-এর বামে</b> ডুব। ছোট notch normal; বড় গর্ত মানে trigger sensitivity খারাপ বা auto-PEEP।</li>
+   <li><b>Mode-এর প্রভাব (রোগ নয়, তবে সবচেয়ে common ভুল):</b> PC/PSV <b>আয়তাকার</b> loop বানায় — beaking ভাববেন না।</li></ul>`}},
+
+ {en:'F–V loop: how to read it',bn:'Flow–Volume loop: কীভাবে পড়বেন',
+  img:figrow(fig(FV_NORMAL,'Normal','Normal'),fig(FV_SCOOP,'Scooped → obstruction','Scooped → obstruction'),fig(FV_TRAP,'Cut off → air trapping','কাটা → air trapping')),
+  sub:{en:'The expiratory limb is the prize',bn:'Expiratory limb-ই আসল'},
+  html:{
+   en:`<h4>Inspiratory limb (top)</h4>
+   <p>Its shape is mostly the mode — square = VC constant flow, a descending ramp = PC/PSV. A flat, cut-off inspiratory limb = upper-airway / ETT obstruction.</p>
+   <h4>Expiratory limb (bottom) — the money</h4>
+   <ul><li><b>Normal:</b> quick peak, then a smooth exponential back to zero flow at zero volume.</li>
+   <li><b>Scooping</b> (concave tail curving inward): obstructive — bronchospasm, COPD, secretions. Compare the loop before and after a bronchodilator — a higher peak expiratory flow and less scooping means it worked. This is the most useful bedside use.</li>
+   <li><b>Doesn't reach zero before the next breath:</b> <b>air trapping / auto-PEEP</b> → lengthen expiratory time, cut RR, bronchodilate.</li>
+   <li><b>Doesn't return to the start (a volume gap):</b> leak.</li>
+   <li><b>Sawtooth (both limbs):</b> secretions or condensate → suction, then look again.</li>
+   <li><b>Peak expiratory flow suddenly drops:</b> kinked ETT, mucus plug, or the patient deteriorating.</li></ul>`,
+   bn:`<h4>Inspiratory limb (উপরে)</h4>
+   <p>এর আকৃতি মূলত mode বলে — square = VC constant flow, নামতে থাকা ramp = PC/PSV। চ্যাপ্টা ও কাটা inspiratory limb = upper-airway / ETT obstruction।</p>
+   <h4>Expiratory limb (নিচে) — আসল দামি অংশ</h4>
+   <ul><li><b>Normal:</b> দ্রুত peak, তারপর মসৃণ exponential — শূন্য volume-এ শূন্য flow।</li>
+   <li><b>Scooping</b> (ভেতরে বাঁকা concave লেজ): obstructive — bronchospasm, COPD, secretion। Bronchodilator-এর আগে-পরে loop মিলিয়ে দেখুন — বেশি peak expiratory flow ও কম scooping মানে কাজ করেছে। এটাই সবচেয়ে কাজের বেড-সাইড ব্যবহার।</li>
+   <li><b>পরের breath-এর আগে শূন্যে পৌঁছায় না:</b> <b>air trapping / auto-PEEP</b> → expiratory time বাড়ান, RR কমান, bronchodilator।</li>
+   <li><b>শুরুতে ফেরে না (volume gap):</b> leak।</li>
+   <li><b>করাতের দাঁত (দুই limb):</b> secretion বা condensate → suction করে আবার দেখুন।</li>
+   <li><b>Peak expiratory flow হঠাৎ কমা:</b> ETT পেঁচানো, mucus plug, বা রোগীর অবনতি।</li></ul>`}},
+
+ {en:'Compliance & driving pressure',bn:'Compliance ও driving pressure',
+  img:figrow(fig(SC_PT,'Ppeak vs Pplat','Ppeak বনাম Pplat'),fig(PV_NORMAL,'Slope = compliance','Slope = compliance'),fig(PV_FLAT,'Flat = low compliance','শোয়া = কম compliance')),
+  sub:{en:'The two numbers that matter most',bn:'সবচেয়ে জরুরি দুই সংখ্যা'},
+  html:{
+   en:`<p><b>Compliance = how soft the lung is. Driving pressure = how much the lung is stretched with each breath.</b> Know one and the other falls out.</p>
+   <div class="lformula"><em>C_stat</em> = VT ÷ (Pplat − PEEP<sub>total</sub>) <span class="fu">mL/cmH₂O</span></div>
+   <div class="lformula"><em>ΔP</em> = Pplat − PEEP<sub>total</sub> = VT ÷ C_stat <span class="fu">cmH₂O — aim &lt; 15</span></div>
+   <div class="lformula"><em>Raw</em> = (Ppeak − Pplat) ÷ Flow(L/s) <span class="fu">cmH₂O/L/s</span></div>
+   <p>Set flow to 60 L/min = 1 L/s and <b>Raw = Ppeak − Pplat</b> directly — the maths happens in your head.</p>
+   <p><b>Dynamic compliance</b> = VT ÷ (Ppeak − PEEP) is <b>not</b> true compliance — it has resistance baked in. The gap between C_dyn and C_stat is the resistance story.</p>
+   <p>The most useful inversion: <b>VT_max = C × 15</b> — the largest tidal volume that keeps ΔP under 15.</p>`,
+   bn:`<p><b>Compliance = ফুসফুস কতটা নরম। Driving pressure = প্রতিটি breath-এ ফুসফুস কতটা টান খাচ্ছে।</b> একটা জানলে অন্যটা বেরিয়ে আসে।</p>
+   <div class="lformula"><em>C_stat</em> = VT ÷ (Pplat − PEEP<sub>total</sub>) <span class="fu">mL/cmH₂O</span></div>
+   <div class="lformula"><em>ΔP</em> = Pplat − PEEP<sub>total</sub> = VT ÷ C_stat <span class="fu">cmH₂O — লক্ষ্য &lt; 15</span></div>
+   <div class="lformula"><em>Raw</em> = (Ppeak − Pplat) ÷ Flow(L/s) <span class="fu">cmH₂O/L/s</span></div>
+   <p>Flow ৬০ L/min = ১ L/s সেট রাখলে <b>Raw = Ppeak − Pplat</b> সরাসরি — হিসাব মাথাতেই হয়ে যায়।</p>
+   <p><b>Dynamic compliance</b> = VT ÷ (Ppeak − PEEP) আসল compliance <b>নয়</b> — এতে resistance মেশানো। C_dyn আর C_stat-এর ব্যবধানই resistance-এর গল্প।</p>
+   <p>সবচেয়ে কাজের উল্টো হিসাব: <b>VT_max = C × ১৫</b> — ΔP ১৫-এর নিচে রাখে এমন সর্বোচ্চ tidal volume।</p>`}},
+
+ {en:'Measuring correctly (4 steps + traps)',bn:'সঠিক মাপা (৪ ধাপ + ফাঁদ)',
+  img:figrow(fig(SC_PT,'Inspiratory hold → Pplat','Inspiratory hold → Pplat'),fig(SC_STARVE,'Effort ruins Pplat','Effort থাকলে Pplat নষ্ট'),fig(SC_AUTOPEEP,'Exp hold → real PEEP','Exp hold → আসল PEEP')),
+  sub:{en:'Where everyone goes wrong',bn:'যেখানে সবার ভুল হয়'},
+  html:{
+   en:`<h4>The 4 steps</h4>
+   <ul><li><b>1 · Patient must be passive.</b> Any effort makes Pplat lie. VC, constant flow, deep sedation ± NMB.</li>
+   <li><b>2 · Inspiratory hold 0.3–0.5 s</b> → where pressure settles is <b>Pplat</b>.</li>
+   <li><b>3 · Expiratory hold 3–5 s</b> → <b>PEEP_total</b>. Don't assume set PEEP — auto-PEEP hides here. This is the step everyone skips.</li>
+   <li><b>4 · Use exhaled VT</b> (not set VT — there may be a leak).</li></ul>
+   <h4>The 5 traps</h4>
+   <ul><li>Don't measure Pplat with effort present.</li>
+   <li>Use PEEP_total, not set PEEP.</li>
+   <li>Too short a pause overreads Pplat, underreads C.</li>
+   <li>In PC mode, if flow hasn't hit zero, that peak isn't Pplat — confirm with a hold.</li>
+   <li>In obesity / tight abdomen, a high Pplat isn't always a stiff lung — measure bladder pressure, and use oesophageal balloon if you can. These need <b>more</b> PEEP, not less.</li></ul>`,
+   bn:`<h4>৪টি ধাপ</h4>
+   <ul><li><b>১ · রোগী passive হতে হবে।</b> Effort থাকলে Pplat মিথ্যা বলে। VC, constant flow, গভীর sedation ± NMB।</li>
+   <li><b>২ · Inspiratory hold ০.৩–০.৫ সেকেন্ড</b> → চাপ যেখানে থিতু হয় সেটাই <b>Pplat</b>।</li>
+   <li><b>৩ · Expiratory hold ৩–৫ সেকেন্ড</b> → <b>PEEP_total</b>। Set PEEP ধরবেন না — auto-PEEP এখানে লুকায়। এই ধাপটাই সবাই বাদ দেয়।</li>
+   <li><b>৪ · Exhaled VT নিন</b> (set VT নয় — leak থাকতে পারে)।</li></ul>
+   <h4>৫টি ফাঁদ</h4>
+   <ul><li>Effort থাকলে Pplat মাপবেন না।</li>
+   <li>Set PEEP নয়, PEEP_total।</li>
+   <li>ছোট pause Pplat বেশি, C কম দেখায়।</li>
+   <li>PC mode-এ flow শূন্যে না নামলে ওই peak = Pplat নয় — hold দিয়ে নিশ্চিত হোন।</li>
+   <li>স্থূল / টানটান পেটে বেশি Pplat মানেই stiff lung নয় — bladder pressure মাপুন, পারলে oesophageal balloon। এদের PEEP <b>বেশি</b> লাগে, কম নয়।</li></ul>`}},
+
+ {en:'Sudden deterioration — DOPES',bn:'হঠাৎ অবনতি — DOPES',
+  img:figrow(fig(SC_PT,'Both P↑ → lung/PTX','দুটো P↑ → lung/PTX'),fig(SC_SAW,'Sawtooth → secretions','করাতের দাঁত → secretion'),fig(SC_AUTOPEEP,'No zero → stacking','শূন্য নয় → stacking')),
+  sub:{en:'The 30-second emergency drill',bn:'৩০ সেকেন্ডের জরুরি ড্রিল'},
+  html:{
+   en:`<div class="lmnemonic"><b>D</b> Displacement · <b>O</b> Obstruction · <b>P</b> Pneumothorax · <b>E</b> Equipment · <b>S</b> Stacking (auto-PEEP)</div>
+   <ul><li><b>D — Displacement:</b> tube moved or in a mainstem. Check depth, bilateral air entry.</li>
+   <li><b>O — Obstruction:</b> plug, kink, biting. Pass a suction catheter.</li>
+   <li><b>P — Pneumothorax:</b> sudden Ppeak↑, one-sided air entry, hypotension.</li>
+   <li><b>E — Equipment:</b> vent, circuit, O₂ supply, valve.</li>
+   <li><b>S — Stacking:</b> auto-PEEP. Disconnect and let them fully exhale.</li></ul>
+   <p><b>The fastest test:</b> take them off the vent and bag by hand — in two breaths you know whether the problem is the machine or the patient.</p>`,
+   bn:`<div class="lmnemonic"><b>D</b> Displacement · <b>O</b> Obstruction · <b>P</b> Pneumothorax · <b>E</b> Equipment · <b>S</b> Stacking (auto-PEEP)</div>
+   <ul><li><b>D — Displacement:</b> tube সরে গেছে বা mainstem-এ। Depth ও দুই পাশের air entry দেখুন।</li>
+   <li><b>O — Obstruction:</b> plug, kink, কামড়। Suction catheter নামান।</li>
+   <li><b>P — Pneumothorax:</b> হঠাৎ Ppeak↑, একদিকে air entry, hypotension।</li>
+   <li><b>E — Equipment:</b> vent, circuit, O₂ supply, valve।</li>
+   <li><b>S — Stacking:</b> auto-PEEP। Circuit খুলে পুরোপুরি শ্বাস ছাড়তে দিন।</li></ul>
+   <p><b>দ্রুততম পরীক্ষা:</b> ভেন্ট থেকে খুলে হাতে bag করুন — দুই breath-এই বোঝা যায় সমস্যা মেশিনে না রোগীতে।</p>`}},
+
+ {en:'The 10-second bedside routine',bn:'বেডসাইডে ১০ সেকেন্ডের রুটিন',
+  img:figrow(fig(SC_DOUBLE,'Double trigger','Double trigger'),fig(SC_INEFF,'Ineffective effort','Ineffective effort'),fig(SC_VT,'Volume back to zero?','Volume শূন্যে ফেরে?')),
+  sub:{en:'Same order, every time',bn:'প্রতিবার একই ক্রমে'},
+  html:{
+   en:`<p>Run these in the same order and you'll never miss the big things:</p>
+   <div class="lkey"><span class="lk">Loop steep or flat?</span><span>→ compliance</span></div>
+   <div class="lkey"><span class="lk">Fat or narrow?</span><span>→ resistance</span></div>
+   <div class="lkey"><span class="lk">A beak on top?</span><span>→ drop VT / ΔP</span></div>
+   <div class="lkey"><span class="lk">Loop closes?</span><span>→ if not, leak</span></div>
+   <div class="lkey"><span class="lk">Expiratory tail scooped?</span><span>→ bronchodilator</span></div>
+   <div class="lkey"><span class="lk">Expiratory flow reach zero?</span><span>→ if not, auto-PEEP</span></div>
+   <div class="lkey"><span class="lk">Sawtooth?</span><span>→ suction</span></div>
+   <div class="lkey"><span class="lk">Dip to the left at the start?</span><span>→ effort / trigger</span></div>
+   <h4>The shortcut mantra</h4>
+   <p>Flow won't reach zero → a <b>time</b> problem (auto-PEEP). Volume won't reach zero → a <b>leak</b>. Peak−Plateau wide → the <b>pipe</b>. Both high, gap narrow → the <b>lung</b>. Pressure line caves in → the patient is <b>hungry, raise the flow</b>. A notch in expiration → the patient <b>wants a breath and isn't getting it</b>.</p>
+   <p><b>Most important of all:</b> it's not the absolute shape that diagnoses — it's the <b>change</b>. Freeze the screen before every intervention and compare afterwards.</p>`,
+   bn:`<p>এগুলো একই ক্রমে চালান, বড় জিনিস কখনো মিস হবে না:</p>
+   <div class="lkey"><span class="lk">Loop খাড়া না শোয়া?</span><span>→ compliance</span></div>
+   <div class="lkey"><span class="lk">মোটা না সরু?</span><span>→ resistance</span></div>
+   <div class="lkey"><span class="lk">মাথায় beak?</span><span>→ VT / ΔP কমান</span></div>
+   <div class="lkey"><span class="lk">Loop বন্ধ হয়?</span><span>→ না হলে leak</span></div>
+   <div class="lkey"><span class="lk">Expiratory লেজ scooped?</span><span>→ bronchodilator</span></div>
+   <div class="lkey"><span class="lk">Exp flow শূন্যে ফেরে?</span><span>→ না হলে auto-PEEP</span></div>
+   <div class="lkey"><span class="lk">করাতের দাঁত?</span><span>→ suction</span></div>
+   <div class="lkey"><span class="lk">শুরুতে বামে ডুব?</span><span>→ effort / trigger</span></div>
+   <h4>শর্টকাট মন্ত্র</h4>
+   <p>Flow শূন্যে ফেরে না → <b>time</b>-এর সমস্যা (auto-PEEP)। Volume শূন্যে ফেরে না → <b>leak</b>। Peak−Plateau চওড়া → <b>পাইপ</b>। দুটোই উঁচু, ব্যবধান সরু → <b>ফুসফুস</b>। চাপের রেখা দেবে যায় → রোগী <b>ক্ষুধার্ত, flow বাড়ান</b>। Exp-এ খাঁজ → রোগী <b>চাইছে, পাচ্ছে না</b>।</p>
+   <p><b>সবচেয়ে বড় কথা:</b> absolute চেহারা নয়, <b>পরিবর্তনটাই</b> রোগ নির্ণয় করে। প্রতিটি intervention-এর আগে screen freeze করে পরে মিলিয়ে দেখুন।</p>`}},
+];
+function renderLearn(){
+  const g=$('learnTiles');if(!g)return;g.innerHTML='';
+  LEARN.forEach((l,i)=>{
+    const b=el('button','lcard lc'+(i%8));
+    b.innerHTML=`<div class="lnum">${String(i+1).padStart(2,'0')}</div>
+      <h3>${T(l.en,l.bn)}</h3><p>${T(l.sub.en,l.sub.bn)}</p>
+      <div class="larrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>`;
+    b.onclick=()=>{
+      const imgHtml = l.img ? `<div class="lfigwrap">${l.img}</div>` : '';
+      $('modalBody').innerHTML=`<h3>${T(l.en,l.bn)}</h3><div class="mtag">${T(l.sub.en,l.sub.bn)}</div>${imgHtml}<div class="lbody">${T(l.html.en,l.html.bn)}</div>`;
+      openModal();
+    };
+    g.appendChild(b);
+  });
+}
+
+/* ===================================================================
+   INITIAL SETUP WIZARD
+   =================================================================== */
+let wzSexV='M', wzPick=null;
+const WZ=[
+  {id:'ards',en:'ARDS',bn:'ARDS',den:'stiff, hypoxic',dbn:'stiff, hypoxic',
+   vt:6,vtNote:{en:'4–6 if severe',bn:'severe হলে 4–6'},rr:'18–22',peep:'10–12',fio2:'start 100%, wean',ie:'1:2',
+   notes:{en:['Target Pplat ≤ 30, driving pressure < 15','Titrate PEEP to best compliance; prone if P/F < 150','Permissive hypercapnia is fine, keep pH > 7.2'],bn:['লক্ষ্য Pplat ≤ 30, driving pressure < 15','সেরা compliance-এ PEEP titrate; P/F < 150 হলে prone','Permissive hypercapnia চলে, pH > 7.2 রাখুন']}},
+  {id:'copd',en:'COPD / Asthma',bn:'COPD / Asthma',den:'obstructive',dbn:'obstructive',
+   vt:7,rr:'10–12',peep:'5 (or ⅔ auto-PEEP)',fio2:'lowest for SpO₂≥92%',ie:'1:3 to 1:5',
+   notes:{en:['The enemy is time — give a long expiration','Low RR, high inspiratory flow to lengthen Te','Watch expiratory flow return to zero; treat bronchospasm'],bn:['শত্রু time — লম্বা expiration দিন','কম RR, বেশি inspiratory flow যাতে Te বাড়ে','Expiratory flow শূন্যে ফেরে কিনা দেখুন; bronchospasm treat করুন']}},
+  {id:'normal',en:'Normal lungs',bn:'স্বাভাবিক ফুসফুস',den:'e.g. post-op, GCS',dbn:'যেমন post-op, GCS',
+   vt:8,rr:'12–14',peep:'5',fio2:'40%',ie:'1:2',
+   notes:{en:['Standard lung-protective settings','Wean sedation and screen for weaning early'],bn:['Standard lung-protective setting','Sedation কমান, early weaning screen করুন']}},
+  {id:'neuro',en:'Brain injury / ICP',bn:'Brain injury / ICP',den:'protect the brain',dbn:'মস্তিষ্ক রক্ষা',
+   vt:7,rr:'14–16 (to PaCO₂ 35–40)',peep:'5–8',fio2:'keep PaO₂ > 100',ie:'1:2',
+   notes:{en:['Tight normocapnia: PaCO₂ 35–40','Avoid hypoxia and hypotension absolutely','Head up 30°; brief hyperventilation only for herniation'],bn:['কড়া normocapnia: PaCO₂ 35–40','Hypoxia ও hypotension একেবারেই এড়ান','Head up 30°; শুধু herniation-এ সংক্ষিপ্ত hyperventilation']}},
+  {id:'metabolic',en:'Metabolic acidosis',bn:'Metabolic acidosis',den:'match their MV',dbn:'MV মেলান',
+   vt:6,rr:'high — match pre-intubation MV',peep:'5',fio2:'as needed',ie:'1:2',
+   notes:{en:['Do NOT let CO₂ rise — they were compensating','Match or exceed their pre-tube minute ventilation','Sedation/paralysis can crash the pH — be ready'],bn:['CO₂ বাড়তে দেবেন না — তারা compensate করছিল','Intubation-পূর্ব minute ventilation মেলান বা বেশি দিন','Sedation/paralysis pH ধসাতে পারে — প্রস্তুত থাকুন']}},
+  {id:'obese',en:'Obese',bn:'স্থূল',den:'chest-wall load',dbn:'chest-wall load',
+   vt:6,vtNote:{en:'on height, not weight',bn:'উচ্চতায়, ওজনে নয়'},rr:'14–18',peep:'10–15',fio2:'start high',ie:'1:2',
+   notes:{en:['Set VT on PBW (height), never actual weight','Higher PEEP to hold the lung open; recruit after suctioning','Nurse head-up / reverse-Trendelenburg'],bn:['VT PBW (উচ্চতা) দেখে, প্রকৃত ওজনে নয়','ফুসফুস খোলা রাখতে বেশি PEEP; suction-এর পর recruit','Head-up / reverse-Trendelenburg রাখুন']}},
+];
+$('wzSex').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  $('wzSex').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');wzSexV=b.dataset.v;runWizard();
+});
+function renderWzPick(){
+  const g=$('wzPickGrid');if(!g)return;g.innerHTML='';
+  WZ.forEach(w=>{
+    const b=el('button','wzopt'+(wzPick===w.id?' on':''));
+    b.innerHTML=`<div class="wzt">${T(w.en,w.bn)}</div><div class="wzd">${T(w.den,w.dbn)}</div>`;
+    b.onclick=()=>{wzPick=w.id;renderWzPick();runWizard();};
+    g.appendChild(b);
+  });
+}
+function runWizard(){
+  const ht=num($('wzHt').value);
+  if(!wzPick){$('wzResult').innerHTML=`<div style="color:var(--ink3);font-size:13px;padding:6px 0">${T('Pick a clinical picture above.','উপরে একটা অবস্থা বাছুন।')}</div>`;$('wzCalls').innerHTML='';return;}
+  const w=WZ.find(x=>x.id===wzPick);
+  let pbw=null,vtLo=null,vtHi=null,vtTarget=null;
+  if(ht!=null){pbw=(wzSexV==='F'?45.5:50)+0.91*(ht-152.4);if(pbw<0)pbw=null;}
+  if(pbw){vtTarget=Math.round(pbw*w.vt/10)*10; vtLo=Math.round(pbw*4/10)*10; vtHi=Math.round(pbw*8/10)*10;}
+  let h='';
+  h+=`<div class="wzset"><span class="wl">${T('Tidal volume','Tidal volume')}</span><span class="wv">${vtTarget?vtTarget+' mL':w.vt+' mL/kg'}<small>${w.vt} mL/kg PBW${w.vtNote?' · '+T(w.vtNote.en,w.vtNote.bn):''}</small></span></div>`;
+  if(pbw) h+=`<div class="wzset"><span class="wl">PBW</span><span class="wv">${r1(pbw)} kg<small>${T('range','range')} ${vtLo}–${Math.round(pbw*8/10)*10} mL (4–8/kg)</small></span></div>`;
+  h+=`<div class="wzset"><span class="wl">${T('Resp. rate','Resp. rate')}</span><span class="wv">${w.rr}<small>/min</small></span></div>`;
+  h+=`<div class="wzset"><span class="wl">PEEP</span><span class="wv">${w.peep}<small>cmH₂O</small></span></div>`;
+  h+=`<div class="wzset"><span class="wl">FiO₂</span><span class="wv" style="font-size:15px">${w.fio2}</span></div>`;
+  h+=`<div class="wzset"><span class="wl">I:E</span><span class="wv">${w.ie}</span></div>`;
+  $('wzResult').innerHTML=h;
+  let c=[callBox('info','✓',T(`<b>${w.en} — starting point.</b> Mode: volume control or pressure control, constant monitoring. Get an ABG in 30 minutes and adjust.`,`<b>${w.bn} — শুরুর বিন্দু।</b> Mode: volume control বা pressure control, নিয়মিত monitoring। ৩০ মিনিটে ABG নিয়ে সমন্বয় করুন।`))];
+  T(w.notes.en,w.notes.bn).forEach(n=>c.push(callBox('warn','•',n)));
+  if(!ht) c.unshift(callBox('warn','!',T('Enter height to get an exact tidal volume in mL.','সঠিক mL-এ VT পেতে উচ্চতা দিন।')));
+  $('wzCalls').innerHTML=c.join('');
+}
+['wzHt'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id)runWizard();}));
+
+/* ===================================================================
+   WAVEFORM QUIZ
+   =================================================================== */
+// reuse the figure SVG constants defined above (PV_*, FV_*, SC_*)
+const QUIZ=[
+  {svg:SC_PT,q:{en:'Ppeak is high, Pplat is normal (wide gap). What kind of problem?',bn:'Ppeak বেশি, Pplat স্বাভাবিক (চওড়া gap)। কোন ধরনের সমস্যা?'},
+   opts:{en:['A resistance (pipe) problem','A compliance (lung) problem','A leak','Auto-PEEP'],bn:['Resistance (পাইপ) সমস্যা','Compliance (ফুসফুস) সমস্যা','Leak','Auto-PEEP']},a:0,
+   ex:{en:'A wide Ppeak–Pplat gap is resistive: secretions, plug, bronchospasm, kinked ETT. Pplat (the alveolar pressure) is normal, so the lung is fine.',bn:'চওড়া Ppeak–Pplat gap resistive: secretion, plug, bronchospasm, kinked ETT। Pplat (alveolar চাপ) স্বাভাবিক, তাই ফুসফুস ঠিক।'}},
+  {svg:FV_SCOOP,q:{en:'The expiratory limb of the flow–volume loop is scooped inward. Most likely?',bn:'Flow–volume loop-এর expiratory limb ভেতরে scooped। সম্ভাব্য কারণ?'},
+   opts:{en:['Obstruction (COPD/asthma)','ARDS','Overdistension','Normal'],bn:['Obstruction (COPD/asthma)','ARDS','Overdistension','স্বাভাবিক']},a:0,
+   ex:{en:'A concave (scooped) expiratory limb is the classic obstruction signature. Compare before/after a bronchodilator to judge response.',bn:'Concave (scooped) expiratory limb obstruction-এর ক্লাসিক স্বাক্ষর। Bronchodilator-এর আগে-পরে মিলিয়ে response দেখুন।'}},
+  {svg:SC_AUTOPEEP,q:{en:'Expiratory flow doesn\'t reach zero before the next breath. This means?',bn:'পরের breath-এর আগে expiratory flow শূন্যে পৌঁছায় না। এর মানে?'},
+   opts:{en:['Air trapping / auto-PEEP','A leak','Flow starvation','Double triggering'],bn:['Air trapping / auto-PEEP','Leak','Flow starvation','Double triggering']},a:0,
+   ex:{en:'Gas is trapped because expiration is cut short. Lengthen Te (cut RR, shorten Ti), aim I:E 1:3–1:5, bronchodilate. Watch blood pressure.',bn:'Expiration ছোট হওয়ায় গ্যাস আটকে যাচ্ছে। Te বাড়ান (RR কমান, Ti ছোট), I:E 1:3–1:5, bronchodilator। BP দেখুন।'}},
+  {svg:SC_STARVE,q:{en:'In volume control the pressure line caves inward on inspiration. What is it?',bn:'Volume control-এ inspiration-এ চাপের রেখা ভেতরে দেবে যায়। এটা কী?'},
+   opts:{en:['Flow starvation (air hunger)','Overdistension','Secretions','Normal PC breath'],bn:['Flow starvation (air hunger)','Overdistension','Secretion','স্বাভাবিক PC breath']},a:0,
+   ex:{en:'The patient is pulling harder than the set flow delivers. Increase inspiratory flow or VT, or switch to PC/PSV — do NOT just deepen sedation.',bn:'রোগী সেট flow-এর চেয়ে জোরে টানছে। Inspiratory flow বা VT বাড়ান, বা PC/PSV-তে যান — শুধু sedation বাড়াবেন না।'}},
+  {svg:PV_BEAK,q:{en:'The top of the P–V loop flattens to the right (a "beak"). What does it show?',bn:'P–V loop-এর মাথা ডানে চ্যাপ্টা ("beak")। এটা কী দেখায়?'},
+   opts:{en:['Overdistension','Recruitable collapse','Low PEEP','Leak'],bn:['Overdistension','Recruitable collapse','কম PEEP','Leak']},a:0,
+   ex:{en:'Pressure keeps rising but volume barely moves — the alveoli are maxed out. Reduce VT or driving pressure; reassess PEEP.',bn:'চাপ বাড়ছে কিন্তু volume নড়ছে না — alveoli টানটান। VT বা driving pressure কমান; PEEP পুনর্বিবেচনা।'}},
+  {svg:SC_DOUBLE,q:{en:'Two breaths stacked with almost no expiration between them. This is?',bn:'দুই breath পরপর, মাঝে expiration প্রায় নেই। এটা?'},
+   opts:{en:['Double triggering','Auto-triggering','Ineffective effort','Sawtooth'],bn:['Double triggering','Auto-triggering','Ineffective effort','করাতের দাঁত']},a:0,
+   ex:{en:'The patient\'s neural inspiration is longer than the vent\'s, so a second breath stacks on the first — the delivered volume doubles. Lengthen Ti or increase VT.',bn:'রোগীর neural inspiration মেশিনের চেয়ে লম্বা, তাই দ্বিতীয় breath প্রথমটার উপর জমে — volume দ্বিগুণ। Ti লম্বা করুন বা VT বাড়ান।'}},
+  {svg:PV_FLAT,q:{en:'The whole P–V loop is flat, tipped toward the pressure axis. This means?',bn:'পুরো P–V loop শোয়া, pressure অক্ষের দিকে হেলানো। মানে?'},
+   opts:{en:['Low compliance (stiff lung or chest wall)','High resistance','A leak','Overdistension'],bn:['কম compliance (stiff lung বা chest wall)','বেশি resistance','Leak','Overdistension']},a:0,
+   ex:{en:'A flat slope = low compliance: lots of pressure, little volume. ARDS, oedema, atelectasis — or a chest-wall/abdominal cause that mimics stiff lung.',bn:'চ্যাপ্টা slope = কম compliance: অনেক চাপে অল্প volume। ARDS, oedema, atelectasis — বা chest-wall/পেটের কারণ যা stiff lung নকল করে।'}},
+  {svg:SC_SAW,q:{en:'Both limbs of the flow trace show small teeth. Most likely?',bn:'Flow রেখার দুই limb-এ ছোট দাঁত। সম্ভাব্য কারণ?'},
+   opts:{en:['Secretions / water in circuit','Bronchospasm','Overdistension','Leak'],bn:['Secretion / circuit-এ পানি','Bronchospasm','Overdistension','Leak']},a:0,
+   ex:{en:'Sawtoothing usually means secretions rattling or condensate in the tubing. Suction and empty the water traps, then look again.',bn:'করাতের দাঁত সাধারণত secretion বা tubing-এ জমা পানি। Suction করুন, water trap খালি করুন, আবার দেখুন।'}},
+  {svg:PV_LEAK,q:{en:'The P–V loop never closes — expiration ends above the start. This is?',bn:'P–V loop বন্ধ হয় না — expiration শুরুর উপরে শেষ। এটা?'},
+   opts:{en:['A leak','Auto-PEEP','Overdistension','Flow starvation'],bn:['Leak','Auto-PEEP','Overdistension','Flow starvation']},a:0,
+   ex:{en:'Exhaled volume is less than delivered — gas is escaping. Check cuff pressure, connections, and (in a chest-drain patient) a bronchopleural fistula.',bn:'Exhaled volume delivered-এর চেয়ে কম — গ্যাস বেরোচ্ছে। Cuff pressure, জোড়া, আর (chest-drain রোগীতে) bronchopleural fistula দেখুন।'}},
+  {svg:SC_INEFF,q:{en:'A small notch on the expiratory flow, but no breath is delivered. This is?',bn:'Expiratory flow-এ ছোট খাঁজ, কিন্তু breath আসে না। এটা?'},
+   opts:{en:['Ineffective effort','Double triggering','A leak','Normal'],bn:['Ineffective effort','Double triggering','Leak','স্বাভাবিক']},a:0,
+   ex:{en:'The patient tried to trigger but couldn\'t — usually auto-PEEP raising the threshold or low trigger sensitivity. Reduce auto-PEEP, raise sensitivity.',bn:'রোগী trigger করতে চেয়েছিল কিন্তু পারেনি — সাধারণত auto-PEEP threshold বাড়াচ্ছে বা কম sensitivity। Auto-PEEP কমান, sensitivity বাড়ান।'}},
+];
+let quizI=0, quizScore=0, quizAnswered=false, quizOrder=[];
+function startQuiz(){
+  quizI=0;quizScore=0;quizAnswered=false;
+  quizOrder=QUIZ.map((_,i)=>i).sort(()=>Math.random()-0.5);
+  renderQuiz();
+}
+function renderQuiz(){
+  const box=$('quizBox');if(!box)return;
+  if(quizI>=quizOrder.length){
+    const pct=Math.round(quizScore/quizOrder.length*100);
+    box.innerHTML=`<div class="quizcard quizdone"><div class="big">${quizScore}/${quizOrder.length}</div>
+      <div class="msg">${pct>=80?T('Excellent — you read these fast.','চমৎকার — দ্রুত পড়তে পারছেন।'):pct>=50?T('Good. Review the ones you missed.','ভালো। যেগুলো ভুল হলো আবার দেখুন।'):T('Keep practising — check the Learn cards.','অনুশীলন চালিয়ে যান — Learn কার্ড দেখুন।')}</div>
+      <button class="quiznext" id="quizRestart">${T('Restart','আবার শুরু')}</button></div>`;
+    $('quizRestart').onclick=startQuiz;
+    return;
+  }
+  const q=QUIZ[quizOrder[quizI]];
+  quizAnswered=false;
+  const opts=T(q.opts.en,q.opts.bn).map((o,i)=>`<button class="qopt" data-i="${i}"><span class="qmark"></span><span>${o}</span></button>`).join('');
+  box.innerHTML=`<div class="quizcard">
+    <div class="quizprog"><span>${T('Question','প্রশ্ন')} ${quizI+1} / ${quizOrder.length}</span><span class="quizscore">${T('Score','স্কোর')}: ${quizScore}</span></div>
+    <div class="quizfig">${q.svg}</div>
+    <div class="quizq">${T(q.q.en,q.q.bn)}</div>
+    <div class="quizopts" id="quizOpts">${opts}</div>
+    <div id="quizFoot"></div>
+  </div>`;
+  $('quizOpts').querySelectorAll('.qopt').forEach(btn=>{
+    btn.onclick=()=>{
+      if(quizAnswered)return;quizAnswered=true;
+      const chosen=+btn.dataset.i, correct=q.a;
+      $('quizOpts').querySelectorAll('.qopt').forEach((b,i)=>{
+        b.classList.add('disabled');
+        if(i===correct){b.classList.add('correct');b.querySelector('.qmark').textContent='✓';}
+        else if(i===chosen){b.classList.add('wrong');b.querySelector('.qmark').textContent='✕';}
+      });
+      if(chosen===correct)quizScore++;
+      $('quizFoot').innerHTML=`<div class="quizexpl"><b>${chosen===correct?T('Correct. ','ঠিক। '):T('Not quite. ','ঠিক হয়নি। ')}</b>${T(q.ex.en,q.ex.bn)}</div>
+        <button class="quiznext" id="quizNext">${quizI+1>=quizOrder.length?T('See score','স্কোর দেখুন'):T('Next','পরের')}</button>`;
+      $('quizNext').onclick=()=>{quizI++;renderQuiz();};
+    };
+  });
+}
+
+/* ===================================================================
+   DRUG INFUSION CALCULATOR
+   =================================================================== */
+// unit: 'mcgkgmin' | 'mcgkghr' | 'mgkghr' | 'mcgmin' | 'mghr' | 'unitmin' | 'unithr'
+// amtUnit: how the vial content is entered (mg or mcg or unit)
+const DRUGS={
+  sed:{en:'Sedatives & analgesics',bn:'Sedative ও analgesic',list:[
+    {n:'Propofol',unit:'mcgkgmin',amtUnit:'mg',lo:5,hi:50,rangeEn:'5–50 mcg/kg/min (or 0.3–3 mg/kg/hr)',rangeBn:'5–50 mcg/kg/min (বা 0.3–3 mg/kg/hr)',defAmt:1000,defVol:100},
+    {n:'Midazolam',unit:'mgkghr',amtUnit:'mg',lo:0.02,hi:0.2,rangeEn:'0.02–0.2 mg/kg/hr',rangeBn:'0.02–0.2 mg/kg/hr',defAmt:50,defVol:50},
+    {n:'Fentanyl',unit:'mcgkghr',amtUnit:'mcg',lo:0.5,hi:5,rangeEn:'0.5–5 mcg/kg/hr',rangeBn:'0.5–5 mcg/kg/hr',defAmt:500,defVol:50},
+    {n:'Remifentanil',unit:'mcgkgmin',amtUnit:'mg',lo:0.025,hi:0.2,rangeEn:'0.025–0.2 mcg/kg/min',rangeBn:'0.025–0.2 mcg/kg/min',defAmt:2,defVol:50},
+    {n:'Morphine',unit:'mghr',amtUnit:'mg',lo:1,hi:10,rangeEn:'1–10 mg/hr (not weight-based)',rangeBn:'1–10 mg/hr (weight-ভিত্তিক নয়)',defAmt:50,defVol:50},
+    {n:'Dexmedetomidine',unit:'mcgkghr',amtUnit:'mcg',lo:0.2,hi:1.4,rangeEn:'0.2–1.4 mcg/kg/hr',rangeBn:'0.2–1.4 mcg/kg/hr',defAmt:200,defVol:50},
+    {n:'Ketamine',unit:'mgkghr',amtUnit:'mg',lo:0.1,hi:2,rangeEn:'0.1–2 mg/kg/hr',rangeBn:'0.1–2 mg/kg/hr',defAmt:500,defVol:50},
+  ]},
+  nmb:{en:'Muscle relaxants',bn:'Muscle relaxant',list:[
+    {n:'Vecuronium',unit:'mcgkgmin',amtUnit:'mg',lo:0.8,hi:1.7,rangeEn:'0.8–1.7 mcg/kg/min',rangeBn:'0.8–1.7 mcg/kg/min',defAmt:20,defVol:50},
+    {n:'Rocuronium',unit:'mcgkgmin',amtUnit:'mg',lo:8,hi:12,rangeEn:'8–12 mcg/kg/min',rangeBn:'8–12 mcg/kg/min',defAmt:250,defVol:50},
+    {n:'Cisatracurium',unit:'mcgkgmin',amtUnit:'mg',lo:1,hi:3,rangeEn:'1–3 mcg/kg/min',rangeBn:'1–3 mcg/kg/min',defAmt:150,defVol:50},
+  ]},
+  ino:{en:'Inotropes & vasoactives',bn:'Inotrope ও vasoactive',list:[
+    {n:'Adrenaline',unit:'mcgkgmin',amtUnit:'mg',lo:0.01,hi:0.5,rangeEn:'0.01–0.5 mcg/kg/min',rangeBn:'0.01–0.5 mcg/kg/min',defAmt:4,defVol:50},
+    {n:'Noradrenaline',unit:'mcgkgmin',amtUnit:'mg',lo:0.01,hi:1,rangeEn:'0.01–1 mcg/kg/min',rangeBn:'0.01–1 mcg/kg/min',defAmt:4,defVol:50},
+    {n:'Dopamine',unit:'mcgkgmin',amtUnit:'mg',lo:2,hi:20,rangeEn:'2–20 mcg/kg/min',rangeBn:'2–20 mcg/kg/min',defAmt:200,defVol:50},
+    {n:'Dobutamine',unit:'mcgkgmin',amtUnit:'mg',lo:2,hi:20,rangeEn:'2–20 mcg/kg/min',rangeBn:'2–20 mcg/kg/min',defAmt:250,defVol:50},
+    {n:'Vasopressin',unit:'unitmin',amtUnit:'unit',lo:0.01,hi:0.04,rangeEn:'0.01–0.04 units/min (not weight-based)',rangeBn:'0.01–0.04 units/min (weight-ভিত্তিক নয়)',defAmt:20,defVol:50},
+    {n:'GTN (nitroglycerin)',unit:'mcgmin',amtUnit:'mg',lo:5,hi:200,rangeEn:'5–200 mcg/min (not weight-based)',rangeBn:'5–200 mcg/min (weight-ভিত্তিক নয়)',defAmt:50,defVol:50},
+    {n:'Labetalol',unit:'mghr',amtUnit:'mg',lo:10,hi:160,rangeEn:'10–160 mg/hr (or 0.5–2 mg/min)',rangeBn:'10–160 mg/hr (বা 0.5–2 mg/min)',defAmt:100,defVol:50},
+  ]},
+};
+const DUNITS={
+  mcgkgmin:{label:'mcg/kg/min',wt:true,perMin:true, toMcg:d=>d},          // dose in mcg/kg/min
+  mcgkghr:{label:'mcg/kg/hr',wt:true,perMin:false, toMcg:d=>d},
+  mgkghr:{label:'mg/kg/hr',wt:true,perMin:false, toMcg:d=>d*1000},
+  mcgmin:{label:'mcg/min',wt:false,perMin:true, toMcg:d=>d},
+  mghr:{label:'mg/hr',wt:false,perMin:false, toMcg:d=>d*1000},
+  unitmin:{label:'units/min',wt:false,perMin:true, unit:true},
+  unithr:{label:'units/hr',wt:false,perMin:false, unit:true},
+};
+let curDrug=null;
+function renderDrugGroups(){
+  const g=$('drugGroups');if(!g)return;g.innerHTML='';
+  Object.keys(DRUGS).forEach(k=>{
+    const grp=DRUGS[k];
+    const wrap=el('div','druggroup');
+    wrap.innerHTML=`<h4>${T(grp.en,grp.bn)}</h4>`;
+    const chips=el('div','drugchips');
+    grp.list.forEach(d=>{
+      const b=el('button','drugchip'+(curDrug&&curDrug.n===d.n?' on':''));
+      b.textContent=d.n;
+      b.onclick=()=>selectDrug(d);
+      chips.appendChild(b);
+    });
+    wrap.appendChild(chips);g.appendChild(wrap);
+  });
+}
+function selectDrug(d){
+  curDrug=d;
+  renderDrugGroups();
+  $('drugCalcPanel').classList.remove('hide');
+  $('drugName').textContent=d.n;
+  const u=DUNITS[d.unit];
+  $('drugClass').textContent=u.label;
+  $('drugRange').innerHTML=`<b>${T('Typical range','সাধারণ range')}:</b> ${T(d.rangeEn,d.rangeBn)}`;
+  $('drugAmtUnit').textContent=d.amtUnit;
+  $('drugDoseUnit').textContent=u.label;
+  // prefill dilution defaults & mid dose, keep weight if already typed
+  $('drugAmt').value=d.defAmt;
+  $('drugVol').value=d.defVol;
+  $('drugDose').value = (d.lo+d.hi)/2 < 1 ? +( (d.lo+d.hi)/2 ).toFixed(3) : +(((d.lo+d.hi)/2).toFixed(2));
+  runDrug();
+}
+function runDrug(){
+  if(!curDrug)return;
+  const d=curDrug, u=DUNITS[d.unit];
+  const amt=num($('drugAmt').value);   // in amtUnit (mg/mcg/unit)
+  const vol=num($('drugVol').value);   // mL
+  const dose=num($('drugDose').value); // in u.label
+  const wt=num($('drugWt').value);
+  if(amt==null||vol==null||vol<=0||dose==null){
+    $('drugResult').innerHTML=`<div style="color:var(--ink3);font-size:13px">${T('Fill drug amount, volume and dose.','ড্রাগ পরিমাণ, আয়তন ও dose দিন।')}</div>`;$('drugCalls').innerHTML='';return;
+  }
+  if(u.wt && wt==null){
+    $('drugResult').innerHTML=`<div style="color:var(--ink3);font-size:13px">${T('This drug is weight-based — enter weight.','এই ড্রাগ weight-ভিত্তিক — ওজন দিন।')}</div>`;$('drugCalls').innerHTML='';return;
+  }
+  // concentration
+  let concPerMl; // in amtUnit per mL
+  concPerMl = amt/vol;
+  // convert everything to "amtUnit per hour" demand, then / conc = mL/hr
+  let ratePerHr; // amount of drug (in amtUnit) needed per hour
+  if(u.unit){
+    // vasopressin units, GTN handled below separately; unit drugs:
+    let perMin = u.perMin ? dose : dose/60; // units/min
+    let perHrUnits = perMin*60;
+    ratePerHr = perHrUnits; // amtUnit is 'unit'
+  } else {
+    // dose expressed in mcg or mg depending; convert dose to mcg of drug per minute (or hr)
+    let doseMcg = u.toMcg(dose); // mcg per (kg?) per (min?/hr?)
+    let mcgPerMin;
+    if(u.wt) mcgPerMin = u.perMin ? doseMcg*wt : doseMcg*wt/60;
+    else mcgPerMin = u.perMin ? doseMcg : doseMcg/60;
+    let mcgPerHr = mcgPerMin*60;
+    // convert to amtUnit/hr: amtUnit is mg or mcg
+    ratePerHr = d.amtUnit==='mg' ? mcgPerHr/1000 : mcgPerHr; // if vial entered in mg, need mg/hr
+  }
+  const mlhr = ratePerHr / concPerMl;
+  // display concentration nicely
+  const concLabel = `${r2(concPerMl)} ${d.amtUnit}/mL`;
+  $('drugResult').innerHTML=`<div class="drugbig"><div class="dv">${mlhr>=10?r1(mlhr):r2(mlhr)}</div><div class="du">mL/hr</div></div>
+    <div class="drugconc">${T('Concentration','ঘনত্ব')}: <b>${concLabel}</b>${u.wt&&wt?` · ${T('for','—')} ${wt} kg`:''}</div>`;
+  // range check
+  let c=[];
+  if(dose<d.lo) c.push(callBox('warn','↓',T(`Dose ${dose} ${u.label} is <b>below</b> the typical range (${d.lo}–${d.hi}). Intentional? Check effect.`,`Dose ${dose} ${u.label} সাধারণ range-এর (${d.lo}–${d.hi}) <b>নিচে</b>। ইচ্ছাকৃত? প্রভাব দেখুন।`)));
+  else if(dose>d.hi) c.push(callBox('bad','↑',T(`Dose ${dose} ${u.label} is <b>above</b> the typical range (${d.lo}–${d.hi}). Double-check before running.`,`Dose ${dose} ${u.label} সাধারণ range-এর (${d.lo}–${d.hi}) <b>উপরে</b>। চালানোর আগে যাচাই করুন।`)));
+  else c.push(callBox('ok','✓',T(`Dose is within the typical range (${d.lo}–${d.hi} ${u.label}).`,`Dose সাধারণ range-এর (${d.lo}–${d.hi} ${u.label}) মধ্যে।`)));
+  // show reverse: what dose does a given rate give? quick helper line
+  c.push(callBox('info','i',T('Change any field — the mL/hr updates live. Always have a second person verify the pump setting.','যেকোনো ঘর বদলান — mL/hr live বদলাবে। Pump setting সবসময় দ্বিতীয় একজনকে দিয়ে যাচাই করান।')));
+  $('drugCalls').innerHTML=c.join('');
+}
+function r2(n){return Math.round(n*100)/100;}
+['drugWt','drugAmt','drugVol','drugDose'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id)runDrug();}));
+
+/* ===================================================================
    REFERENCE
    =================================================================== */
 const REF=[
@@ -1412,7 +2191,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
 /* ---------- render everything (on lang change) ---------- */
 function renderAll(){
-  renderCards();renderWaves();renderDz();renderWean();renderRass();renderTrbl();renderRef();
+  renderCards();renderWaves();renderDz();renderWean();renderRass();renderTrbl();renderRef();renderLearn();
+  renderWzPick();runWizard();renderDrugGroups();runDrug();
   runCalc();runIE();runRSBI();runABG();renderPeep();renderTrend();
 }
 
