@@ -212,6 +212,7 @@ body.inview .backbtn{display:grid}
 .quizscore{color:var(--brand);font-weight:700}
 .quizfig{background:#0A1524;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px}
 .quizfig svg{width:100%;height:auto;display:block;max-height:180px}
+.quizstem{background:rgba(245,167,66,.09);border:1px solid rgba(245,167,66,.3);border-radius:12px;padding:13px 15px;margin-bottom:14px;font-size:14.5px;line-height:1.5;font-weight:600}
 .quizq{font-size:15.5px;font-weight:700;margin-bottom:12px;line-height:1.35}
 .quizopts{display:grid;gap:9px}
 .qopt{background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:12px 14px;text-align:left;font-size:14px;font-weight:600;transition:all .12s;display:flex;align-items:center;gap:10px}
@@ -573,10 +574,14 @@ body:not(.bn) .lcard h3{font-family:"Inter",sans-serif}
     <div class="disclaimer" data-bn>Standard guideline থেকে নিরাপদ শুরুর বিন্দু — ৩০ মিনিটের মধ্যে ABG ও mechanics দেখে রোগী বুঝে titrate করুন।</div>
   </section>
 
-  <!-- ===================== WAVEFORM QUIZ ===================== -->
+  <!-- ===================== QUIZ ===================== -->
   <section id="quiz" class="view">
-    <h2 data-en>Waveform Quiz</h2><h2 data-bn>Waveform কুইজ</h2>
-    <div class="vsub" data-en>See the trace, name the problem. Great for teaching on the round.</div><div class="vsub" data-bn>ছবি দেখে সমস্যা চিনুন। রাউন্ডে পড়ানোর জন্য চমৎকার।</div>
+    <h2 data-en>Ventilator Quiz</h2><h2 data-bn>ভেন্টিলেটর কুইজ</h2>
+    <div class="vsub" data-en>Test yourself and teach on the round. Two modes.</div><div class="vsub" data-bn>নিজেকে যাচাই করুন, রাউন্ডে পড়ান। দুই মোড।</div>
+    <div class="seg" id="quizMode" style="margin-bottom:16px">
+      <button data-v="wave" class="on" data-en>Waveforms</button><button data-v="wave" class="on hide" data-bn>Waveform</button>
+      <button data-v="clin" data-en>Clinical scenarios</button><button data-v="clin" class="hide" data-bn>Clinical scenario</button>
+    </div>
     <div id="quizBox"></div>
   </section>
 
@@ -759,7 +764,7 @@ const CARDS=[
   {id:'calc',cls:'c-calc',en:'Calculator',bn:'ক্যালকুলেটর',den:'Compliance, ΔP, resistance, MV, P/F',dbn:'Compliance, ΔP, resistance, MV, P/F',ic:'<path d="M9 3h6a2 2 0 012 2v14a2 2 0 01-2 2H9a2 2 0 01-2-2V5a2 2 0 012-2z"/><path d="M9 7h6M9 11h2M13 11h2M9 15h2M13 15h2"/>'},
   {id:'wizard',cls:'c-wiz',en:'Setup Wizard',bn:'সেটআপ উইজার্ড',den:'Starting settings for a fresh intubation',dbn:'নতুন intubation-এর শুরুর সেটিং',ic:'<path d="M12 2l2.4 5 5.6.8-4 4 1 5.6L12 20l-5 2.4 1-5.6-4-4 5.6-.8z" stroke-width="1.6"/>'},
   {id:'drugs',cls:'c-drug',en:'Infusions',bn:'ইনফিউশন',den:'Sedatives, relaxants, inotropes → mL/hr',dbn:'Sedative, relaxant, inotrope → mL/hr',ic:'<path d="M9 3h6M10 3v4M14 3v4M7 21h10a1 1 0 001-1v-9a4 4 0 00-1.2-2.8L14 7h-4L7.2 8.2A4 4 0 006 11v9a1 1 0 001 1z"/><path d="M6 13h12"/>'},
-  {id:'quiz',cls:'c-quiz',en:'Waveform Quiz',bn:'Waveform কুইজ',den:'See the trace, name the problem',dbn:'ছবি দেখে সমস্যা চিনুন',ic:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 .5c0 2-2.5 2-2.5 4"/><path d="M12 17h.01"/>'},
+  {id:'quiz',cls:'c-quiz',en:'Quiz',bn:'কুইজ',den:'Waveforms + clinical scenarios',dbn:'Waveform + clinical scenario',ic:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 .5c0 2-2.5 2-2.5 4"/><path d="M12 17h.01"/>'},
   {id:'abg',cls:'c-abg',en:'ABG Interpreter',bn:'ABG ব্যাখ্যা',den:'Full acid–base, anion gap, A–a, delta ratio',dbn:'Acid–base, anion gap, A–a, delta ratio',ic:'<path d="M8 3h8M10 3v5l-5 9a2 2 0 001.8 3h10.4a2 2 0 001.8-3l-5-9V3"/><path d="M7.5 15h9"/>'},
   {id:'ie',cls:'c-ie',en:'I:E & Timing',bn:'I:E ও টাইমিং',den:'Ti, Te, ratio, cycle time',dbn:'Ti, Te, ratio, cycle time',ic:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'},
   {id:'wave',cls:'c-wave',en:'Waveform Codes',bn:'Waveform কোড',den:'Read the screen in a glance',dbn:'এক নজরে স্ক্রিন পড়ুন',ic:'<path d="M2 12h3l2-7 3 14 3-10 2 5h4"/>'},
@@ -1704,6 +1709,75 @@ const LEARN=[
    <h4>যে অভ্যাস কখনো ভুল হতে দেয় না</h4>
    <p>যেকোনো shape পড়ার আগে তিনটি জিনিস জানুন: <b>mode, set VT/pressure, আর রোগী effort দিচ্ছে কি না।</b> এই তিনটা ভুল পড়লে পুরো interpretation ভুল হবে।</p>`}},
 
+ {en:'The seven numbers (the foundation)',bn:'সাতটি সংখ্যা (সব হিসাবের ভিত্তি)',
+  img:figrow(fig(SC_PT,'Ppeak vs Pplat','Ppeak বনাম Pplat'),fig(SC_AUTOPEEP,'Auto-PEEP: flow cut off','Auto-PEEP: flow কাটা'),fig(PV_NORMAL,'Slope = compliance','Slope = compliance')),
+  sub:{en:'Pplat, PEEP, resistance, compliance, ΔP — without these, nothing else makes sense',bn:'Pplat, PEEP, resistance, compliance, ΔP — এগুলো ছাড়া বাকি কিছুই বোঝা যায় না'},
+  html:{
+   en:`<p>Every other reading is built from these. Learn them once and the whole ventilator opens up.</p>
+
+   <h4>1 · Pplat — plateau pressure</h4>
+   <p>Do an <b>inspiratory hold 0.3–0.5 s</b>; when flow stops, the pressure settles — that settled value is Pplat, the <b>true pressure inside the alveoli</b>.</p>
+   <p><b>Why:</b> Ppeak has the pipe (resistance) mixed in; Pplat does not. So Pplat, not Ppeak, is the real cause of barotrauma. <b>Keep ≤ 30.</b></p>
+
+   <h4>2 · Total PEEP</h4>
+   <div class="lformula"><em>Total PEEP</em> = Set PEEP + Auto-PEEP <span class="fu">measured by an expiratory hold 3–5 s</span></div>
+   <p><b>Why:</b> every calculation below uses <b>Total PEEP, not the set value</b> — hidden auto-PEEP would otherwise make them all wrong.</p>
+
+   <h4>3 · Airway resistance (Raw)</h4>
+   <div class="lformula"><em>Raw</em> = (Ppeak − Pplat) ÷ Flow(L/s) <span class="fu">flow 60 L/min = 1 L/s → Raw = Ppeak − Pplat</span></div>
+   <p>Example: Ppeak 30, Pplat 22, flow 1 L/s → Raw = <b>8</b>. <b>Why:</b> high Raw = a pipe problem — secretions, plug, bronchospasm, kinked/bitten ETT. Normal <b>5–10</b>.</p>
+
+   <h4>4 · Auto-PEEP (air trapping)</h4>
+   <div class="lformula"><em>Auto-PEEP</em> = Total PEEP − Set PEEP</div>
+   <p>On the flow trace the expiratory tail is <b>cut off before it reaches zero</b>. <b>Why:</b> it drops the blood pressure, blocks triggering, and risks barotrauma. Fix = more expiratory time (lower RR, I:E 1:3–1:5).</p>
+
+   <h4>5 · Static compliance (the real one)</h4>
+   <div class="lformula"><em>Cstat</em> = VT ÷ (Pplat − Total PEEP) <span class="fu">no resistance in it — pure lung softness</span></div>
+   <p>Example: 420 ÷ (22 − 8) = <b>30 mL/cmH₂O</b>. Normal <b>50–80</b>; low in ARDS.</p>
+
+   <h4>6 · Dynamic compliance</h4>
+   <div class="lformula"><em>Cdyn</em> = VT ÷ (Ppeak − Total PEEP) <span class="fu">has resistance baked in — not true compliance</span></div>
+   <p>Example: 420 ÷ (30 − 8) = <b>19</b>. <b>A big Cstat − Cdyn gap = a resistance problem</b>, because only Cdyn is dragged down by resistance.</p>
+
+   <h4>7 · Driving pressure (ΔP)</h4>
+   <div class="lformula"><em>ΔP</em> = Pplat − Total PEEP = VT ÷ Cstat <span class="fu">aim &lt; 15</span></div>
+   <p>Example: 22 − 8 = <b>14</b>. <b>Why:</b> the strongest mortality signal in ARDS — if VT 6 mL/kg still gives ΔP 20, that VT is too big for this patient. Reverse it: <b>VT_max = Cstat × 15</b>.</p>
+
+   <div class="lmnemonic"><b>The chain:</b> Ppeak = pipe + lung → Pplat = lung only (hold) → <b>Ppeak−Pplat = Raw</b> (÷flow) → <b>Pplat−TotalPEEP = ΔP</b> → <b>VT÷ΔP = Cstat</b> → <b>TotalPEEP−SetPEEP = Auto-PEEP</b>.</div>
+   <p><b>Two rules before you measure anything:</b> the patient must be <b>passive</b> (effort makes Pplat lie), and take <b>Total PEEP with an expiratory hold</b>, never the set value. Get these two wrong and every number is wrong.</p>`,
+   bn:`<p>বাকি সব রিডিং এগুলো থেকেই তৈরি। একবার শিখে ফেললে পুরো ভেন্টিলেটর খুলে যায়।</p>
+
+   <h4>১ · Pplat — plateau pressure</h4>
+   <p><b>Inspiratory hold ০.৩–০.৫ সেকেন্ড</b> দিন; flow থেমে গেলে চাপ যেখানে থিতু হয় সেটাই Pplat — <b>alveoli-র ভেতরের আসল চাপ</b>।</p>
+   <p><b>কেন:</b> Ppeak-এ পাইপের বাধা (resistance) মেশানো, Pplat-এ নেই। তাই barotrauma-র আসল দোষী Pplat, Ppeak নয়। <b>≤ ৩০ রাখুন।</b></p>
+
+   <h4>২ · Total PEEP</h4>
+   <div class="lformula"><em>Total PEEP</em> = Set PEEP + Auto-PEEP <span class="fu">expiratory hold ৩–৫ সেকেন্ড দিয়ে মাপা</span></div>
+   <p><b>কেন:</b> নিচের সব হিসাব <b>Total PEEP দিয়ে, set value নয়</b> — নইলে লুকানো auto-PEEP সব ভুল করে দেয়।</p>
+
+   <h4>৩ · Airway resistance (Raw)</h4>
+   <div class="lformula"><em>Raw</em> = (Ppeak − Pplat) ÷ Flow(L/s) <span class="fu">flow ৬০ L/min = ১ L/s → Raw = Ppeak − Pplat</span></div>
+   <p>উদাহরণ: Ppeak ৩০, Pplat ২২, flow ১ L/s → Raw = <b>৮</b>। <b>কেন:</b> বেশি Raw = পাইপের সমস্যা — secretion, plug, bronchospasm, kinked/কামড়ানো ETT। স্বাভাবিক <b>৫–১০</b>।</p>
+
+   <h4>৪ · Auto-PEEP (air trapping)</h4>
+   <div class="lformula"><em>Auto-PEEP</em> = Total PEEP − Set PEEP</div>
+   <p>Flow রেখায় expiratory লেজ <b>শূন্যে পৌঁছানোর আগেই কাটা পড়ে</b>। <b>কেন:</b> BP পড়ায়, trigger আটকায়, barotrauma-র ঝুঁকি বাড়ায়। সমাধান = বেশি expiratory time (RR কমান, I:E ১:৩–১:৫)।</p>
+
+   <h4>৫ · Static compliance (আসলটা)</h4>
+   <div class="lformula"><em>Cstat</em> = VT ÷ (Pplat − Total PEEP) <span class="fu">resistance নেই — শুধু ফুসফুসের নরমত্ব</span></div>
+   <p>উদাহরণ: ৪২০ ÷ (২২ − ৮) = <b>৩০ mL/cmH₂O</b>। স্বাভাবিক <b>৫০–৮০</b>; ARDS-এ কম।</p>
+
+   <h4>৬ · Dynamic compliance</h4>
+   <div class="lformula"><em>Cdyn</em> = VT ÷ (Ppeak − Total PEEP) <span class="fu">resistance মেশানো — খাঁটি compliance নয়</span></div>
+   <p>উদাহরণ: ৪২০ ÷ (৩০ − ৮) = <b>১৯</b>। <b>Cstat − Cdyn বড় ফাঁক = resistance-এর সমস্যা</b>, কারণ শুধু Cdyn-কেই resistance নিচে টানে।</p>
+
+   <h4>৭ · Driving pressure (ΔP)</h4>
+   <div class="lformula"><em>ΔP</em> = Pplat − Total PEEP = VT ÷ Cstat <span class="fu">লক্ষ্য &lt; ১৫</span></div>
+   <p>উদাহরণ: ২২ − ৮ = <b>১৪</b>। <b>কেন:</b> ARDS-এ mortality-র সবচেয়ে শক্তিশালী সংকেত — VT ৬ mL/kg দিয়েও ΔP ২০ হলে ওই VT এই রোগীর জন্য বেশি। উল্টো হিসাব: <b>VT_max = Cstat × ১৫</b>।</p>
+
+   <div class="lmnemonic"><b>শিকল:</b> Ppeak = পাইপ + ফুসফুস → Pplat = শুধু ফুসফুস (hold) → <b>Ppeak−Pplat = Raw</b> (÷flow) → <b>Pplat−TotalPEEP = ΔP</b> → <b>VT÷ΔP = Cstat</b> → <b>TotalPEEP−SetPEEP = Auto-PEEP</b>।</div>
+   <p><b>মাপার আগে দুই নিয়ম:</b> রোগী <b>passive</b> হতে হবে (effort থাকলে Pplat মিথ্যা বলে), আর <b>Total PEEP নিতে হবে expiratory hold দিয়ে</b>, set value নয়। এই দুটো ভুল হলে প্রতিটা সংখ্যা ভুল।</p>`}},
+
  {en:'P–V loop: how to read it',bn:'P–V loop: কীভাবে পড়বেন',
   img:figrow(fig(PV_NORMAL,'Steep = good compliance','খাড়া = ভালো compliance'),fig(PV_FAT,'Fat = high resistance','মোটা = বেশি resistance'),fig(PV_BEAK,'Beak = overdistension','Beak = overdistension')),
   sub:{en:'Slope, width, and the two ends',bn:'হেলান, চওড়া, দুই মাথা'},
@@ -1974,14 +2048,80 @@ const QUIZ=[
    opts:{en:['Ineffective effort','Double triggering','A leak','Normal'],bn:['Ineffective effort','Double triggering','Leak','স্বাভাবিক']},a:0,
    ex:{en:'The patient tried to trigger but couldn\'t — usually auto-PEEP raising the threshold or low trigger sensitivity. Reduce auto-PEEP, raise sensitivity.',bn:'রোগী trigger করতে চেয়েছিল কিন্তু পারেনি — সাধারণত auto-PEEP threshold বাড়াচ্ছে বা কম sensitivity। Auto-PEEP কমান, sensitivity বাড়ান।'}},
 ];
+// Clinical scenarios — number-and-reasoning cases (text-based, no figure)
+const CLINQUIZ=[
+  {stem:{en:'High-pressure alarm. Peak = 40. What is the single first step?',bn:'High-pressure alarm। Peak = 40। প্রথম একটাই কাজ কী?'},
+   q:{en:'Your immediate move?',bn:'সঙ্গে সঙ্গে কী করবেন?'},
+   opts:{en:['Inspiratory hold to read Pplat','Drop VT straight away','Increase sedation','Increase PEEP'],bn:['Inspiratory hold দিয়ে Pplat দেখুন','সঙ্গে সঙ্গে VT কমান','Sedation বাড়ান','PEEP বাড়ান']},a:0,
+   ex:{en:'Peak alone can\'t tell pipe from lung. Do an inspiratory hold: if Pplat is also high it\'s the lung (drop VT); if Pplat is normal the gap is resistive (suction, bronchodilator).',bn:'শুধু Peak দেখে পাইপ না ফুসফুস বোঝা যায় না। Inspiratory hold দিন: Pplat-ও বেশি হলে ফুসফুস (VT কমান); Pplat স্বাভাবিক হলে gap resistive (suction, bronchodilator)।'}},
+
+  {stem:{en:'Pplat 28, PEEP 10, VT 450. Why care about driving pressure over Pplat?',bn:'Pplat 28, PEEP 10, VT 450। Pplat-এর চেয়ে driving pressure কেন বেশি জরুরি?'},
+   q:{en:'ΔP here and why it matters?',bn:'এখানে ΔP কত ও কেন গুরুত্বপূর্ণ?'},
+   opts:{en:['ΔP = 18; best survival predictor in ARDS','ΔP = 28; same as Pplat','ΔP = 10; ignore it','ΔP = 38; add Pplat and PEEP'],bn:['ΔP = 18; ARDS-এ সেরা survival predictor','ΔP = 28; Pplat-এর সমান','ΔP = 10; পাত্তা দেবেন না','ΔP = 38; Pplat ও PEEP যোগ']},a:0,
+   ex:{en:'ΔP = Pplat − PEEP = 28 − 10 = 18 (target < 15). It is the distending force on functional lung and the single best survival predictor. Reduce VT or optimise PEEP to lower it.',bn:'ΔP = Pplat − PEEP = 28 − 10 = 18 (লক্ষ্য < 15)। এটা কার্যকর ফুসফুসের উপর টান আর সেরা survival predictor। VT কমান বা PEEP optimise করে নামান।'}},
+
+  {stem:{en:'Double-triggering on the flow waveform, patient "fighting". Fix right now?',bn:'Flow-এ double-triggering, রোগী "fighting"। এখনই কী করবেন?'},
+   q:{en:'First move?',bn:'প্রথম কাজ?'},
+   opts:{en:['Increase flow / Ti to match effort','Give propofol first','Increase PEEP','Decrease VT'],bn:['Effort মেলাতে flow / Ti বাড়ান','আগে propofol দিন','PEEP বাড়ান','VT কমান']},a:0,
+   ex:{en:'Double-triggering means the patient\'s neural Ti is longer than the vent\'s. Increase peak flow (60→80–90) or the set Ti before sedating. Address flow starvation before reaching for propofol.',bn:'Double-triggering মানে রোগীর neural Ti মেশিনের চেয়ে লম্বা। Sedate করার আগে peak flow (60→80–90) বা set Ti বাড়ান। Propofol-এর আগে flow starvation ঠিক করুন।'}},
+
+  {stem:{en:'BP dropping, chest not fully deflating, vent still cycling. Emergency step?',bn:'BP পড়ছে, বুক পুরো খালি হচ্ছে না, ভেন্ট চলছে। জরুরি পদক্ষেপ?'},
+   q:{en:'What do you do first?',bn:'প্রথমে কী করবেন?'},
+   opts:{en:['Disconnect the circuit for 5 s to let lungs empty','Push fluids and wait','Increase RR','Increase VT'],bn:['Circuit ৫ সেকেন্ড খুলে ফুসফুস খালি হতে দিন','Fluid দিয়ে অপেক্ষা করুন','RR বাড়ান','VT বাড়ান']},a:0,
+   ex:{en:'This is auto-PEEP (dynamic hyperinflation) — high intrathoracic pressure cuts venous return and drops BP. Emergency: disconnect 5 s, then lower RR / lengthen expiration (I:E 1:3–1:4), treat bronchospasm.',bn:'এটা auto-PEEP (dynamic hyperinflation) — বাড়তি intrathoracic চাপ venous return কমিয়ে BP ফেলে। জরুরি: ৫ সেকেন্ড circuit খুলুন, তারপর RR কমান / expiration লম্বা করুন (I:E 1:3–1:4), bronchospasm treat করুন।'}},
+
+  {stem:{en:'VT 450, Pplat 32, Total PEEP 12. Compute static compliance.',bn:'VT 450, Pplat 32, Total PEEP 12। Static compliance বের করুন।'},
+   q:{en:'Cstat = ?',bn:'Cstat = ?'},
+   opts:{en:['22.5 mL/cmH₂O — stiff lung','45 mL/cmH₂O — normal','60 mL/cmH₂O — healthy','15 mL/cmH₂O'],bn:['22.5 mL/cmH₂O — stiff lung','45 mL/cmH₂O — স্বাভাবিক','60 mL/cmH₂O — সুস্থ','15 mL/cmH₂O']},a:0,
+   ex:{en:'Cstat = VT ÷ (Pplat − Total PEEP) = 450 ÷ (32 − 12) = 22.5 mL/cmH₂O. Low is common in ARDS — the real alarm is a Cstat falling 5–10 points over hours (lung dying, or a pneumothorax) before the X-ray shows it.',bn:'Cstat = VT ÷ (Pplat − Total PEEP) = 450 ÷ (32 − 12) = 22.5 mL/cmH₂O। ARDS-এ কম হওয়া স্বাভাবিক — আসল বিপদ সংকেত হলো কয়েক ঘণ্টায় Cstat ৫–১০ পয়েন্ট পড়ে যাওয়া (ফুসফুস খারাপ হচ্ছে বা pneumothorax), X-ray দেখানোর আগেই।'}},
+
+  {stem:{en:'Peak 38, Pplat 28, Total PEEP 10, flow 60 L/min (1 L/s). Raw and priority?',bn:'Peak 38, Pplat 28, Total PEEP 10, flow 60 L/min (1 L/s)। Raw ও priority?'},
+   q:{en:'Raw and what to do?',bn:'Raw কত ও কী করবেন?'},
+   opts:{en:['Raw 10, elevated — suction / bronchodilator','Raw 10 — increase PEEP','Raw 28 — drop VT','Raw 3.8 — normal, do nothing'],bn:['Raw 10, বাড়তি — suction / bronchodilator','Raw 10 — PEEP বাড়ান','Raw 28 — VT কমান','Raw 3.8 — স্বাভাবিক, কিছু নয়']},a:0,
+   ex:{en:'Raw = (Peak − Pplat) ÷ flow = (38 − 28) ÷ 1 = 10. The wide Peak–Pplat gap is an airway problem, not the lung. Suction, listen, bronchodilate if wheezing — don\'t paralyse the patient, fix the tube.',bn:'Raw = (Peak − Pplat) ÷ flow = (38 − 28) ÷ 1 = 10। চওড়া Peak–Pplat gap airway-র সমস্যা, ফুসফুসের নয়। Suction করুন, শুনুন, wheeze থাকলে bronchodilator — রোগীকে paralyse নয়, tube ঠিক করুন।'}},
+
+  {stem:{en:'Pplat 28, set PEEP 8, but expiratory hold shows Total PEEP 14. True ΔP and fix?',bn:'Pplat 28, set PEEP 8, কিন্তু expiratory hold-এ Total PEEP 14। আসল ΔP ও করণীয়?'},
+   q:{en:'True ΔP and the mandatory move?',bn:'আসল ΔP ও অবশ্য-করণীয়?'},
+   opts:{en:['ΔP 14 (safe); lower RR for auto-PEEP, keep VT','ΔP 20; drop VT now','ΔP 14; do nothing at all','ΔP 6; increase VT'],bn:['ΔP 14 (নিরাপদ); auto-PEEP-এ RR কমান, VT রাখুন','ΔP 20; এখনই VT কমান','ΔP 14; কিছুই করবেন না','ΔP 6; VT বাড়ান']},a:0,
+   ex:{en:'True ΔP = Pplat − Total PEEP = 28 − 14 = 14 (safe). Auto-PEEP = 14 − 8 = 6, so the patient is trapping gas. Because ΔP is safe, DO NOT cut VT — lower the RR to lengthen expiration. Total PEEP is the truth; using set PEEP would falsely read ΔP 20.',bn:'আসল ΔP = Pplat − Total PEEP = 28 − 14 = 14 (নিরাপদ)। Auto-PEEP = 14 − 8 = 6, রোগী gas আটকাচ্ছে। ΔP নিরাপদ বলে VT কমাবেন না — RR কমিয়ে expiration লম্বা করুন। Total PEEP-ই সত্য; set PEEP দিয়ে হিসাব করলে ভুলভাবে ΔP 20 দেখাত।'}},
+
+  {stem:{en:'Cdyn dropped 45→25, but Cstat unchanged. What is happening?',bn:'Cdyn 45→25 পড়েছে, কিন্তু Cstat একই। কী হচ্ছে?'},
+   q:{en:'The isolated physiology?',bn:'মূল physiology?'},
+   opts:{en:['A resistive problem — secretions / blocked ETT','The lung got stiffer','A leak developed','Overdistension'],bn:['Resistive সমস্যা — secretion / ETT ব্লক','ফুসফুস আরও শক্ত হয়েছে','Leak হয়েছে','Overdistension']},a:0,
+   ex:{en:'Cdyn uses Peak, Cstat uses Pplat. Cdyn falling while Cstat is flat means Peak rose but Pplat didn\'t — a pure resistance rise. Classic secretions or a partly blocked/bitten ETT. Pass a suction catheter; if it meets resistance at the tip, think mucous plug → bronchoscopy.',bn:'Cdyn-এ Peak, Cstat-এ Pplat। Cstat একই থেকে Cdyn পড়া মানে Peak বেড়েছে, Pplat নয় — বিশুদ্ধ resistance বৃদ্ধি। ক্লাসিক secretion বা আংশিক ব্লক/কামড়ানো ETT। Suction catheter নামান; tip-এ বাধা পেলে mucous plug → bronchoscopy।'}},
+
+  {stem:{en:'ARDS: VT 400, Peak 40, Pplat 35, Total PEEP 15, flow 1 L/s. ΔP and the one adjustment?',bn:'ARDS: VT 400, Peak 40, Pplat 35, Total PEEP 15, flow 1 L/s। ΔP ও একটি পরিবর্তন?'},
+   q:{en:'ΔP and what to change?',bn:'ΔP কত ও কী বদলাবেন?'},
+   opts:{en:['ΔP 20; drop VT to ~6 mL/kg, raise RR for CO₂','ΔP 20; raise PEEP more','ΔP 5; increase VT','ΔP 25; add PEEP and VT'],bn:['ΔP 20; VT ~6 mL/kg-এ নামান, CO₂-র জন্য RR বাড়ান','ΔP 20; PEEP আরও বাড়ান','ΔP 5; VT বাড়ান','ΔP 25; PEEP ও VT যোগ']},a:0,
+   ex:{en:'Raw = 5 (airway fine), ΔP = 35 − 15 = 20 (dangerous), Cstat = 400/20 = 20. VT is too big for this baby lung. Drop VT to ~6 mL/kg, accept permissive hypercapnia and raise RR to 30–35. Don\'t add PEEP — the high ΔP suggests overdistension, not recruitable lung.',bn:'Raw = 5 (airway ঠিক), ΔP = 35 − 15 = 20 (বিপজ্জনক), Cstat = 400/20 = 20। এই baby lung-এর জন্য VT বড়। VT ~6 mL/kg-এ নামান, permissive hypercapnia মেনে RR 30–35 করুন। PEEP বাড়াবেন না — উঁচু ΔP overdistension বোঝায়, recruitable ফুসফুস নয়।'}},
+
+  {stem:{en:'Back from CT: Peak 45, Pplat 30, Total PEEP 5, flow 45 L/min (0.75 L/s). Raw jumped — why?',bn:'CT থেকে ফিরে: Peak 45, Pplat 30, Total PEEP 5, flow 45 L/min (0.75 L/s)। Raw লাফ দিল — কেন?'},
+   q:{en:'Raw and the overlooked exam?',bn:'Raw কত ও যে পরীক্ষাটা বাদ পড়ে?'},
+   opts:{en:['Raw 20; ETT in right mainstem — auscultate both apices','Raw 20; give bronchodilator','Raw 15; increase PEEP','Raw 10; normal, ignore'],bn:['Raw 20; ETT right mainstem-এ — দুই apex শুনুন','Raw 20; bronchodilator দিন','Raw 15; PEEP বাড়ান','Raw 10; স্বাভাবিক, বাদ দিন']},a:0,
+   ex:{en:'Raw = (45 − 30) ÷ 0.75 = 20 — double normal. Moving a patient advances the tube 2–3 cm into the right mainstem, so you\'re ventilating one lung. Auscultate the apices: breath sounds only on the right. Pull the ETT back 2–3 cm and Raw normalises.',bn:'Raw = (45 − 30) ÷ 0.75 = 20 — স্বাভাবিকের দ্বিগুণ। রোগী নড়ালে tube 2–3 cm এগিয়ে right mainstem-এ যায়, তাই এক ফুসফুস ventilate হচ্ছে। Apex শুনুন: শুধু ডানে breath sound। ETT 2–3 cm টেনে নিন, Raw স্বাভাবিক হবে।'}},
+
+  {stem:{en:'7 AM, awake and triggering. During the SBT the HR spikes and BP drops. What failed?',bn:'সকাল ৭টা, সজাগ ও triggering। SBT-র সময় HR লাফ দিল, BP পড়ল। কী ব্যর্থ হলো?'},
+   q:{en:'What kind of wean failure?',bn:'কোন ধরনের wean failure?'},
+   opts:{en:['Cardiogenic — diurese first, not a lung failure','Lung failure — reintubate','Sedation too light','Normal SBT, extubate'],bn:['Cardiogenic — আগে diurese, ফুসফুস ব্যর্থতা নয়','ফুসফুস ব্যর্থতা — reintubate','Sedation কম','স্বাভাবিক SBT, extubate']},a:0,
+   ex:{en:'A rising HR / falling BP during an SBT is cardiogenic wean failure — the negative-pressure breathing unmasks heart failure, not lung failure. Diurese and optimise the heart before trying again. (RSBI = RR ÷ VT(L); < 105 favours success.)',bn:'SBT-তে HR বাড়া / BP পড়া cardiogenic wean failure — negative-pressure শ্বাস heart failure প্রকাশ করে, ফুসফুস নয়। আবার চেষ্টার আগে diurese ও হৃদপিণ্ড optimise করুন। (RSBI = RR ÷ VT(L); < 105 সফলতা বোঝায়।)'}},
+];
+let quizBank='wave';
 let quizI=0, quizScore=0, quizAnswered=false, quizOrder=[];
+function activeQuiz(){return quizBank==='clin'?CLINQUIZ:QUIZ;}
+$('quizMode').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  $('quizMode').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+  $('quizMode').querySelectorAll('button[data-v="'+b.dataset.v+'"]').forEach(x=>x.classList.add('on'));
+  quizBank=b.dataset.v;startQuiz();
+});
 function startQuiz(){
+  const bank=activeQuiz();
   quizI=0;quizScore=0;quizAnswered=false;
-  quizOrder=QUIZ.map((_,i)=>i).sort(()=>Math.random()-0.5);
+  quizOrder=bank.map((_,i)=>i).sort(()=>Math.random()-0.5);
   renderQuiz();
 }
 function renderQuiz(){
   const box=$('quizBox');if(!box)return;
+  const bank=activeQuiz();
   if(quizI>=quizOrder.length){
     const pct=Math.round(quizScore/quizOrder.length*100);
     box.innerHTML=`<div class="quizcard quizdone"><div class="big">${quizScore}/${quizOrder.length}</div>
@@ -1990,12 +2130,15 @@ function renderQuiz(){
     $('quizRestart').onclick=startQuiz;
     return;
   }
-  const q=QUIZ[quizOrder[quizI]];
+  const q=bank[quizOrder[quizI]];
   quizAnswered=false;
   const opts=T(q.opts.en,q.opts.bn).map((o,i)=>`<button class="qopt" data-i="${i}"><span class="qmark"></span><span>${o}</span></button>`).join('');
+  const head = q.svg
+    ? `<div class="quizfig">${q.svg}</div>`
+    : `<div class="quizstem">${T(q.stem.en,q.stem.bn)}</div>`;
   box.innerHTML=`<div class="quizcard">
     <div class="quizprog"><span>${T('Question','প্রশ্ন')} ${quizI+1} / ${quizOrder.length}</span><span class="quizscore">${T('Score','স্কোর')}: ${quizScore}</span></div>
-    <div class="quizfig">${q.svg}</div>
+    ${head}
     <div class="quizq">${T(q.q.en,q.q.bn)}</div>
     <div class="quizopts" id="quizOpts">${opts}</div>
     <div id="quizFoot"></div>
