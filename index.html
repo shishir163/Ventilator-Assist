@@ -191,6 +191,21 @@ body.inview .backbtn{display:grid}
 .c-wiz .ic{background:#123A2E;color:var(--ok)}
 .c-quiz .ic{background:#3A2140;color:#E48CE8}
 .c-drug .ic{background:#3A2A16;color:#F5A742}
+.c-oxy .ic{background:#0E3340;color:#4FD0E0}
+.c-capno .ic{background:#132C40;color:#6FB6F0}
+
+/* capnography normal panel */
+.capnormal{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:15px}
+.capnormal .wsvg{background:#0A1524;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+.capnormal .wsvg svg{width:100%;height:auto;display:block}
+.capnote{font-size:13.5px;line-height:1.6;color:var(--ink2)}
+.capnote b{color:var(--ink);font-weight:700}
+
+/* PEEP trial table */
+.ptrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 8px;border-bottom:1px solid var(--line);font-size:14px;font-variant-numeric:tabular-nums;text-align:center}
+.ptrow.pthead{font-size:12px;color:var(--ink2);font-weight:600;text-align:center}
+.ptrow.best{background:rgba(55,211,153,.14);border-radius:8px}
+.ptrow.best span:last-child{color:var(--ok);font-weight:800}
 
 /* wizard pick grid */
 .wzpick{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
@@ -213,6 +228,11 @@ body.inview .backbtn{display:grid}
 .quizfig{background:#0A1524;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px}
 .quizfig svg{width:100%;height:auto;display:block;max-height:180px}
 .quizstem{background:rgba(245,167,66,.09);border:1px solid rgba(245,167,66,.3);border-radius:12px;padding:13px 15px;margin-bottom:14px;font-size:14.5px;line-height:1.5;font-weight:600}
+.quizopts-svg{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.qopt-svg{flex-direction:column;align-items:stretch;padding:8px}
+.qopt-svg .qmark{align-self:flex-start}
+.qoptfig{display:block;background:#0A1524;border-radius:8px;padding:6px;margin-top:4px}
+.qoptfig svg{width:100%;height:auto;display:block}
 .quizq{font-size:15.5px;font-weight:700;margin-bottom:12px;line-height:1.35}
 .quizopts{display:grid;gap:9px}
 .qopt{background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:12px 14px;text-align:left;font-size:14px;font-weight:600;transition:all .12s;display:flex;align-items:center;gap:10px}
@@ -299,6 +319,15 @@ body:not(.bn) .lcard h3{font-family:"Inter",sans-serif}
 .lfigsvg{background:#0A1524;border:1px solid var(--line);border-radius:10px;padding:8px}
 .lfigsvg svg{width:100%;height:auto;display:block}
 .lfig figcaption{font-size:10.5px;color:var(--ink2);text-align:center;margin-top:5px;line-height:1.3}
+
+/* cross-reference (one problem, three windows) */
+.xrefhead{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px;position:sticky;top:0}
+.xrefhead span{font-size:11px;font-weight:700;color:var(--brand);text-align:center;letter-spacing:.03em}
+.xrefblock{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;background:var(--panel)}
+.xreftitle{font-size:14.5px;font-weight:700;margin-bottom:10px;font-family:"Noto Serif Bengali",serif}
+body:not(.bn) .xreftitle{font-family:"Inter",sans-serif}
+.xrefrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.xrefnote{font-size:12.8px;color:var(--ink2);line-height:1.5;margin:10px 0 0}
 
 /* disease + waveform tiles */
 .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
@@ -489,6 +518,41 @@ body:not(.bn) .lcard h3{font-family:"Inter",sans-serif}
     <div class="calls" id="ieCalls"></div>
   </section>
 
+  <!-- ===================== OXYGENATION ===================== -->
+  <section id="oxy" class="view">
+    <h2 data-en>Oxygenation &amp; Gas Exchange</h2><h2 data-bn>Oxygenation ও গ্যাস বিনিময়</h2>
+    <div class="vsub" data-en>P/F, oxygenation index, S/F, a/A, and dead space — severity in one place.</div><div class="vsub" data-bn>P/F, oxygenation index, S/F, a/A, dead space — severity এক জায়গায়।</div>
+
+    <div class="panel">
+      <div class="panel-t" data-en>INPUTS</div><div class="panel-t" data-bn>ইনপুট</div>
+      <div class="field-grid">
+        <div class="field"><label>PaO₂ <span class="u">mmHg</span></label><input id="ox_pao2" type="number" inputmode="decimal" placeholder="80"></div>
+        <div class="field"><label>FiO₂ <span class="u">%</span></label><input id="ox_fio2" type="number" inputmode="decimal" placeholder="60"></div>
+        <div class="field"><label>SpO₂ <span class="u">%</span></label><input id="ox_spo2" type="number" inputmode="decimal" placeholder="94"></div>
+        <div class="field"><label>PaCO₂ <span class="u">mmHg</span></label><input id="ox_paco2" type="number" inputmode="decimal" placeholder="40"></div>
+        <div class="field"><label><span data-en>Mean airway P</span><span data-bn>Mean airway P</span> <span class="u">cmH₂O</span></label><input id="ox_map" type="number" inputmode="decimal" placeholder="12"></div>
+        <div class="field"><label><span data-en>EtCO₂</span> <span class="u">mmHg</span></label><input id="ox_etco2" type="number" inputmode="decimal" placeholder="32"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-t" data-en>RESULTS</div><div class="panel-t" data-bn>ফলাফল</div>
+      <div id="oxRes"></div>
+    </div>
+    <div class="calls" id="oxCalls"></div>
+    <div class="disclaimer" data-en>A–a and PAO₂ assume sea level (Patm 760). Vd/Vt by Bohr–Enghoff needs an arterial CO₂ and end-tidal CO₂.</div>
+    <div class="disclaimer" data-bn>A–a ও PAO₂ sea level ধরে (Patm 760)। Vd/Vt (Bohr–Enghoff) arterial ও end-tidal CO₂ লাগে।</div>
+  </section>
+
+  <!-- ===================== CAPNOGRAPHY ===================== -->
+  <section id="capno" class="view">
+    <h2 data-en>Capnography</h2><h2 data-bn>Capnography</h2>
+    <div class="vsub" data-en>Start with the normal shape, then the patterns that name a problem.</div><div class="vsub" data-bn>আগে normal আকৃতি, তারপর যে প্যাটার্নগুলো সমস্যা চেনায়।</div>
+    <div id="capnoNormal"></div>
+    <h3 style="font-size:16px;margin:20px 0 4px" data-en>Abnormal patterns</h3><h3 style="font-size:16px;margin:20px 0 4px" data-bn>অস্বাভাবিক প্যাটার্ন</h3>
+    <div class="vsub" data-en>Tap any trace for what it means and what to do.</div><div class="vsub" data-bn>যেকোনো ছবিতে ট্যাপ করলে মানে ও করণীয়।</div>
+    <div class="tiles" id="capnoTiles"></div>
+  </section>
+
   <!-- ===================== WAVEFORMS ===================== -->
   <section id="wave" class="view">
     <h2 data-en>Waveform Cheat-Code</h2><h2 data-bn>Waveform Cheat-Code</h2>
@@ -580,7 +644,8 @@ body:not(.bn) .lcard h3{font-family:"Inter",sans-serif}
     <div class="vsub" data-en>Test yourself and teach on the round. Two modes.</div><div class="vsub" data-bn>নিজেকে যাচাই করুন, রাউন্ডে পড়ান। দুই মোড।</div>
     <div class="seg" id="quizMode" style="margin-bottom:16px">
       <button data-v="wave" class="on" data-en>Waveforms</button><button data-v="wave" class="on hide" data-bn>Waveform</button>
-      <button data-v="clin" data-en>Clinical scenarios</button><button data-v="clin" class="hide" data-bn>Clinical scenario</button>
+      <button data-v="clin" data-en>Clinical</button><button data-v="clin" class="hide" data-bn>Clinical</button>
+      <button data-v="xref" data-en>Match windows</button><button data-v="xref" class="hide" data-bn>Match windows</button>
     </div>
     <div id="quizBox"></div>
   </section>
@@ -707,6 +772,23 @@ body:not(.bn) .lcard h3{font-family:"Inter",sans-serif}
     <div class="calls" id="peepCalls"></div>
     <div class="disclaimer" data-en>ARDSnet ARMA (lower) and ALVEOLI/high-PEEP tables. A guide to pairing, not a substitute for titrating PEEP to compliance, oxygenation and haemodynamics in your patient.</div>
     <div class="disclaimer" data-bn>ARDSnet ARMA (lower) ও ALVEOLI/high-PEEP টেবিল। জোড়া মেলানোর guide — রোগীতে compliance, oxygenation ও haemodynamics দেখে PEEP titrate করার বিকল্প নয়।</div>
+
+    <h3 style="font-size:16px;margin:22px 0 4px" data-en>Best-PEEP trial helper</h3><h3 style="font-size:16px;margin:22px 0 4px" data-bn>Best-PEEP trial সহায়ক</h3>
+    <div class="vsub" data-en>At each PEEP step, enter VT, Pplat and that PEEP. It finds the step with the best compliance / lowest driving pressure.</div><div class="vsub" data-bn>প্রতিটি PEEP ধাপে VT, Pplat আর ওই PEEP দিন। সেরা compliance / সর্বনিম্ন driving pressure-এর ধাপ বের করে দেয়।</div>
+    <div class="panel">
+      <div class="field-grid">
+        <div class="field"><label>VT <span class="u">mL</span></label><input id="pt_vt" type="number" inputmode="decimal" placeholder="420"></div>
+        <div class="field"><label>Pplat <span class="u">cmH₂O</span></label><input id="pt_pplat" type="number" inputmode="decimal" placeholder="26"></div>
+        <div class="field"><label>PEEP <span class="u">cmH₂O</span></label><input id="pt_peep" type="number" inputmode="decimal" placeholder="10"></div>
+      </div>
+      <button class="savebtn" id="ptAdd" style="margin-top:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg><span data-en>Add this step</span><span data-bn>এই ধাপ যোগ</span></button>
+    </div>
+    <div class="panel" id="ptTablePanel" style="display:none">
+      <div class="panel-t" data-en>TRIAL STEPS</div><div class="panel-t" data-bn>Trial ধাপ</div>
+      <div id="ptTable"></div>
+      <button class="linkbtn" id="ptClear" data-en>Clear steps</button><button class="linkbtn hide" id="ptClear2" data-bn>ধাপ মুছুন</button>
+    </div>
+    <div class="calls" id="ptCalls"></div>
   </section>
 
 </div>
@@ -747,7 +829,7 @@ function setLang(bn){
 $('langTog').onclick=()=>setLang(!BN);
 
 /* ---------- navigation ---------- */
-const views=['calc','wizard','abg','ie','wave','quiz','dz','drugs','wean','trbl','peeptbl','trend','ref','learn'];
+const views=['calc','wizard','abg','oxy','ie','wave','capno','quiz','dz','drugs','wean','trbl','peeptbl','trend','ref','learn'];
 function go(id){
   $('home').classList.toggle('hide', id!=='home');
   views.forEach(v=>$(v).classList.toggle('active', v===id));
@@ -766,6 +848,8 @@ const CARDS=[
   {id:'drugs',cls:'c-drug',en:'Infusions',bn:'ইনফিউশন',den:'Sedatives, relaxants, inotropes → mL/hr',dbn:'Sedative, relaxant, inotrope → mL/hr',ic:'<path d="M9 3h6M10 3v4M14 3v4M7 21h10a1 1 0 001-1v-9a4 4 0 00-1.2-2.8L14 7h-4L7.2 8.2A4 4 0 006 11v9a1 1 0 001 1z"/><path d="M6 13h12"/>'},
   {id:'quiz',cls:'c-quiz',en:'Quiz',bn:'কুইজ',den:'Waveforms + clinical scenarios',dbn:'Waveform + clinical scenario',ic:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 .5c0 2-2.5 2-2.5 4"/><path d="M12 17h.01"/>'},
   {id:'abg',cls:'c-abg',en:'ABG Interpreter',bn:'ABG ব্যাখ্যা',den:'Full acid–base, anion gap, A–a, delta ratio',dbn:'Acid–base, anion gap, A–a, delta ratio',ic:'<path d="M8 3h8M10 3v5l-5 9a2 2 0 001.8 3h10.4a2 2 0 001.8-3l-5-9V3"/><path d="M7.5 15h9"/>'},
+  {id:'oxy',cls:'c-oxy',en:'Oxygenation',bn:'Oxygenation',den:'P/F, OI, S/F, a/A, dead space',dbn:'P/F, OI, S/F, a/A, dead space',ic:'<circle cx="12" cy="12" r="9"/><path d="M12 7a5 5 0 000 10 5 5 0 010-10z"/>'},
+  {id:'capno',cls:'c-capno',en:'Capnography',bn:'Capnography',den:'Normal shape + pattern cheat-codes',dbn:'Normal আকৃতি + pattern cheat-code',ic:'<path d="M2 18h4l2-9 3 9 2-11 2 6h5"/><path d="M2 21h20" opacity=".4"/>'},
   {id:'ie',cls:'c-ie',en:'I:E & Timing',bn:'I:E ও টাইমিং',den:'Ti, Te, ratio, cycle time',dbn:'Ti, Te, ratio, cycle time',ic:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'},
   {id:'wave',cls:'c-wave',en:'Waveform Codes',bn:'Waveform কোড',den:'Read the screen in a glance',dbn:'এক নজরে স্ক্রিন পড়ুন',ic:'<path d="M2 12h3l2-7 3 14 3-10 2 5h4"/>'},
   {id:'dz',cls:'c-dz',en:'Disease Strategy',bn:'রোগভিত্তিক কৌশল',den:'ARDS, COPD, ICP, acidosis…',dbn:'ARDS, COPD, ICP, acidosis…',ic:'<path d="M12 3v18M3 12h18" stroke-width="2.6"/>'},
@@ -1654,6 +1738,174 @@ function renderPeep(){
 document.addEventListener('input',e=>{if(e.target.id==='peepFio2')renderPeep();});
 
 /* ===================================================================
+   OXYGENATION & GAS EXCHANGE
+   =================================================================== */
+function runOxy(){
+  const pao2=num($('ox_pao2').value), fio2p=num($('ox_fio2').value), spo2=num($('ox_spo2').value);
+  const paco2=num($('ox_paco2').value), map=num($('ox_map').value), etco2=num($('ox_etco2').value);
+  const fio2=fio2p!=null?fio2p/100:null;
+  let h='',c=[];
+  // P/F
+  if(pao2!=null&&fio2){
+    const pf=pao2/fio2; const cls=pf>300?'ok':pf>200?'warn':'bad';
+    const sev=pf>300?T('normal','স্বাভাবিক'):pf>200?T('mild ARDS','mild ARDS'):pf>100?T('moderate ARDS','moderate ARDS'):T('severe ARDS','severe ARDS');
+    h+=calcRow('P/F ratio',T('PaO₂ ÷ FiO₂ — ARDS if ≤300','PaO₂ ÷ FiO₂ — ≤300 হলে ARDS'),r0(pf),'',sev,cls,cls);
+  }
+  // S/F (when no ABG)
+  if(spo2!=null&&fio2&&spo2<=100){
+    const sf=spo2/fio2; const cls=sf>315?'ok':sf>235?'warn':'bad';
+    const sev=sf>315?T('normal','স্বাভাবিক'):sf>235?T('~mild-mod','~mild-mod'):T('~severe','~severe');
+    h+=calcRow('S/F ratio',T('SpO₂ ÷ FiO₂ — proxy when no ABG (315≈P/F 300)','SpO₂ ÷ FiO₂ — ABG ছাড়া proxy (315≈P/F 300)'),r0(sf),'',sev,cls,cls);
+  }
+  // Oxygenation index
+  if(map!=null&&fio2&&pao2!=null&&pao2>0){
+    const oi=(fio2*100*map)/pao2; const cls=oi<5?'ok':oi<16?'warn':'bad';
+    const sev=oi<5?T('normal','স্বাভাবিক'):oi<16?T('moderate','moderate'):oi<25?T('severe','severe'):T('very severe / ECMO?','very severe / ECMO?');
+    h+=calcRow('Oxygenation Index',T('FiO₂% × MAP ÷ PaO₂ — higher is worse','FiO₂% × MAP ÷ PaO₂ — বেশি মানে খারাপ'),r1(oi),'',sev,cls,cls);
+  }
+  // A-a gradient & PAO2 (sea level, RQ 0.8)
+  if(pao2!=null&&fio2&&paco2!=null){
+    const PAO2=(713*fio2)-(paco2/0.8);
+    const aa=PAO2-pao2;
+    h+=calcRow('PAO₂',T('alveolar O₂ = (713×FiO₂) − PaCO₂/0.8','alveolar O₂ = (713×FiO₂) − PaCO₂/0.8'),r0(PAO2),'mmHg');
+    const cls=aa<=20?'ok':aa<=50?'warn':'bad';
+    h+=calcRow('A–a gradient',T('PAO₂ − PaO₂ — high = lung problem','PAO₂ − PaO₂ — বেশি = ফুসফুসের সমস্যা'),r0(aa),'mmHg',aa<=20?T('normal-ish','মোটামুটি'):T('elevated','বাড়তি'),cls,cls);
+    // a/A ratio
+    if(PAO2>0){const aA=pao2/PAO2;const cls2=aA>=0.75?'ok':aA>=0.5?'warn':'bad';
+      h+=calcRow('a/A ratio',T('PaO₂ ÷ PAO₂ — normal >0.75','PaO₂ ÷ PAO₂ — স্বাভাবিক >0.75'),r2(aA),'',aA>=0.75?T('normal','স্বাভাবিক'):T('low','কম'),cls2,cls2);}
+  }
+  // Vd/Vt (Bohr-Enghoff): (PaCO2 - EtCO2) / PaCO2
+  if(paco2!=null&&etco2!=null&&paco2>0){
+    const vdvt=(paco2-etco2)/paco2; const cls=vdvt<=0.4?'ok':vdvt<=0.6?'warn':'bad';
+    h+=calcRow('Vd/Vt',T('dead space = (PaCO₂ − EtCO₂) ÷ PaCO₂ (normal ≤0.4)','dead space = (PaCO₂ − EtCO₂) ÷ PaCO₂ (স্বাভাবিক ≤0.4)'),r2(vdvt),'',vdvt<=0.4?T('normal','স্বাভাবিক'):vdvt<=0.6?T('raised','বাড়তি'):T('high','বেশি'),cls,cls);
+  }
+  $('oxRes').innerHTML = h || `<div style="color:var(--ink3);font-size:13px;padding:8px 0">${T('Enter PaO₂ and FiO₂ to begin.','শুরু করতে PaO₂ ও FiO₂ দিন।')}</div>`;
+  // interpretation
+  if(pao2!=null&&fio2){
+    const pf=pao2/fio2;
+    if(pf<=150) c.push(callBox('warn','↓',T('<b>P/F ≤ 150.</b> Consider proning ≥16 h/day, optimise PEEP, keep driving pressure low, and think about neuromuscular blockade if severe.','<b>P/F ≤ 150।</b> দিনে ≥১৬ ঘণ্টা prone ভাবুন, PEEP optimise, driving pressure কম রাখুন, severe হলে neuromuscular blockade।')));
+  }
+  if(map!=null&&fio2&&pao2!=null){
+    const oi=(fio2*100*map)/pao2;
+    if(oi>=25) c.push(callBox('bad','!',T('<b>Oxygenation index ≥ 25.</b> Very severe — this is around where ECMO referral criteria are discussed. Check your unit\'s threshold and call early.','<b>Oxygenation index ≥ 25।</b> খুব severe — এই সীমাতেই ECMO referral আলোচনা হয়। Unit-এর threshold দেখে আগেভাগে কল করুন।')));
+  }
+  if(etco2!=null&&paco2!=null&&paco2>0){
+    const vdvt=(paco2-etco2)/paco2;
+    if(vdvt>0.6) c.push(callBox('warn','◔',T('<b>High dead space (Vd/Vt > 0.6).</b> Think pulmonary embolism, low cardiac output, or overdistension from too much PEEP/VT. A high dead space in ARDS predicts worse outcome.','<b>বেশি dead space (Vd/Vt > 0.6)।</b> Pulmonary embolism, কম cardiac output, বা বেশি PEEP/VT থেকে overdistension ভাবুন। ARDS-এ বেশি dead space খারাপ ফল বোঝায়।')));
+  }
+  if(c.length===0 && h) c.push(callBox('ok','✓',T('Oxygenation indices are within acceptable ranges. Track the trend, not one snapshot.','Oxygenation-এর মান গ্রহণযোগ্য সীমার মধ্যে। একটা snapshot নয়, trend দেখুন।')));
+  $('oxCalls').innerHTML=c.join('');
+}
+['ox_pao2','ox_fio2','ox_spo2','ox_paco2','ox_map','ox_etco2'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id)runOxy();}));
+
+/* ===================================================================
+   BEST-PEEP TRIAL HELPER
+   =================================================================== */
+let ptSteps=[];
+function ptAdd(){
+  const vt=num($('pt_vt').value), pplat=num($('pt_pplat').value), peep=num($('pt_peep').value);
+  if(vt==null||pplat==null||peep==null){toast(T('Fill VT, Pplat and PEEP','VT, Pplat ও PEEP দিন'));return;}
+  const dp=pplat-peep; if(dp<=0){toast(T('Pplat must be above PEEP','Pplat, PEEP-এর চেয়ে বড় হতে হবে'));return;}
+  const c=vt/dp;
+  ptSteps.push({peep:r1(peep),dp:r1(dp),c:r1(c),pplat:r1(pplat)});
+  ptSteps.sort((a,b)=>a.peep-b.peep);
+  $('pt_pplat').value='';  // ready for next step
+  renderPtTrial();
+}
+function renderPtTrial(){
+  if(ptSteps.length===0){$('ptTablePanel').style.display='none';$('ptCalls').innerHTML='';return;}
+  $('ptTablePanel').style.display='block';
+  // best = highest compliance (equivalently lowest ΔP for fixed VT)
+  let bestC=Math.max(...ptSteps.map(s=>s.c));
+  let rows=`<div class="ptrow pthead"><span>PEEP</span><span>Pplat</span><span>ΔP</span><span>Compliance</span></div>`;
+  ptSteps.forEach(s=>{
+    const best=s.c===bestC;
+    rows+=`<div class="ptrow${best?' best':''}"><span>${s.peep}</span><span>${s.pplat}</span><span>${s.dp}</span><span>${s.c}${best?' ★':''}</span></div>`;
+  });
+  $('ptTable').innerHTML=rows;
+  const best=ptSteps.find(s=>s.c===bestC);
+  let c=[callBox('ok','★',T(`<b>Best compliance at PEEP ${best.peep}</b> (C ${best.c} mL/cmH₂O, ΔP ${best.dp}). In a decremental trial this is the PEEP that best balances recruitment and overdistension. Set PEEP a touch above the collapse point and re-recruit before settling there.`,`<b>সেরা compliance PEEP ${best.peep}-এ</b> (C ${best.c} mL/cmH₂O, ΔP ${best.dp})। Decremental trial-এ এটাই recruitment ও overdistension-এর সেরা ভারসাম্য। Collapse point-এর একটু উপরে PEEP রাখুন, বসানোর আগে আবার recruit করুন।`))];
+  if(ptSteps.length<3) c.push(callBox('info','i',T('Add at least 3–4 PEEP steps for a meaningful trial.','অর্থপূর্ণ trial-এর জন্য অন্তত ৩–৪টি PEEP ধাপ দিন।')));
+  $('ptCalls').innerHTML=c.join('');
+}
+function ptClear(){ptSteps=[];renderPtTrial();}
+$('ptAdd').onclick=ptAdd;
+$('ptClear').onclick=ptClear; $('ptClear2').onclick=ptClear;
+
+/* ===================================================================
+   CAPNOGRAPHY
+   =================================================================== */
+const CAP_NORMAL=`<svg viewBox="0 0 300 120"><line x1="20" y1="96" x2="292" y2="96" stroke="${AX}" stroke-width="1.2"/><line x1="20" y1="12" x2="20" y2="96" stroke="${AX}" stroke-width="1.2"/>
+<text x="14" y="20" fill="${GY}" font-size="9" text-anchor="end">CO₂</text><text x="288" y="110" fill="${GY}" font-size="9" text-anchor="end">time→</text>
+<path d="M20 96 L60 96 L66 40 L120 34 L124 32 L140 30 L142 96 L182 96 L188 40 L242 34 L246 32 L262 30 L264 96 L292 96" fill="none" stroke="${G}" stroke-width="2.6" stroke-linejoin="round"/>
+<text x="55" y="90" fill="${GY}" font-size="8">I</text><text x="92" y="30" fill="${GY}" font-size="8">II</text><text x="180" y="28" fill="${GY}" font-size="8">III</text>
+<line x1="140" y1="30" x2="152" y2="24" stroke="${RD}" stroke-width="1.2"/><text x="156" y="24" fill="${RD}" font-size="8">EtCO₂</text></svg>`;
+
+const CAPNO=[
+ {t:{en:'Sudden loss to zero',bn:'হঠাৎ শূন্যে চলে যাওয়া'},cls:'bad',
+  svg:`<svg viewBox="0 0 300 110"><line x1="20" y1="90" x2="292" y2="90" stroke="${AX}" stroke-width="1.2"/><path d="M20 90 L44 90 L50 36 L96 32 L98 90 L120 90 L126 36 L172 32 L174 90 L292 90" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><line x1="178" y1="20" x2="178" y2="98" stroke="${RD}" stroke-width="1.4" stroke-dasharray="3 3"/><text x="184" y="40" fill="${RD}" font-size="9">flat 0</text></svg>`,
+  mean:{en:'The trace drops to zero and stays flat. No CO₂ is returning at all.',bn:'রেখা শূন্যে নেমে সমান্তরাল থাকে। কোনো CO₂ ফিরছে না।'},
+  cause:{en:['Oesophageal intubation (if just tubed)','Circuit disconnection','ETT completely blocked or displaced','Cardiac arrest / no cardiac output','Ventilator/sampling line failure'],bn:['Oesophageal intubation (সবে tube করলে)','Circuit disconnection','ETT পুরো ব্লক বা সরে গেছে','Cardiac arrest / cardiac output নেই','Ventilator/sampling line নষ্ট']},
+  act:{en:['This is an emergency — check the patient first, not the monitor','Confirm the tube is in the trachea; look, auscultate','Check for disconnection and pulse'],bn:['এটা জরুরি — আগে রোগী দেখুন, monitor নয়','Tube trachea-তে আছে নিশ্চিত করুন; দেখুন, শুনুন','Disconnection ও pulse দেখুন']}},
+
+ {t:{en:'Gradual fall in EtCO₂',bn:'EtCO₂ ধীরে কমা'},cls:'warn',
+  svg:`<svg viewBox="0 0 300 110"><line x1="20" y1="90" x2="292" y2="90" stroke="${AX}" stroke-width="1.2"/><path d="M20 90 L40 90 L46 40 L74 38 L76 90 L96 90 L102 46 L128 44 L130 90 L150 90 L156 52 L182 50 L184 90 L204 90 L210 58 L236 56 L238 90 L258 90 L264 64 L288 62" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><path d="M74 38 L288 62" stroke="${RD}" stroke-width="1" stroke-dasharray="3 3" opacity=".7"/></svg>`,
+  mean:{en:'The plateau height falls breath by breath over time.',bn:'Plateau-র উচ্চতা breath ধরে ধরে ধীরে কমছে।'},
+  cause:{en:['Falling cardiac output / hypovolaemia / bleeding','Dropping body temperature','Hyperventilation (rising minute ventilation)','Developing pulmonary embolism'],bn:['Cardiac output কমা / hypovolaemia / রক্তক্ষরণ','শরীরের তাপমাত্রা কমা','Hyperventilation (minute ventilation বাড়ছে)','Pulmonary embolism তৈরি হচ্ছে']},
+  act:{en:['Look at haemodynamics — is this a falling output?','Check for bleeding, over-ventilation','Correlate with an ABG'],bn:['Haemodynamics দেখুন — output কি পড়ছে?','রক্তক্ষরণ, over-ventilation দেখুন','ABG-র সাথে মিলিয়ে দেখুন']}},
+
+ {t:{en:'Rising EtCO₂',bn:'EtCO₂ বাড়া'},cls:'warn',
+  svg:`<svg viewBox="0 0 300 110"><line x1="20" y1="90" x2="292" y2="90" stroke="${AX}" stroke-width="1.2"/><path d="M20 90 L40 90 L46 62 L74 60 L76 90 L96 90 L102 54 L128 52 L130 90 L150 90 L156 44 L182 42 L184 90 L204 90 L210 36 L236 34 L238 90 L258 90 L264 28 L288 26" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/></svg>`,
+  mean:{en:'The plateau height climbs over successive breaths.',bn:'Plateau-র উচ্চতা পরপর breath-এ বাড়ছে।'},
+  cause:{en:['Hypoventilation (RR or VT too low)','Rising temperature / sepsis / malignant hyperthermia','Absorbed CO₂ (laparoscopy)','Return of circulation after arrest (a good sign)'],bn:['Hypoventilation (RR বা VT কম)','তাপমাত্রা বাড়া / sepsis / malignant hyperthermia','শোষিত CO₂ (laparoscopy)','Arrest-এর পর circulation ফেরা (ভালো লক্ষণ)']},
+  act:{en:['Increase minute ventilation if hypoventilating','Look for a hypermetabolic cause','If post-arrest, this may be ROSC — check pulse'],bn:['Hypoventilation হলে minute ventilation বাড়ান','Hypermetabolic কারণ খুঁজুন','Post-arrest হলে এটা ROSC হতে পারে — pulse দেখুন']}},
+
+ {t:{en:'Shark-fin (obstruction)',bn:'হাঙরের পাখনা (obstruction)'},cls:'bad',
+  svg:`<svg viewBox="0 0 300 110"><line x1="20" y1="90" x2="292" y2="90" stroke="${AX}" stroke-width="1.2"/><path d="M20 90 L48 90 C 70 84 96 50 130 34 L134 90 L162 90 C 184 84 210 50 244 34 L248 90 L292 90" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><text x="150" y="52" fill="${RD}" font-size="9">no sharp corner</text></svg>`,
+  mean:{en:'The sharp upstroke and corner are lost — a slurred, sloping fin. Air is coming out unevenly.',bn:'খাড়া upstroke ও কোণ হারিয়ে যায় — ঢালু, পাখনার মতো। বাতাস অসমভাবে বেরোচ্ছে।'},
+  cause:{en:['Bronchospasm (asthma / COPD)','Kinked or partially obstructed ETT','Secretions'],bn:['Bronchospasm (asthma / COPD)','Kinked বা আংশিক ব্লক ETT','Secretion']},
+  act:{en:['Bronchodilators','Suction, check the tube for a kink','This is the capnography twin of a scooped flow–volume loop'],bn:['Bronchodilator','Suction, tube-এ kink দেখুন','এটা scooped flow–volume loop-এর capnography যমজ']}},
+
+ {t:{en:'Curare cleft (patient effort)',bn:'Curare cleft (রোগীর effort)'},cls:'warn',
+  svg:`<svg viewBox="0 0 300 110"><line x1="20" y1="90" x2="292" y2="90" stroke="${AX}" stroke-width="1.2"/><path d="M20 90 L50 90 L56 36 L96 32 L110 52 L124 32 L150 30 L152 90 L182 90 L188 36 L228 32 L242 52 L256 32 L282 30 L284 90" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><line x1="110" y1="52" x2="122" y2="66" stroke="${RD}" stroke-width="1.2"/><text x="126" y="70" fill="${RD}" font-size="8">cleft</text></svg>`,
+  mean:{en:'A notch dipping down in the middle of the plateau — the patient took a breath against the ventilator.',bn:'Plateau-র মাঝে নিচের দিকে একটা খাঁজ — রোগী ভেন্টের বিরুদ্ধে শ্বাস নিয়েছে।'},
+  cause:{en:['Spontaneous effort during a mandatory breath','Neuromuscular blockade wearing off'],bn:['Mandatory breath-এর সময় spontaneous effort','Neuromuscular blockade কেটে যাচ্ছে']},
+  act:{en:['Often just means the patient is waking — reassess sedation/paralysis need','Not itself dangerous; a sign, not a crisis'],bn:['প্রায়ই মানে রোগী জাগছে — sedation/paralysis দরকার পুনর্বিবেচনা','নিজে বিপজ্জনক নয়; সংকেত, সংকট নয়']}},
+
+ {t:{en:'Rising baseline',bn:'Baseline উঠে যাওয়া'},cls:'warn',
+  svg:`<svg viewBox="0 0 300 110"><line x1="20" y1="90" x2="292" y2="90" stroke="${AX}" stroke-width="1.2"/><path d="M20 78 L44 78 L50 36 L96 32 L98 78 L120 78 L126 36 L172 32 L174 78 L196 78 L202 36 L248 32 L250 78 L292 78" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><line x1="20" y1="78" x2="292" y2="78" stroke="${RD}" stroke-width="1" stroke-dasharray="3 3"/><text x="24" y="74" fill="${RD}" font-size="8">baseline &gt; 0</text></svg>`,
+  mean:{en:'The waveform never returns to zero between breaths — inspired CO₂ is above zero.',bn:'Breath-এর মাঝে রেখা শূন্যে ফেরে না — inspired CO₂ শূন্যের উপরে।'},
+  cause:{en:['Rebreathing — exhausted CO₂ absorber (soda lime)','Faulty expiratory valve','Inadequate fresh gas flow'],bn:['Rebreathing — CO₂ absorber (soda lime) শেষ','Expiratory valve নষ্ট','পর্যাপ্ত fresh gas flow নেই']},
+  act:{en:['Change the CO₂ absorber','Check the expiratory valve and circuit','Increase fresh gas flow'],bn:['CO₂ absorber বদলান','Expiratory valve ও circuit দেখুন','Fresh gas flow বাড়ান']}},
+
+ {t:{en:'Prolonged / sloping phase III',bn:'দীর্ঘ / ঢালু phase III'},cls:'info',
+  svg:`<svg viewBox="0 0 300 110"><line x1="20" y1="90" x2="292" y2="90" stroke="${AX}" stroke-width="1.2"/><path d="M20 90 L50 90 L56 50 L110 34 L140 28 L142 90 L172 90 L178 50 L232 34 L262 28 L264 90 L292 90" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><text x="96" y="34" fill="${GY}" font-size="8">upsloping III</text></svg>`,
+  mean:{en:'Phase III (the plateau) slopes upward instead of being flat, and expiration is prolonged.',bn:'Phase III (plateau) সমান না হয়ে উপরের দিকে ঢালু, আর expiration দীর্ঘ।'},
+  cause:{en:['Mild obstruction / uneven emptying (COPD)','A less extreme version of the shark-fin'],bn:['মৃদু obstruction / অসম emptying (COPD)','Shark-fin-এর কম চরম রূপ']},
+  act:{en:['Reassess for bronchospasm','Note: EtCO₂ may then under-read true PaCO₂ (bigger gradient)'],bn:['Bronchospasm আবার দেখুন','মনে রাখুন: তখন EtCO₂ আসল PaCO₂-র চেয়ে কম দেখাতে পারে (বড় gradient)']}},
+];
+function renderCapno(){
+  const n=$('capnoNormal'); if(n){
+    n.innerHTML=`<div class="capnormal"><div class="wsvg">${CAP_NORMAL}</div>
+      <div class="capnote">${T('<b>Normal trace.</b> Phase I: dead-space gas, no CO₂ (baseline). Phase II: sharp rise as alveolar gas arrives. Phase III: the alveolar plateau — its end point is <b>EtCO₂</b>, normally 35–45 mmHg and a few mmHg below PaCO₂. Then a sharp drop as the next breath washes it out. A normal capnogram confirms the tube is in the airway AND that there is circulation carrying CO₂ to the lungs.','<b>স্বাভাবিক রেখা।</b> Phase I: dead-space গ্যাস, CO₂ নেই (baseline)। Phase II: alveolar গ্যাস আসায় খাড়া ওঠা। Phase III: alveolar plateau — এর শেষ বিন্দুই <b>EtCO₂</b>, স্বাভাবিক ৩৫–৪৫ mmHg, PaCO₂-র চেয়ে কয়েক mmHg কম। তারপর পরের breath-এ খাড়া নেমে যাওয়া। স্বাভাবিক capnogram নিশ্চিত করে tube airway-তে আছে এবং CO₂ ফুসফুসে পৌঁছানোর মতো circulation আছে।')}</div></div>`;
+  }
+  const g=$('capnoTiles'); if(g){ g.innerHTML='';
+    CAPNO.forEach((c,i)=>{
+      const t=el('button','tile');
+      t.innerHTML=`<div class="wsvg">${c.svg}</div><div class="tt">${T(c.t.en,c.t.bn)}</div>`;
+      t.onclick=()=>{
+        $('modalBody').innerHTML=`<h3>${T(c.t.en,c.t.bn)}</h3><div class="wsvg" style="margin:6px 0 14px">${c.svg}</div>
+          <div class="mblock"><h4>${T('WHAT IT MEANS','মানে')}</h4><p style="font-size:14px;margin:0">${T(c.mean.en,c.mean.bn)}</p></div>
+          <div class="mblock"><h4>${T('CAUSES','কারণ')}</h4>${list(T(c.cause.en,c.cause.bn))}</div>
+          <div class="mblock"><h4>${T('WHAT TO DO','করণীয়')}</h4>${list(T(c.act.en,c.act.bn))}</div>`;
+        openModal();
+      };
+      g.appendChild(t);
+    });
+  }
+}
+
+/* ===================================================================
    LEARN / NOTES  — the core theory, bedside-ready
    =================================================================== */
 /* labelled waveform figures reused in the Learn modals.
@@ -1685,6 +1937,47 @@ const SC_DOUBLE=`<svg viewBox="0 0 150 74"><line x1="10" y1="60" x2="146" y2="60
 const SC_INEFF=`<svg viewBox="0 0 150 74"><line x1="10" y1="38" x2="146" y2="38" stroke="${AX}" stroke-width="1"/><path d="M10 38 L20 38 L20 14 L48 14 L48 38" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><path d="M48 38 L52 66 C 66 56 78 46 92 42 L104 40 L110 34 L116 40 C 126 38 134 38 140 38" fill="none" stroke="${Y}" stroke-width="2.4"/><circle cx="110" cy="35" r="5" fill="none" stroke="${RD}" stroke-width="1.6"/></svg>`;
 const SC_SAW=`<svg viewBox="0 0 150 74"><line x1="10" y1="38" x2="146" y2="38" stroke="${AX}" stroke-width="1"/><path d="M10 38 L20 38 L20 16 L26 22 L32 14 L38 22 L44 16 L50 22 L56 16 L56 38" fill="none" stroke="${G}" stroke-width="2.2"/><path d="M56 38 L60 62 L66 54 L72 60 L80 50 L88 56 L98 46 L110 44 L122 40 L140 38" fill="none" stroke="${Y}" stroke-width="2.2"/></svg>`;
 
+/* compact capnography figures for cross-reference */
+const CP_NORMAL=`<svg viewBox="0 0 150 74"><line x1="12" y1="60" x2="146" y2="60" stroke="${AX}" stroke-width="1"/><path d="M12 60 L34 60 L38 22 L70 20 L72 60 L94 60 L98 22 L130 20 L132 60 L146 60" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/></svg>`;
+const CP_SHARK=`<svg viewBox="0 0 150 74"><line x1="12" y1="60" x2="146" y2="60" stroke="${AX}" stroke-width="1"/><path d="M12 60 L30 60 C 46 56 66 34 90 20 L92 60 L108 60 C 124 56 140 40 146 32" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linejoin="round"/><text x="70" y="34" fill="${RD}" font-size="8">shark-fin</text></svg>`;
+const CP_FLAT=`<svg viewBox="0 0 150 74"><line x1="12" y1="60" x2="146" y2="60" stroke="${AX}" stroke-width="1"/><path d="M12 60 L30 60 L34 22 L60 20 L62 60 L146 60" fill="none" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/><line x1="66" y1="60" x2="146" y2="60" stroke="${RD}" stroke-width="1.6" stroke-dasharray="3 3"/><text x="86" y="52" fill="${RD}" font-size="8">→ flat 0</text></svg>`;
+const CP_RISE=`<svg viewBox="0 0 150 74"><line x1="12" y1="60" x2="146" y2="60" stroke="${AX}" stroke-width="1"/><path d="M12 60 L30 60 L34 40 L60 38 L62 60 L82 60 L86 32 L112 30 L114 60 L134 60 L138 24 L146 23" fill="none" stroke="${Y}" stroke-width="2.4" stroke-linejoin="round"/><text x="120" y="20" fill="${RD}" font-size="8">rising</text></svg>`;
+
+/* ===================================================================
+   CROSS-REFERENCE  — one problem seen in flow, capno and P–V loop
+   =================================================================== */
+const XREF=[
+  {en:'Bronchospasm / obstruction',bn:'Bronchospasm / obstruction',
+   flow:FV_SCOOP, flowc:{en:'F–V: scooped expiratory limb',bn:'F–V: scooped expiratory limb'},
+   capno:CP_SHARK, capnoc:{en:'Capno: shark-fin (slurred upstroke)',bn:'Capno: shark-fin (ঢালু upstroke)'},
+   loop:PV_FAT, loopc:{en:'P–V: fat, wide loop',bn:'P–V: মোটা, চওড়া loop'},
+   note:{en:'Air leaves unevenly and slowly. The flow limb caves in, the capnogram loses its sharp corner, and the P–V loop fattens with the resistive gap. One physiology, three windows.',bn:'বাতাস অসমভাবে ধীরে বেরোয়। Flow limb দেবে যায়, capnogram-এর খাড়া কোণ হারায়, P–V loop resistive gap-এ মোটা হয়। এক physiology, তিন জানালা।'}},
+
+  {en:'Auto-PEEP / air trapping',bn:'Auto-PEEP / air trapping',
+   flow:SC_AUTOPEEP, flowc:{en:'Flow: expiratory flow cut off before zero',bn:'Flow: expiratory flow শূন্যের আগে কাটা'},
+   capno:CP_SHARK, capnoc:{en:'Capno: obstructive slur (if from obstruction)',bn:'Capno: obstructive ঢাল (obstruction হলে)'},
+   loop:PV_FAT, loopc:{en:'P–V: often fat (resistive), may not close',bn:'P–V: প্রায়ই মোটা (resistive), বন্ধ নাও হতে পারে'},
+   note:{en:'The tell is on the flow trace — expiration never reaches zero before the next breath. Confirm with an expiratory hold. Fix = more time to exhale (lower RR, longer I:E).',bn:'মূল সংকেত flow trace-এ — পরের breath-এর আগে expiration শূন্যে পৌঁছায় না। Expiratory hold দিয়ে নিশ্চিত করুন। সমাধান = শ্বাস ছাড়ার বেশি সময় (RR কমান, I:E লম্বা)।'}},
+
+  {en:'Leak / disconnection',bn:'Leak / disconnection',
+   flow:FV_TRAP, flowc:{en:'Volume/flow: does not return to baseline',bn:'Volume/flow: baseline-এ ফেরে না'},
+   capno:CP_FLAT, capnoc:{en:'Capno: sudden loss toward zero',bn:'Capno: হঠাৎ শূন্যের দিকে'},
+   loop:PV_LEAK, loopc:{en:'P–V: loop does not close (open loop)',bn:'P–V: loop বন্ধ হয় না (open loop)'},
+   note:{en:'Gas is escaping. The volume/flow trace and the P–V loop both fail to close; a big leak or disconnection collapses the capnogram. Check cuff, circuit, chest drain.',bn:'গ্যাস বেরোচ্ছে। Volume/flow trace আর P–V loop দুটোই বন্ধ হয় না; বড় leak বা disconnection-এ capnogram ধসে পড়ে। Cuff, circuit, chest drain দেখুন।'}},
+
+  {en:'Falling cardiac output',bn:'Cardiac output কমা',
+   flow:FV_NORMAL, flowc:{en:'Flow: often unchanged (lungs are fine)',bn:'Flow: প্রায়ই একই (ফুসফুস ঠিক)'},
+   capno:CP_RISE, capnoc:{en:'Capno: EtCO₂ falls (less CO₂ delivered)',bn:'Capno: EtCO₂ পড়ে (কম CO₂ পৌঁছায়)'},
+   loop:PV_NORMAL, loopc:{en:'P–V: unchanged',bn:'P–V: একই'},
+   note:{en:'A pure circulation problem barely touches the flow or loop — but EtCO₂ falls because less CO₂ is carried to the lungs. Capnography catches what the mechanics miss.',bn:'বিশুদ্ধ circulation সমস্যা flow বা loop-এ প্রায় ছোঁয় না — কিন্তু EtCO₂ পড়ে কারণ কম CO₂ ফুসফুসে যায়। Mechanics যা মিস করে capnography তা ধরে।'}},
+
+  {en:'Normal (for comparison)',bn:'স্বাভাবিক (তুলনার জন্য)',
+   flow:FV_NORMAL, flowc:{en:'F–V: smooth exponential to zero',bn:'F–V: মসৃণ exponential শূন্যে'},
+   capno:CP_NORMAL, capnoc:{en:'Capno: flat baseline, sharp corners, plateau',bn:'Capno: সমান baseline, খাড়া কোণ, plateau'},
+   loop:PV_NORMAL, loopc:{en:'P–V: narrow, steep, closed',bn:'P–V: সরু, খাড়া, বন্ধ'},
+   note:{en:'Keep this next to the others. Reading normal fast is what lets you spot abnormal fast.',bn:'এটা বাকিগুলোর পাশে রাখুন। দ্রুত normal চিনতে পারলেই দ্রুত abnormal ধরা যায়।'}},
+];
+
 const LEARN=[
  {en:'The big picture',bn:'পুরো ছবিটা',
   img:figrow(fig(PV_NORMAL,'P–V loop','P–V loop'),fig(FV_NORMAL,'F–V loop','F–V loop'),fig(SC_FT,'Scalar (flow–time)','Scalar (flow–time)')),
@@ -1708,6 +2001,11 @@ const LEARN=[
    <p>সবুজ = inspiration, হলুদ = expiration। Zero line-এর উপরে = ভেতরে ঢুকছে, নিচে = বেরোচ্ছে।</p>
    <h4>যে অভ্যাস কখনো ভুল হতে দেয় না</h4>
    <p>যেকোনো shape পড়ার আগে তিনটি জিনিস জানুন: <b>mode, set VT/pressure, আর রোগী effort দিচ্ছে কি না।</b> এই তিনটা ভুল পড়লে পুরো interpretation ভুল হবে।</p>`}},
+
+ {en:'One problem, three windows',bn:'এক সমস্যা, তিন জানালা',
+  xref:true,
+  sub:{en:'The same pathology in flow, capnography and the P–V loop',bn:'একই রোগ flow, capnography ও P–V loop-এ'},
+  intro:{en:'The same problem shows up differently in each trace. Seeing all three together makes the diagnosis unmistakable — and shows why capnography sometimes catches what the loops miss.',bn:'একই সমস্যা প্রতিটা trace-এ আলাদা দেখায়। তিনটা একসাথে দেখলে রোগ নির্ণয় নিশ্চিত হয় — আর বোঝা যায় কেন capnography মাঝে মাঝে এমন কিছু ধরে যা loop মিস করে।'}},
 
  {en:'The seven numbers (the foundation)',bn:'সাতটি সংখ্যা (সব হিসাবের ভিত্তি)',
   img:figrow(fig(SC_PT,'Ppeak vs Pplat','Ppeak বনাম Pplat'),fig(SC_AUTOPEEP,'Auto-PEEP: flow cut off','Auto-PEEP: flow কাটা'),fig(PV_NORMAL,'Slope = compliance','Slope = compliance')),
@@ -1936,6 +2234,78 @@ const LEARN=[
    <h4>শর্টকাট মন্ত্র</h4>
    <p>Flow শূন্যে ফেরে না → <b>time</b>-এর সমস্যা (auto-PEEP)। Volume শূন্যে ফেরে না → <b>leak</b>। Peak−Plateau চওড়া → <b>পাইপ</b>। দুটোই উঁচু, ব্যবধান সরু → <b>ফুসফুস</b>। চাপের রেখা দেবে যায় → রোগী <b>ক্ষুধার্ত, flow বাড়ান</b>। Exp-এ খাঁজ → রোগী <b>চাইছে, পাচ্ছে না</b>।</p>
    <p><b>সবচেয়ে বড় কথা:</b> absolute চেহারা নয়, <b>পরিবর্তনটাই</b> রোগ নির্ণয় করে। প্রতিটি intervention-এর আগে screen freeze করে পরে মিলিয়ে দেখুন।</p>`}},
+
+ {en:'Ventilator modes (incl. APRV)',bn:'ভেন্টিলেটর মোড (APRV সহ)',
+  sub:{en:'Volume vs pressure, SIMV, PSV, PRVC, APRV — when and how',bn:'Volume বনাম pressure, SIMV, PSV, PRVC, APRV — কখন ও কীভাবে'},
+  html:{
+   en:`<p>A mode is just <b>what the ventilator guarantees</b> (a volume or a pressure) and <b>who triggers</b> the breath.</p>
+   <h4>Volume control (VC / VC-AC)</h4>
+   <p>You set the VT; pressure varies. <b>Guarantees minute ventilation</b>, but pressure can spike if the lung stiffens. Flow is square. First choice for most — ARDS, metabolic acidosis where you must control MV.</p>
+   <h4>Pressure control (PC / PC-AC)</h4>
+   <p>You set the pressure; VT varies. <b>Caps the pressure</b> (safer for a leaky/stiff lung), decelerating flow gives good distribution — but VT falls if compliance drops, so watch the exhaled VT. Good for ARDS, paediatrics, big leaks.</p>
+   <h4>PRVC (dual control)</h4>
+   <p>Set a target VT; the vent delivers it at the <b>lowest pressure</b>, adjusting breath to breath. Tries to give the best of both — but it can drop support just when the patient wants more, so don't trust it blindly in a struggling patient.</p>
+   <h4>SIMV</h4>
+   <p>Mandatory breaths + the patient's own spontaneous breaths (often pressure-supported). Historically used for weaning; modern evidence favours a straight PSV trial instead.</p>
+   <h4>PSV (pressure support)</h4>
+   <p>Every breath is patient-triggered; the vent adds a set pressure. No backup rate — the patient must have drive. <b>The workhorse of weaning</b> (PS 5–8, PEEP 5).</p>
+   <h4>APRV — the one that confuses everyone</h4>
+   <p>Think of it as <b>CPAP at a high pressure with brief releases</b>. Four settings:</p>
+   <ul><li><b>P-high</b> — the high CPAP level (recruits, holds the lung open). Often 25–30.</li>
+   <li><b>T-high</b> — how long you stay at P-high (most of the cycle, e.g. 4–6 s).</li>
+   <li><b>P-low</b> — usually set to 0 (maximises the release flow).</li>
+   <li><b>T-low</b> — the brief release, timed off the expiratory flow (stop at ~50–75% of peak expiratory flow, often 0.5–0.8 s) so gas doesn't fully escape — that residual keeps the lung open (auto-PEEP by design).</li></ul>
+   <p>Spontaneous breathing is allowed throughout. Good for recruitment in ARDS; dangerous if the patient can't tolerate the release or is severely obstructive (breath-stacking).</p>
+   <div class="lmnemonic"><b>Quick pick:</b> control MV → VC. Cap pressure → PC. Weaning → PSV. Refractory ARDS recruitment → consider APRV (with experience).</div>`,
+   bn:`<p>Mode মানে শুধু <b>ভেন্ট কী নিশ্চিত করে</b> (volume না pressure) আর <b>breath কে trigger করে</b>।</p>
+   <h4>Volume control (VC / VC-AC)</h4>
+   <p>আপনি VT সেট করেন; চাপ ওঠানামা করে। <b>Minute ventilation নিশ্চিত</b>, কিন্তু ফুসফুস শক্ত হলে চাপ লাফাতে পারে। Flow square। বেশিরভাগে প্রথম পছন্দ — ARDS, metabolic acidosis যেখানে MV নিয়ন্ত্রণ জরুরি।</p>
+   <h4>Pressure control (PC / PC-AC)</h4>
+   <p>আপনি চাপ সেট করেন; VT ওঠানামা করে। <b>চাপ সীমিত থাকে</b> (leaky/stiff ফুসফুসে নিরাপদ), decelerating flow ভালো distribution দেয় — তবে compliance পড়লে VT কমে, তাই exhaled VT দেখুন। ARDS, paediatrics, বড় leak-এ ভালো।</p>
+   <h4>PRVC (dual control)</h4>
+   <p>Target VT সেট করেন; ভেন্ট সেটা <b>সর্বনিম্ন চাপে</b> দেয়, breath ধরে ধরে সমন্বয় করে। দুটোর সেরা দিতে চায় — তবে রোগী যখন বেশি চায় তখনই support কমাতে পারে, তাই struggling রোগীতে অন্ধভাবে ভরসা নয়।</p>
+   <h4>SIMV</h4>
+   <p>Mandatory breath + রোগীর নিজের spontaneous breath (প্রায়ই pressure-supported)। আগে weaning-এ ব্যবহৃত; আধুনিক প্রমাণ সরাসরি PSV trial-কে এগিয়ে রাখে।</p>
+   <h4>PSV (pressure support)</h4>
+   <p>প্রতিটা breath রোগী trigger করে; ভেন্ট সেট চাপ যোগ করে। Backup rate নেই — রোগীর drive থাকতে হবে। <b>Weaning-এর মূল হাতিয়ার</b> (PS 5–8, PEEP 5)।</p>
+   <h4>APRV — যেটা সবাইকে বিভ্রান্ত করে</h4>
+   <p>ভাবুন <b>উঁচু চাপে CPAP, মাঝে সংক্ষিপ্ত release</b>। চারটা সেটিং:</p>
+   <ul><li><b>P-high</b> — উঁচু CPAP স্তর (recruit করে, ফুসফুস খোলা রাখে)। প্রায়ই ২৫–৩০।</li>
+   <li><b>T-high</b> — P-high-এ কতক্ষণ থাকবে (cycle-এর বেশিরভাগ, যেমন ৪–৬ সেকেন্ড)।</li>
+   <li><b>P-low</b> — সাধারণত ০ (release flow সর্বোচ্চ করতে)।</li>
+   <li><b>T-low</b> — সংক্ষিপ্ত release, expiratory flow দেখে timed (peak expiratory flow-এর ~৫০–৭৫%-এ থামান, প্রায়ই ০.৫–০.৮ সেকেন্ড) যাতে গ্যাস পুরো বেরিয়ে না যায় — ওই অবশিষ্টই ফুসফুস খোলা রাখে (ইচ্ছাকৃত auto-PEEP)।</li></ul>
+   <p>সারাক্ষণ spontaneous breathing চলতে পারে। ARDS-এ recruitment-এ ভালো; রোগী release সহ্য করতে না পারলে বা severe obstructive হলে বিপজ্জনক (breath-stacking)।</p>
+   <div class="lmnemonic"><b>দ্রুত বাছাই:</b> MV নিয়ন্ত্রণ → VC। চাপ সীমিত → PC। Weaning → PSV। Refractory ARDS recruitment → APRV ভাবুন (অভিজ্ঞতা নিয়ে)।</div>`}},
+
+ {en:'Prone positioning',bn:'Prone positioning',
+  sub:{en:'When, how long, and when to stop — ARDS',bn:'কখন, কতক্ষণ, কখন থামাবেন — ARDS'},
+  html:{
+   en:`<h4>When to prone</h4>
+   <p>Moderate-to-severe ARDS with <b>P/F &lt; 150</b> on FiO₂ ≥ 0.6 and PEEP ≥ 5, once lung-protective settings are in place. Earlier is better — don't wait for rescue.</p>
+   <h4>How long</h4>
+   <p><b>At least 16 hours</b> per session (the PROSEVA protocol), then supinate and reassess. Repeat daily as long as it keeps helping.</p>
+   <h4>Before you turn</h4>
+   <ul><li>Secure the ETT — this is when tubes come out</li><li>Empty the stomach, pause feeds; eyes taped, padding for face/pressure points</li><li>Pre-oxygenate; plan lines and who holds the airway</li><li>Enough hands (usually 4–5 people)</li></ul>
+   <h4>Judging response</h4>
+   <p>A meaningful rise in P/F within an hour or two = a responder. Keep going. If oxygenation and CO₂ clearance clearly improve, that's your signal.</p>
+   <h4>When to stop / abort</h4>
+   <ul><li>P/F improves and stays up supine (success — you're done)</li><li>No response after adequate trials</li><li>Emergency: cardiac arrest, unplanned extubation, major instability, airway obstruction → supinate immediately</li></ul>
+   <h4>Watch for</h4>
+   <p>Facial and pressure-area oedema/ulcers, tube and line displacement, transient desaturation on turning, vomiting/aspiration. Contraindications: unstable spine, open abdomen, raised ICP, severe haemodynamic instability.</p>
+   <div class="lmnemonic"><b>The number:</b> P/F &lt; 150 → prone ≥ 16 h. It lowers mortality in moderate-severe ARDS — one of the few things that does.</div>`,
+   bn:`<h4>কখন prone করবেন</h4>
+   <p>Moderate-to-severe ARDS, FiO₂ ≥ 0.6 ও PEEP ≥ 5-এ <b>P/F &lt; 150</b>, lung-protective setting দেওয়ার পর। আগেভাগে ভালো — rescue-র জন্য অপেক্ষা নয়।</p>
+   <h4>কতক্ষণ</h4>
+   <p>প্রতি session <b>অন্তত ১৬ ঘণ্টা</b> (PROSEVA protocol), তারপর supine করে পুনর্মূল্যায়ন। কাজ করলে প্রতিদিন পুনরাবৃত্তি।</p>
+   <h4>ঘোরানোর আগে</h4>
+   <ul><li>ETT সুরক্ষিত করুন — এই সময়েই tube বেরিয়ে যায়</li><li>পেট খালি, feed বন্ধ; চোখ tape, মুখ/pressure point-এ padding</li><li>Pre-oxygenate; line ও airway কে ধরবে ঠিক করুন</li><li>যথেষ্ট হাত (সাধারণত ৪–৫ জন)</li></ul>
+   <h4>Response বোঝা</h4>
+   <p>এক-দুই ঘণ্টায় P/F-এর উল্লেখযোগ্য বৃদ্ধি = responder। চালিয়ে যান। Oxygenation ও CO₂ clearance স্পষ্ট ভালো হলে সেটাই সংকেত।</p>
+   <h4>কখন থামাবেন / abort</h4>
+   <ul><li>P/F ভালো হয়ে supine-এও থাকে (সফল — শেষ)</li><li>যথেষ্ট চেষ্টার পরও response নেই</li><li>জরুরি: cardiac arrest, unplanned extubation, বড় instability, airway obstruction → সঙ্গে সঙ্গে supine</li></ul>
+   <h4>খেয়াল রাখুন</h4>
+   <p>মুখ ও pressure-area-র oedema/ulcer, tube ও line সরে যাওয়া, ঘোরানোর সময় সাময়িক desaturation, বমি/aspiration। Contraindication: unstable spine, open abdomen, raised ICP, severe haemodynamic instability।</p>
+   <div class="lmnemonic"><b>সংখ্যাটা:</b> P/F &lt; 150 → prone ≥ ১৬ ঘণ্টা। Moderate-severe ARDS-এ mortality কমায় — যে অল্প কয়েকটা জিনিস কমায়, তার একটা।</div>`}},
 ];
 function renderLearn(){
   const g=$('learnTiles');if(!g)return;g.innerHTML='';
@@ -1945,6 +2315,23 @@ function renderLearn(){
       <h3>${T(l.en,l.bn)}</h3><p>${T(l.sub.en,l.sub.bn)}</p>
       <div class="larrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>`;
     b.onclick=()=>{
+      if(l.xref){
+        let blocks=XREF.map(x=>`<div class="xrefblock">
+          <div class="xreftitle">${T(x.en,x.bn)}</div>
+          <div class="xrefrow">
+            <figure class="lfig"><div class="lfigsvg">${x.flow}</div><figcaption>${T(x.flowc.en,x.flowc.bn)}</figcaption></figure>
+            <figure class="lfig"><div class="lfigsvg">${x.capno}</div><figcaption>${T(x.capnoc.en,x.capnoc.bn)}</figcaption></figure>
+            <figure class="lfig"><div class="lfigsvg">${x.loop}</div><figcaption>${T(x.loopc.en,x.loopc.bn)}</figcaption></figure>
+          </div>
+          <p class="xrefnote">${T(x.note.en,x.note.bn)}</p>
+        </div>`).join('');
+        $('modalBody').innerHTML=`<h3>${T(l.en,l.bn)}</h3><div class="mtag">${T(l.sub.en,l.sub.bn)}</div>
+          <p class="lbody" style="margin-bottom:6px">${T(l.intro.en,l.intro.bn)}</p>
+          <div class="xrefhead"><span>Flow</span><span>Capno</span><span>P–V loop</span></div>
+          ${blocks}`;
+        openModal();
+        return;
+      }
       const imgHtml = l.img ? `<div class="lfigwrap">${l.img}</div>` : '';
       $('modalBody').innerHTML=`<h3>${T(l.en,l.bn)}</h3><div class="mtag">${T(l.sub.en,l.sub.bn)}</div>${imgHtml}<div class="lbody">${T(l.html.en,l.html.bn)}</div>`;
       openModal();
@@ -2107,13 +2494,43 @@ const CLINQUIZ=[
 ];
 let quizBank='wave';
 let quizI=0, quizScore=0, quizAnswered=false, quizOrder=[];
-function activeQuiz(){return quizBank==='clin'?CLINQUIZ:QUIZ;}
+// Build the "match windows" bank from XREF (skip the Normal row as the prompt source)
+function buildXrefQuiz(){
+  const bank=[];
+  const pool=XREF.filter(x=>!/Normal|স্বাভাবিক/.test(x.en));
+  const windows=[['flow','Flow','Flow'],['capno','Capnography','Capnography'],['loop','P–V loop','P–V loop']];
+  pool.forEach(x=>{
+    // pick a random "shown" window and a different "asked" window
+    const si=Math.floor(Math.random()*3);
+    let ai=Math.floor(Math.random()*3); if(ai===si)ai=(ai+1)%3;
+    const shown=windows[si], asked=windows[ai];
+    // options = the asked-window figure for each XREF row (correct = this row's)
+    const optRows=XREF.slice();
+    const correctFig=x[asked[0]];
+    // assemble up to 4 distinct option figures for the asked window
+    let optFigs=[{fig:correctFig,correct:true}];
+    optRows.filter(r=>r!==x).forEach(r=>{ if(optFigs.length<4 && r[asked[0]]!==correctFig) optFigs.push({fig:r[asked[0]],correct:false}); });
+    // shuffle options
+    optFigs=optFigs.sort(()=>Math.random()-0.5);
+    const a=optFigs.findIndex(o=>o.correct);
+    bank.push({
+      shownFig:x[shown[0]],
+      q:{en:`This is <b>${x.en}</b> on ${shown[1]}. Which ${asked[1]} shows the SAME problem?`,bn:`এটা ${shown[2]}-এ <b>${x.bn}</b>। কোন ${asked[2]} একই সমস্যা দেখায়?`},
+      optsvg:optFigs.map(o=>o.fig), a,
+      ex:{en:x.note.en,bn:x.note.bn}
+    });
+  });
+  return bank.sort(()=>Math.random()-0.5);
+}
+let XREFQUIZ=[];
+function activeQuiz(){return quizBank==='clin'?CLINQUIZ:(quizBank==='xref'?XREFQUIZ:QUIZ);}
 $('quizMode').querySelectorAll('button').forEach(b=>b.onclick=()=>{
   $('quizMode').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
   $('quizMode').querySelectorAll('button[data-v="'+b.dataset.v+'"]').forEach(x=>x.classList.add('on'));
   quizBank=b.dataset.v;startQuiz();
 });
 function startQuiz(){
+  if(quizBank==='xref') XREFQUIZ=buildXrefQuiz();
   const bank=activeQuiz();
   quizI=0;quizScore=0;quizAnswered=false;
   quizOrder=bank.map((_,i)=>i).sort(()=>Math.random()-0.5);
@@ -2132,15 +2549,20 @@ function renderQuiz(){
   }
   const q=bank[quizOrder[quizI]];
   quizAnswered=false;
-  const opts=T(q.opts.en,q.opts.bn).map((o,i)=>`<button class="qopt" data-i="${i}"><span class="qmark"></span><span>${o}</span></button>`).join('');
-  const head = q.svg
-    ? `<div class="quizfig">${q.svg}</div>`
-    : `<div class="quizstem">${T(q.stem.en,q.stem.bn)}</div>`;
+  let opts;
+  if(q.optsvg){
+    opts=q.optsvg.map((s,i)=>`<button class="qopt qopt-svg" data-i="${i}"><span class="qmark"></span><span class="qoptfig">${s}</span></button>`).join('');
+  } else {
+    opts=T(q.opts.en,q.opts.bn).map((o,i)=>`<button class="qopt" data-i="${i}"><span class="qmark"></span><span>${o}</span></button>`).join('');
+  }
+  const head = q.shownFig
+    ? `<div class="quizfig">${q.shownFig}</div>`
+    : (q.svg ? `<div class="quizfig">${q.svg}</div>` : `<div class="quizstem">${T(q.stem.en,q.stem.bn)}</div>`);
   box.innerHTML=`<div class="quizcard">
     <div class="quizprog"><span>${T('Question','প্রশ্ন')} ${quizI+1} / ${quizOrder.length}</span><span class="quizscore">${T('Score','স্কোর')}: ${quizScore}</span></div>
     ${head}
     <div class="quizq">${T(q.q.en,q.q.bn)}</div>
-    <div class="quizopts" id="quizOpts">${opts}</div>
+    <div class="quizopts${q.optsvg?' quizopts-svg':''}" id="quizOpts">${opts}</div>
     <div id="quizFoot"></div>
   </div>`;
   $('quizOpts').querySelectorAll('.qopt').forEach(btn=>{
@@ -2336,6 +2758,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 function renderAll(){
   renderCards();renderWaves();renderDz();renderWean();renderRass();renderTrbl();renderRef();renderLearn();
   renderWzPick();runWizard();renderDrugGroups();runDrug();
+  runOxy();renderPeep();renderPtTrial();renderCapno();
   runCalc();runIE();runRSBI();runABG();renderPeep();renderTrend();
 }
 
