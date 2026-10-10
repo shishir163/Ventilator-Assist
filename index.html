@@ -474,6 +474,13 @@ body[data-cards="l"] .card p{font-size:13.5px}
 .addcat button{background:var(--brand);color:#04222A;font-weight:700;border-radius:10px;padding:9px 15px;font-size:13px}
 
 /* ---------- Phase 2: admin notes + rich editor ---------- */
+.wall{position:fixed;inset:0;z-index:9999;background:var(--bg);color:var(--ink);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.wallbox{width:100%;max-width:380px}
+.wallbox h1{font-size:26px;margin:0 0 4px}
+.wallbox .wsub{color:var(--mute,var(--ink));opacity:.75;font-size:13.5px;margin-bottom:18px}
+.lops{position:absolute;top:8px;right:8px;display:flex;gap:6px;z-index:2}
+.lops span{background:rgba(0,0,0,.35);color:#fff;border-radius:8px;padding:4px 9px;font-size:11px;font-weight:700}
+.lops span.d{background:rgba(190,40,40,.75)}
 .notesauth{display:flex;margin:18px 0 2px}
 .nauth{display:flex;align-items:center;gap:8px;width:100%}
 .nauth .nspace{flex:1}
@@ -558,6 +565,7 @@ body[data-cards="l"] .card p{font-size:13.5px}
   <section id="settings" class="view">
     <h2 data-en>Settings</h2><h2 data-bn>সেটিংস</h2>
     <div class="vsub" data-en>Theme, font and dashboard look. Saved on this device.</div><div class="vsub" data-bn>থিম, ফন্ট আর ড্যাশবোর্ডের চেহারা — এই ডিভাইসে সেভ থাকে।</div>
+    <div id="acctBox"></div>
     <div id="settingsBody"></div>
   </section>
 
@@ -722,9 +730,9 @@ body[data-cards="l"] .card p{font-size:13.5px}
   <section id="learn" class="view">
     <h2 data-en>Learn &amp; Notes</h2><h2 data-bn>শেখা ও নোট</h2>
     <div class="vsub" data-en>The core theory, the way it clicks at the bedside. Tap a card to open it.</div><div class="vsub" data-bn>মূল theory, যেভাবে বেডসাইডে মাথায় বসে। কার্ডে ট্যাপ করলে খুলবে।</div>
-    <div id="learnTiles" class="learn-grid"></div>
     <div id="notesAuthbar" class="notesauth" style="display:none"></div>
-    <div id="notesArea" class="notes-wrap"></div>
+    <div id="learnTiles" class="learn-grid"></div>
+    <div id="notesArea" class="notes-wrap" style="display:none"></div>
   </section>
 
   <!-- ===================== SETUP WIZARD ===================== -->
@@ -878,6 +886,7 @@ body[data-cards="l"] .card p{font-size:13.5px}
   <button class="x" id="installX">✕</button>
 </div>
 
+<div id="loginWall" class="wall" style="display:none"></div>
 <script>
 /* =================================================================
    VentAssist — clinical logic + UI. All values on device, offline.
@@ -2463,14 +2472,7 @@ const LEARN=[
    <p>মুখ ও pressure-area-র oedema/ulcer, tube ও line সরে যাওয়া, ঘোরানোর সময় সাময়িক desaturation, বমি/aspiration। Contraindication: unstable spine, open abdomen, raised ICP, severe haemodynamic instability।</p>
    <div class="lmnemonic"><b>সংখ্যাটা:</b> P/F &lt; 150 → prone ≥ ১৬ ঘণ্টা। Moderate-severe ARDS-এ mortality কমায় — যে অল্প কয়েকটা জিনিস কমায়, তার একটা।</div>`}},
 ];
-function renderLearn(){
-  const g=$('learnTiles');if(!g)return;g.innerHTML='';
-  LEARN.forEach((l,i)=>{
-    const b=el('button','lcard lc'+(i%8));
-    b.innerHTML=`<div class="lnum">${String(i+1).padStart(2,'0')}</div>
-      <h3>${T(l.en,l.bn)}</h3><p>${T(l.sub.en,l.sub.bn)}</p>
-      <div class="larrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>`;
-    b.onclick=()=>{
+function openBuiltinLearn(l){
       if(l.xref){
         let blocks=XREF.map(x=>`<div class="xrefblock">
           <div class="xreftitle">${T(x.en,x.bn)}</div>
@@ -2491,8 +2493,51 @@ function renderLearn(){
       const imgHtml = l.img ? `<div class="lfigwrap">${l.img}</div>` : '';
       $('modalBody').innerHTML=`<h3>${T(l.en,l.bn)}</h3><div class="mtag">${T(l.sub.en,l.sub.bn)}</div>${imgHtml}<div class="lbody">${T(l.html.en,l.html.bn)}</div>`;
       openModal();
-    };
-    g.appendChild(b);
+}
+function learnText(h){const d=document.createElement('div');d.innerHTML=h||'';return (d.textContent||'').replace(/\s+/g,' ').trim();}
+function builtinEditHtml(l){
+  if(l.xref) return '<p>'+T(l.intro.en,l.intro.bn)+'</p>';
+  return (l.img?'<div class="lfigwrap">'+l.img+'</div>':'')+T(l.html.en,l.html.bn);
+}
+function renderLearn(){
+  const g=$('learnTiles');if(!g)return;g.innerHTML='';
+  const admin=!!(fbUser&&isAdmin());
+  let n=0;
+  const tile=(title,sub,open,ops)=>{
+    const i=n++;
+    const b=el('button','lcard lc'+(i%8));
+    b.innerHTML=`<div class="lnum">${String(i+1).padStart(2,'0')}</div>
+      <h3>${title}</h3><p>${sub}</p>
+      <div class="larrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>`;
+    if(admin&&ops){
+      const o=el('div','lops');
+      ops.forEach(x=>{const sp=el('span',x.d?'d':'');sp.textContent=x.t;sp.onclick=e=>{e.stopPropagation();x.f();};o.appendChild(sp);});
+      b.appendChild(o);
+    }
+    b.onclick=open; g.appendChild(b);
+  };
+  LEARN.forEach((l,i)=>{
+    const o=ovCache['b'+i]||{};
+    if(o.hidden) return;
+    const edited=!!o.bodyHtml;
+    const title=o.title?escapeHtml(o.title):T(l.en,l.bn);
+    const sub=edited?escapeHtml(learnText(o.bodyHtml).slice(0,60)):T(l.sub.en,l.sub.bn);
+    tile(title,sub,()=>{
+      if(edited){ $('modalBody').innerHTML=`<h3>${title}</h3><div class="lbody">${o.bodyHtml}</div>`; openModal(); }
+      else openBuiltinLearn(l);
+    },[
+      {t:T('Edit','Edit'),f:()=>openNoteEditor({kind:'b',key:'b'+i,title:o.title||T(l.en,l.bn),bodyHtml:edited?o.bodyHtml:builtinEditHtml(l)})},
+      {t:T('Delete','Delete'),d:1,f:()=>deleteCard({kind:'b',key:'b'+i})}
+    ]);
+  });
+  notesCache.forEach(nt=>{
+    const title=escapeHtml(nt.title||T('Untitled','শিরোনামহীন'));
+    tile(title,escapeHtml(learnText(nt.bodyHtml).slice(0,60)),()=>{
+      $('modalBody').innerHTML=`<h3>${title}</h3><div class="lbody">${nt.bodyHtml||''}</div>`; openModal();
+    },[
+      {t:T('Edit','Edit'),f:()=>openNoteEditor({kind:'n',id:nt.id,title:nt.title||'',bodyHtml:nt.bodyHtml||''})},
+      {t:T('Delete','Delete'),d:1,f:()=>deleteCard({kind:'n',id:nt.id})}
+    ]);
   });
 }
 
@@ -2712,82 +2757,127 @@ const FB_CONFIG={
   appId:"1:772754755968:web:62e0029b94c082d6aaf165"
 };
 const ADMIN_UID="hnjThRLqyJgGaFnF70d4YJ13Wzo2"; /* your admin account UID; leave as-is and any signed-in user can edit */
-let fbApp=null,fbAuth=null,fbDB=null,fbUser=null,notesCache=[],notesUnsub=null,fbErr='';
-function fbReady(){ return typeof firebase!=='undefined' && FB_CONFIG && FB_CONFIG.projectId && FB_CONFIG.projectId.indexOf('PASTE')===-1; }
+let fbApp=null,fbAuth=null,fbDB=null,fbUser=null,notesCache=[],ovCache={},fbErr='';
+let subs=[],sessUnsub=null,pendingSid=null,wallMsg='';
+const AUTH_REQUIRED=!!(FB_CONFIG&&FB_CONFIG.projectId&&FB_CONFIG.projectId.indexOf('PASTE')===-1);
+function fbReady(){ return typeof firebase!=='undefined' && AUTH_REQUIRED; }
 function isAdmin(){ if(!fbUser) return false; return (''+ADMIN_UID).indexOf('PASTE')!==-1 ? true : fbUser.uid===ADMIN_UID; }
 function escapeHtml(x){return String(x==null?'':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function newSid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,10); }
 
+/* ---- login wall ---- */
+function showWall(mode){
+  const w=$('loginWall'); if(!w) return;
+  if(mode==='hide'){ w.style.display='none'; w.innerHTML=''; document.body.style.overflow=''; return; }
+  w.style.display='flex'; document.body.style.overflow='hidden';
+  if(mode==='loading'){ w.innerHTML=`<div class="wallbox"><h1>VentAssist</h1><div class="wsub">${T('Loading…','লোড হচ্ছে…')}</div></div>`; return; }
+  if(mode==='nosdk'){ w.innerHTML=`<div class="wallbox"><h1>VentAssist</h1><div class="wsub">${T('Could not load sign-in. Connect to the internet once and reopen the app.','Sign-in লোড হয়নি। একবার internet-এ connect করে অ্যাপটা আবার খোলো।')}</div></div>`; return; }
+  w.innerHTML=`<div class="wallbox"><h1>VentAssist</h1>
+    <div class="wsub">${T('Sign in to continue. Access is by invitation only.','চালিয়ে যেতে sign in করো। শুধু আমন্ত্রিতদের জন্য।')}</div>
+    <div class="field" style="margin-bottom:10px"><label>Email</label><input id="loginEmail" type="email" autocomplete="username"></div>
+    <div class="field" style="margin-bottom:12px"><label>${T('Password','Password')}</label><input id="loginPw" type="password" autocomplete="current-password"></div>
+    <div class="call bad ${wallMsg?'':'hide'}" id="loginErr" style="margin-bottom:10px"><div class="ci">!</div><div id="loginErrMsg">${escapeHtml(wallMsg)}</div></div>
+    <button class="savebtn" id="loginGo" style="width:100%;justify-content:center">${T('Sign in','Sign in')}</button></div>`;
+  const go=()=>doLogin();
+  $('loginGo').onclick=go;
+  $('loginPw').onkeydown=e=>{ if(e.key==='Enter') go(); };
+}
+function wallErr(m){ wallMsg=m; const e=$('loginErr'); if(e){ e.classList.remove('hide'); $('loginErrMsg').textContent=m; } }
+function friendlyAuthErr(e){
+  const c=(e&&e.code)||'';
+  if(c==='auth/network-request-failed') return T('No internet. Connect once to sign in.','Internet নেই। Sign in করতে একবার online হও।');
+  if(c==='auth/too-many-requests') return T('Too many attempts. Try again later.','অনেকবার চেষ্টা হয়েছে। পরে আবার চেষ্টা করো।');
+  if(c==='auth/invalid-email') return T('Enter a valid email.','সঠিক email দাও।');
+  return T('Wrong email or password.','Email বা password ভুল।');
+}
+function doLogin(){
+  if(!fbAuth){ wallErr(T('Sign-in is not ready.','Sign-in তৈরি নয়।')); return; }
+  const em=($('loginEmail').value||'').trim(), pw=$('loginPw').value||'';
+  if(!em||!pw){ wallErr(T('Enter email and password.','Email ও password দাও।')); return; }
+  wallMsg='';
+  pendingSid=newSid();
+  try{ localStorage.setItem('va_sid',pendingSid); }catch(x){}
+  fbAuth.signInWithEmailAndPassword(em,pw).catch(e=>{ pendingSid=null; wallErr(friendlyAuthErr(e)); });
+}
+
+/* ---- init ---- */
 function fbInit(){
-  if(!fbReady()){ renderNotesAuth(); renderNotes(); return; }
+  if(!AUTH_REQUIRED){ renderAcct(); renderNotesAuth(); renderLearn(); return; }  /* no Firebase configured: app open */
   if(fbApp) return;
+  if(typeof firebase==='undefined'){ showWall('nosdk'); return; }
+  showWall('loading');
   try{
     fbApp=firebase.initializeApp(FB_CONFIG);
     fbAuth=firebase.auth();
     fbDB=firebase.firestore();
     try{ fbDB.enablePersistence({synchronizeTabs:true}).catch(()=>{}); }catch(e){}
-    fbAuth.onAuthStateChanged(u=>{ fbUser=u; renderNotesAuth(); renderNotes(); });
-    subscribeNotes();
-  }catch(e){ fbErr=String(e&&e.message||e); }
-  renderNotesAuth(); renderNotes();
+    fbAuth.onAuthStateChanged(onAuth);
+  }catch(e){ fbErr=String(e&&e.message||e); showWall('login'); wallErr(fbErr); }
 }
-function subscribeNotes(){
-  if(!fbDB||notesUnsub) return;
-  notesUnsub=fbDB.collection('notes').orderBy('order','asc').onSnapshot(
-    snap=>{ notesCache=snap.docs.map(d=>Object.assign({id:d.id},d.data())); renderNotes(); },
-    err=>{ fbErr=String(err&&err.message||err); renderNotes(); });
+function stopSubs(){ subs.forEach(u=>{try{u();}catch(x){}}); subs=[]; if(sessUnsub){try{sessUnsub();}catch(x){} sessUnsub=null;} }
+function onAuth(u){
+  fbUser=u; stopSubs(); notesCache=[]; ovCache={};
+  if(!u){ showWall('login'); renderAcct(); renderNotesAuth(); renderLearn(); return; }
+  if(!isAdmin()) startSession(u);
+  showWall('hide');
+  subscribeData();
+  renderAcct(); renderNotesAuth(); renderLearn();
 }
-function adminLogout(){ if(fbAuth) fbAuth.signOut(); }
+function startSession(u){
+  const ref=fbDB.collection('sessions').doc(u.uid);
+  const listen=()=>{
+    sessUnsub=ref.onSnapshot(sn=>{
+      const d=sn.data(); if(!d) return;
+      let mine=null; try{mine=localStorage.getItem('va_sid');}catch(x){}
+      if(d.sid!==mine){ kick(); }
+    },()=>{});
+  };
+  if(pendingSid){
+    const sid=pendingSid; pendingSid=null;
+    ref.set({sid:sid,at:firebase.firestore.FieldValue.serverTimestamp()}).then(listen).catch(()=>{ wallMsg=T('Could not start session. Try again.','Session শুরু করা যায়নি। আবার চেষ্টা করো।'); try{localStorage.removeItem('va_sid');}catch(x){} fbAuth.signOut(); });
+  } else { listen(); }
+}
+function kick(){
+  wallMsg=T('You were signed out because this account was opened on another device.','এই account অন্য device-এ খোলা হয়েছে, তাই এখানে sign out হয়েছে।');
+  try{localStorage.removeItem('va_sid');}catch(x){}
+  if(fbAuth) fbAuth.signOut();
+}
+function subscribeData(){
+  subs.push(fbDB.collection('notes').orderBy('order','asc').onSnapshot(
+    snap=>{ notesCache=snap.docs.map(d=>Object.assign({id:d.id},d.data())); renderLearn(); renderNotesAuth(); },
+    err=>{ fbErr=String(err&&err.message||err); }));
+  subs.push(fbDB.collection('overrides').onSnapshot(
+    snap=>{ ovCache={}; snap.docs.forEach(d=>{ovCache[d.id]=d.data();}); renderLearn(); renderNotesAuth(); },
+    err=>{ fbErr=String(err&&err.message||err); }));
+}
+function adminLogout(){
+  try{localStorage.removeItem('va_sid');}catch(x){}
+  wallMsg='';
+  if(fbAuth) fbAuth.signOut();
+}
 
+/* ---- account box (Settings) + admin bar (Learn) ---- */
+function renderAcct(){
+  const g=$('acctBox'); if(!g) return;
+  if(!fbUser){ g.innerHTML=''; return; }
+  g.innerHTML=`<div class="panel"><div class="panel-t">${T('ACCOUNT','অ্যাকাউন্ট')}</div>
+    <div style="font-size:13.5px;margin-bottom:10px">${escapeHtml(fbUser.email||'')}${isAdmin()?' · <b>Admin</b>':''}</div>
+    <button class="nbtn" id="acctOut">${T('Sign out','Sign out')}</button></div>`;
+  $('acctOut').onclick=adminLogout;
+}
 function renderNotesAuth(){
   const g=$('notesAuthbar'); if(!g) return;
-  if(!fbReady()){ g.style.display='none'; g.innerHTML=''; return; }
+  if(!(fbUser&&isAdmin())){ g.style.display='none'; g.innerHTML=''; return; }
   g.style.display='';
-  if(fbUser && isAdmin()){
-    g.innerHTML=`<div class="nauth"><span class="ntag">${T('Admin','Admin')} · ${escapeHtml(fbUser.email||'')}</span><span class="nspace"></span>`
-      +`<button class="nbtn add" id="noteAdd">＋ ${T('Add note','Note যোগ')}</button>`
-      +`<button class="nbtn" id="noteOut">${T('Sign out','Sign out')}</button></div>`;
-    $('noteAdd').onclick=()=>openNoteEditor(null);
-    $('noteOut').onclick=adminLogout;
-  } else {
-    g.innerHTML=`<div class="nauth"><span class="nspace"></span><button class="nbtn" id="noteIn">${T('Admin sign in','Admin sign in')}</button></div>`;
-    $('noteIn').onclick=openLogin;
-  }
+  g.innerHTML=`<div class="nauth"><span class="ntag">Admin</span><span class="nspace"></span>`
+    +`<button class="nbtn add" id="noteAdd">＋ ${T('New card','নতুন card')}</button></div>`;
+  $('noteAdd').onclick=()=>openNoteEditor(null);
 }
-function renderNotes(){
-  const g=$('notesArea'); if(!g) return;
-  if(!fbReady()){ g.innerHTML=''; return; }
-  const admin=fbUser&&isAdmin();
-  if(!notesCache.length){
-    g.innerHTML=`<div class="notes-empty">${admin?T('No notes yet — tap “Add note”.','এখনো note নেই — “Add note” চাপো।'):T('No notes yet.','এখনো কোনো note নেই।')}</div>`;
-    return;
-  }
-  g.innerHTML=notesCache.map(n=>`<div class="note-card">
-      <div class="note-head"><div class="note-title">${escapeHtml(n.title||T('Untitled','শিরোনামহীন'))}</div>`
-      +(admin?`<div class="note-ops"><button class="nbtn sm" data-ed="${n.id}">${T('Edit','Edit')}</button><button class="nbtn sm danger" data-del="${n.id}">${T('Delete','Delete')}</button></div>`:'')
-      +`</div><div class="note-body">${n.bodyHtml||''}</div></div>`).join('');
-  if(admin){
-    g.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>openNoteEditor(notesCache.find(x=>x.id===b.getAttribute('data-ed'))));
-    g.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>deleteNote(b.getAttribute('data-del')));
-  }
-}
-function openLogin(){
-  $('modalBody').innerHTML=`<h3>${T('Admin sign in','Admin sign in')}</h3>
-    <div class="mtag">${T('Only the admin can add or edit notes.','শুধু admin note add/edit korte pare.')}</div>
-    <div class="field" style="margin-bottom:10px"><label>Email</label><input id="loginEmail" type="email" autocomplete="username"></div>
-    <div class="field" style="margin-bottom:12px"><label>${T('Password','Password')}</label><input id="loginPw" type="password" autocomplete="current-password"></div>
-    <div class="call bad hide" id="loginErr" style="margin-bottom:10px"><div class="ci">!</div><div id="loginErrMsg"></div></div>
-    <button class="savebtn" id="loginGo" style="width:100%;justify-content:center">${T('Sign in','Sign in')}</button>`;
-  $('loginGo').onclick=()=>{
-    if(!fbAuth){ $('loginErr').classList.remove('hide'); $('loginErrMsg').textContent=T('Firebase not set up yet.','Firebase এখনো setup হয়নি।'); return; }
-    const em=($('loginEmail').value||'').trim(), pw=$('loginPw').value||'';
-    fbAuth.signInWithEmailAndPassword(em,pw).then(()=>closeModal())
-      .catch(e=>{ $('loginErr').classList.remove('hide'); $('loginErrMsg').textContent=e.message||String(e); });
-  };
-  openModal();
-}
+function renderNotes(){ renderLearn(); }
+/* ---- editor ---- */
 function openNoteEditor(note){
   const editing=!!note;
-  $('modalBody').innerHTML=`<h3>${editing?T('Edit note','Note edit'):T('New note','নতুন note')}</h3>
+  $('modalBody').innerHTML=`<h3>${editing?T('Edit card','Card edit'):T('New card','নতুন card')}</h3>
     <div class="field" style="margin:8px 0 12px"><label>${T('Title','শিরোনাম')}</label><input id="noteTitle" type="text" value="${editing?escapeHtml(note.title||''):''}"></div>
     <div class="rt-toolbar">
       <button data-cmd="bold" class="rtb"><b>B</b></button>
@@ -2827,17 +2917,20 @@ function openNoteEditor(note){
 function saveNote(note,title,body,cb){
   if(!fbDB){cb&&cb(T('Firebase not set up yet.','Firebase এখনো setup হয়নি।'));return;}
   if(!(fbUser&&isAdmin())){cb&&cb(T('Not authorised.','অনুমতি নেই।'));return;}
-  const data={title:title,bodyHtml:body,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const ts=firebase.firestore.FieldValue.serverTimestamp();
   let p;
-  if(note&&note.id){ p=fbDB.collection('notes').doc(note.id).update(data); }
-  else{ const mx=notesCache.length?Math.max.apply(null,notesCache.map(n=>n.order||0)):0; data.order=mx+1; data.createdAt=firebase.firestore.FieldValue.serverTimestamp(); p=fbDB.collection('notes').add(data); }
+  if(note&&note.kind==='b'){ p=fbDB.collection('overrides').doc(note.key).set({title:title,bodyHtml:body,hidden:false,updatedAt:ts},{merge:true}); }
+  else if(note&&note.id){ p=fbDB.collection('notes').doc(note.id).update({title:title,bodyHtml:body,updatedAt:ts}); }
+  else{ const mx=notesCache.length?Math.max.apply(null,notesCache.map(n=>n.order||0)):0; p=fbDB.collection('notes').add({title:title,bodyHtml:body,order:mx+1,createdAt:ts,updatedAt:ts}); }
   p.then(()=>cb&&cb(null)).catch(e=>cb&&cb(e.message||String(e)));
 }
-function deleteNote(id){
+function deleteCard(c){
   if(!fbDB||!(fbUser&&isAdmin()))return;
-  if(!confirm(T('Delete this note?','এই note মুছবে?')))return;
-  fbDB.collection('notes').doc(id).delete().catch(e=>alert(e.message||String(e)));
+  if(!confirm(T('Delete this card?','এই card মুছবে?')))return;
+  const p=c.kind==='b'?fbDB.collection('overrides').doc(c.key).set({hidden:true},{merge:true}):fbDB.collection('notes').doc(c.id).delete();
+  p.catch(e=>alert(e.message||String(e)));
 }
+function deleteNote(id){ deleteCard({kind:'n',id:id}); }
 
 /* ---------- boot ---------- */
 applyPrefs();

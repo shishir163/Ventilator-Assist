@@ -1,5 +1,5 @@
 /* VentAssist service worker — offline app shell */
-const CACHE = 'ventassist-v16';
+const CACHE = 'ventassist-v18';
 const ASSETS = [
   './',
   './index.html',
@@ -23,6 +23,8 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  const h = new URL(req.url).hostname;
+  if (h.endsWith('googleapis.com') || h.endsWith('firebaseio.com')) return; // never cache auth/data calls
   // network-first for the HTML so updates show; cache-first for the rest
   if (req.mode === 'navigate' || req.destination === 'document') {
     e.respondWith(
