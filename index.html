@@ -2704,14 +2704,14 @@ $('installX').onclick=()=>{$('installBar').classList.remove('show');localStorage
    FILL FB_CONFIG and ADMIN_UID from your Firebase project (see setup notes).
    Until filled, the app runs normally and cloud notes stay off. */
 const FB_CONFIG={
-  apiKey:"PASTE_API_KEY",
-  authDomain:"PASTE.firebaseapp.com",
-  projectId:"PASTE_PROJECT_ID",
-  storageBucket:"PASTE.appspot.com",
-  messagingSenderId:"PASTE_SENDER_ID",
-  appId:"PASTE_APP_ID"
+  apiKey:"AIzaSyA1Kxeu2N8X2dZ82jXGcZ3TpZ-7np7-xts",
+  authDomain:"ventassist-d0f3c.firebaseapp.com",
+  projectId:"ventassist-d0f3c",
+  storageBucket:"ventassist-d0f3c.firebasestorage.app",
+  messagingSenderId:"772754755968",
+  appId:"1:772754755968:web:62e0029b94c082d6aaf165"
 };
-const ADMIN_UID="PASTE_ADMIN_UID"; /* your admin account UID; leave as-is and any signed-in user can edit */
+const ADMIN_UID="hnjThRLqyJgGaFnF70d4YJ13Wzo2"; /* your admin account UID; leave as-is and any signed-in user can edit */
 let fbApp=null,fbAuth=null,fbDB=null,fbUser=null,notesCache=[],notesUnsub=null,fbErr='';
 function fbReady(){ return typeof firebase!=='undefined' && FB_CONFIG && FB_CONFIG.projectId && FB_CONFIG.projectId.indexOf('PASTE')===-1; }
 function isAdmin(){ if(!fbUser) return false; return (''+ADMIN_UID).indexOf('PASTE')!==-1 ? true : fbUser.uid===ADMIN_UID; }
