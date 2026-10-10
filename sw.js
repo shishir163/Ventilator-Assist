@@ -1,5 +1,5 @@
 /* VentAssist service worker — offline app shell */
-const CACHE = 'ventassist-v12';
+const CACHE = 'ventassist-v13';
 const ASSETS = [
   './',
   './index.html',
