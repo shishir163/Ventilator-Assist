@@ -472,7 +472,36 @@ body[data-cards="l"] .card p{font-size:13.5px}
 .addcat input{flex:1;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:9px 11px;color:var(--ink);font-size:13.5px}
 .addcat input:focus{outline:none;border-color:var(--brand)}
 .addcat button{background:var(--brand);color:#04222A;font-weight:700;border-radius:10px;padding:9px 15px;font-size:13px}
+
+/* ---------- Phase 2: admin notes + rich editor ---------- */
+.notesauth{display:flex;margin:18px 0 2px}
+.nauth{display:flex;align-items:center;gap:8px;width:100%}
+.nauth .nspace{flex:1}
+.ntag{font-size:12px;color:var(--ink2);font-weight:600}
+.nbtn{border:1px solid var(--line);border-radius:10px;padding:8px 13px;font-size:12.5px;font-weight:600;color:var(--ink);background:var(--panel)}
+.nbtn.add{background:var(--brand);color:#04222A;border-color:var(--brand)}
+.nbtn.sm{padding:5px 10px;font-size:11.5px}
+.nbtn.danger{color:var(--bad)}
+.notes-wrap{display:flex;flex-direction:column;gap:12px;margin-top:10px}
+.notes-empty{color:var(--ink3);font-size:13.5px;text-align:center;padding:18px 10px}
+.note-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 15px}
+.note-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.note-title{font-size:16px;font-weight:700;flex:1;line-height:1.3}
+.note-ops{display:flex;gap:6px;flex:none}
+.note-body{font-size:14px;line-height:1.6}
+.note-body p{margin:0 0 8px}
+.note-body ul,.note-body ol{margin:0 0 8px;padding-left:20px}
+.rt-toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:7px;margin-bottom:8px}
+.rtb{border:1px solid var(--line);border-radius:8px;min-width:34px;height:32px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;gap:5px;background:var(--panel);color:var(--ink);font-size:14px;cursor:pointer}
+.rtb input[type=color]{width:18px;height:18px;border:none;background:none;padding:0;cursor:pointer}
+.rtb select,.rtb{font-family:inherit}
+.rt-area{min-height:180px;max-height:44vh;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:14px;line-height:1.6;color:var(--ink)}
+.rt-area:focus{outline:none;border-color:var(--brand)}
+.rtsp{flex:1}
 </style>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -694,6 +723,8 @@ body[data-cards="l"] .card p{font-size:13.5px}
     <h2 data-en>Learn &amp; Notes</h2><h2 data-bn>শেখা ও নোট</h2>
     <div class="vsub" data-en>The core theory, the way it clicks at the bedside. Tap a card to open it.</div><div class="vsub" data-bn>মূল theory, যেভাবে বেডসাইডে মাথায় বসে। কার্ডে ট্যাপ করলে খুলবে।</div>
     <div id="learnTiles" class="learn-grid"></div>
+    <div id="notesAuthbar" class="notesauth" style="display:none"></div>
+    <div id="notesArea" class="notes-wrap"></div>
   </section>
 
   <!-- ===================== SETUP WIZARD ===================== -->
@@ -2651,7 +2682,7 @@ if($('settingsBtn')) $('settingsBtn').onclick=()=>go('settings');
 
 /* ---------- render everything (on lang change) ---------- */
 function renderAll(){
-  renderDash();renderWaves();renderDz();renderWean();renderRass();renderRef();renderLearn();
+  renderDash();renderWaves();renderDz();renderWean();renderRass();renderRef();renderLearn();renderNotesAuth();renderNotes();
   renderWzPick();runWizard();renderSettings();
   runOxy();renderPeep();renderPtTrial();renderCapno();
   runCalc();runIE();runRSBI();runABG();renderPeep();renderTrend();
@@ -2667,11 +2698,153 @@ function doInstall(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=n
 $('installBtn').onclick=doInstall; $('installBtn2').onclick=doInstall;
 $('installX').onclick=()=>{$('installBar').classList.remove('show');localStorage.setItem('va_installhid','1');};
 
+/* ===================================================================
+   PHASE 2 — Firebase: admin login + Learn&Notes editor, user read-only
+   ===================================================================
+   FILL FB_CONFIG and ADMIN_UID from your Firebase project (see setup notes).
+   Until filled, the app runs normally and cloud notes stay off. */
+const FB_CONFIG={
+  apiKey:"PASTE_API_KEY",
+  authDomain:"PASTE.firebaseapp.com",
+  projectId:"PASTE_PROJECT_ID",
+  storageBucket:"PASTE.appspot.com",
+  messagingSenderId:"PASTE_SENDER_ID",
+  appId:"PASTE_APP_ID"
+};
+const ADMIN_UID="PASTE_ADMIN_UID"; /* your admin account UID; leave as-is and any signed-in user can edit */
+let fbApp=null,fbAuth=null,fbDB=null,fbUser=null,notesCache=[],notesUnsub=null,fbErr='';
+function fbReady(){ return typeof firebase!=='undefined' && FB_CONFIG && FB_CONFIG.projectId && FB_CONFIG.projectId.indexOf('PASTE')===-1; }
+function isAdmin(){ if(!fbUser) return false; return (''+ADMIN_UID).indexOf('PASTE')!==-1 ? true : fbUser.uid===ADMIN_UID; }
+function escapeHtml(x){return String(x==null?'':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function fbInit(){
+  if(!fbReady()){ renderNotesAuth(); renderNotes(); return; }
+  if(fbApp) return;
+  try{
+    fbApp=firebase.initializeApp(FB_CONFIG);
+    fbAuth=firebase.auth();
+    fbDB=firebase.firestore();
+    try{ fbDB.enablePersistence({synchronizeTabs:true}).catch(()=>{}); }catch(e){}
+    fbAuth.onAuthStateChanged(u=>{ fbUser=u; renderNotesAuth(); renderNotes(); });
+    subscribeNotes();
+  }catch(e){ fbErr=String(e&&e.message||e); }
+  renderNotesAuth(); renderNotes();
+}
+function subscribeNotes(){
+  if(!fbDB||notesUnsub) return;
+  notesUnsub=fbDB.collection('notes').orderBy('order','asc').onSnapshot(
+    snap=>{ notesCache=snap.docs.map(d=>Object.assign({id:d.id},d.data())); renderNotes(); },
+    err=>{ fbErr=String(err&&err.message||err); renderNotes(); });
+}
+function adminLogout(){ if(fbAuth) fbAuth.signOut(); }
+
+function renderNotesAuth(){
+  const g=$('notesAuthbar'); if(!g) return;
+  if(!fbReady()){ g.style.display='none'; g.innerHTML=''; return; }
+  g.style.display='';
+  if(fbUser && isAdmin()){
+    g.innerHTML=`<div class="nauth"><span class="ntag">${T('Admin','Admin')} · ${escapeHtml(fbUser.email||'')}</span><span class="nspace"></span>`
+      +`<button class="nbtn add" id="noteAdd">＋ ${T('Add note','Note যোগ')}</button>`
+      +`<button class="nbtn" id="noteOut">${T('Sign out','Sign out')}</button></div>`;
+    $('noteAdd').onclick=()=>openNoteEditor(null);
+    $('noteOut').onclick=adminLogout;
+  } else {
+    g.innerHTML=`<div class="nauth"><span class="nspace"></span><button class="nbtn" id="noteIn">${T('Admin sign in','Admin sign in')}</button></div>`;
+    $('noteIn').onclick=openLogin;
+  }
+}
+function renderNotes(){
+  const g=$('notesArea'); if(!g) return;
+  if(!fbReady()){ g.innerHTML=''; return; }
+  const admin=fbUser&&isAdmin();
+  if(!notesCache.length){
+    g.innerHTML=`<div class="notes-empty">${admin?T('No notes yet — tap “Add note”.','এখনো note নেই — “Add note” চাপো।'):T('No notes yet.','এখনো কোনো note নেই।')}</div>`;
+    return;
+  }
+  g.innerHTML=notesCache.map(n=>`<div class="note-card">
+      <div class="note-head"><div class="note-title">${escapeHtml(n.title||T('Untitled','শিরোনামহীন'))}</div>`
+      +(admin?`<div class="note-ops"><button class="nbtn sm" data-ed="${n.id}">${T('Edit','Edit')}</button><button class="nbtn sm danger" data-del="${n.id}">${T('Delete','Delete')}</button></div>`:'')
+      +`</div><div class="note-body">${n.bodyHtml||''}</div></div>`).join('');
+  if(admin){
+    g.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>openNoteEditor(notesCache.find(x=>x.id===b.getAttribute('data-ed'))));
+    g.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>deleteNote(b.getAttribute('data-del')));
+  }
+}
+function openLogin(){
+  $('modalBody').innerHTML=`<h3>${T('Admin sign in','Admin sign in')}</h3>
+    <div class="mtag">${T('Only the admin can add or edit notes.','শুধু admin note add/edit korte pare.')}</div>
+    <div class="field" style="margin-bottom:10px"><label>Email</label><input id="loginEmail" type="email" autocomplete="username"></div>
+    <div class="field" style="margin-bottom:12px"><label>${T('Password','Password')}</label><input id="loginPw" type="password" autocomplete="current-password"></div>
+    <div class="call bad hide" id="loginErr" style="margin-bottom:10px"><div class="ci">!</div><div id="loginErrMsg"></div></div>
+    <button class="savebtn" id="loginGo" style="width:100%;justify-content:center">${T('Sign in','Sign in')}</button>`;
+  $('loginGo').onclick=()=>{
+    if(!fbAuth){ $('loginErr').classList.remove('hide'); $('loginErrMsg').textContent=T('Firebase not set up yet.','Firebase এখনো setup হয়নি।'); return; }
+    const em=($('loginEmail').value||'').trim(), pw=$('loginPw').value||'';
+    fbAuth.signInWithEmailAndPassword(em,pw).then(()=>closeModal())
+      .catch(e=>{ $('loginErr').classList.remove('hide'); $('loginErrMsg').textContent=e.message||String(e); });
+  };
+  openModal();
+}
+function openNoteEditor(note){
+  const editing=!!note;
+  $('modalBody').innerHTML=`<h3>${editing?T('Edit note','Note edit'):T('New note','নতুন note')}</h3>
+    <div class="field" style="margin:8px 0 12px"><label>${T('Title','শিরোনাম')}</label><input id="noteTitle" type="text" value="${editing?escapeHtml(note.title||''):''}"></div>
+    <div class="rt-toolbar">
+      <button data-cmd="bold" class="rtb"><b>B</b></button>
+      <button data-cmd="italic" class="rtb"><i>I</i></button>
+      <button data-cmd="underline" class="rtb"><u>U</u></button>
+      <button data-cmd="insertUnorderedList" class="rtb">•</button>
+      <label class="rtb" title="${T('Text colour','লেখার রং')}">A<input type="color" id="rtColor" value="#39C0C8"></label>
+      <label class="rtb" title="${T('Marker','মার্কার')}">▌<input type="color" id="rtMark" value="#F5E06B"></label>
+      <select id="rtFont" class="rtb">
+        <option value="">${T('Font','Font')}</option>
+        <option value="Inter, sans-serif">Sans</option>
+        <option value="Georgia, serif">Serif</option>
+        <option value="Lato, sans-serif">Lato</option>
+        <option value="Roboto, sans-serif">Roboto</option>
+      </select>
+      <span class="rtsp"></span>
+      <button data-cmd="undo" class="rtb" title="Undo">↶</button>
+      <button data-cmd="redo" class="rtb" title="Redo">↷</button>
+    </div>
+    <div id="noteBody" class="rt-area" contenteditable="true">${editing?(note.bodyHtml||''):''}</div>
+    <div class="call bad hide" id="noteErr" style="margin-top:10px"><div class="ci">!</div><div id="noteErrMsg"></div></div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button class="savebtn" id="noteSave" style="flex:1;justify-content:center">${T('Save','সেভ')}</button>
+      <button class="savebtn share" id="noteCancel" style="justify-content:center">${T('Cancel','বাতিল')}</button>
+    </div>`;
+  const area=$('noteBody');
+  $('modalBody').querySelectorAll('.rtb[data-cmd]').forEach(b=>b.onmousedown=e=>{e.preventDefault();area.focus();try{document.execCommand(b.dataset.cmd,false,null);}catch(x){}});
+  $('rtColor').oninput=e=>{area.focus();try{document.execCommand('foreColor',false,e.target.value);}catch(x){}};
+  $('rtMark').oninput=e=>{area.focus();try{if(!document.execCommand('hiliteColor',false,e.target.value))document.execCommand('backColor',false,e.target.value);}catch(x){}};
+  $('rtFont').onchange=e=>{ if(e.target.value){area.focus();try{document.execCommand('fontName',false,e.target.value);}catch(x){}} };
+  $('noteCancel').onclick=closeModal;
+  $('noteSave').onclick=()=>saveNote(editing?note:null,($('noteTitle').value||'').trim(),area.innerHTML,err=>{
+    if(err){ $('noteErr').classList.remove('hide'); $('noteErrMsg').textContent=err; } else closeModal();
+  });
+  openModal();
+}
+function saveNote(note,title,body,cb){
+  if(!fbDB){cb&&cb(T('Firebase not set up yet.','Firebase এখনো setup হয়নি।'));return;}
+  if(!(fbUser&&isAdmin())){cb&&cb(T('Not authorised.','অনুমতি নেই।'));return;}
+  const data={title:title,bodyHtml:body,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  let p;
+  if(note&&note.id){ p=fbDB.collection('notes').doc(note.id).update(data); }
+  else{ const mx=notesCache.length?Math.max.apply(null,notesCache.map(n=>n.order||0)):0; data.order=mx+1; data.createdAt=firebase.firestore.FieldValue.serverTimestamp(); p=fbDB.collection('notes').add(data); }
+  p.then(()=>cb&&cb(null)).catch(e=>cb&&cb(e.message||String(e)));
+}
+function deleteNote(id){
+  if(!fbDB||!(fbUser&&isAdmin()))return;
+  if(!confirm(T('Delete this note?','এই note মুছবে?')))return;
+  fbDB.collection('notes').doc(id).delete().catch(e=>alert(e.message||String(e)));
+}
+
 /* ---------- boot ---------- */
 applyPrefs();
 setLang(localStorage.getItem('va_lang')==='bn');
 go('home');
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fbInit); else fbInit();
 </script>
 </body>
 </html>
